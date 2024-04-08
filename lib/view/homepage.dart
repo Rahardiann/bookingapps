@@ -197,7 +197,26 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ],
-          )
+          ),
+           SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: ElevatedButton(
+              onPressed: () {
+                // Action when button is pressed
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Color.fromARGB(255, 237, 69, 142), // Background berwarna biru
+                side: BorderSide(
+                    color: Color.fromARGB(255, 237, 69, 142),  width: 2), // Border berwarna biru
+              ),
+              child: Text(
+                'Show more promo',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
