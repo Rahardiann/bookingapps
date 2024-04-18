@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
+import 'package:booking/view/regristasi.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -116,7 +117,10 @@ class _LoginFormState extends State<LoginForm> {
                     Text("Don't have an account yet? "),
                     TextButton(
                       onPressed: () {
-                        // Action when register button is pressed
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Register()),
+                      );
                       },
                       child: Text('Register'),
                     ),

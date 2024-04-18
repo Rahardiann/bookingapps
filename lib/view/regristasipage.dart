@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:booking/view/regristasipage.dart';
+import 'package:booking/view/home.dart';
 
-class Register extends StatelessWidget {
+class Regst extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,22 +10,22 @@ class Register extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
-        child: RegisterForm(),
+        child: RegstForm(),
       ),
     );
   }
 }
 
-class RegisterForm extends StatefulWidget {
+class RegstForm extends StatefulWidget {
   @override
-  _RegisterFormState createState() => _RegisterFormState();
+  _RegstFormState createState() => _RegstFormState();
 }
 
-class _RegisterFormState extends State<RegisterForm> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
+class _RegstFormState extends State<RegstForm> {
+  final TextEditingController _idCardController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
@@ -48,45 +48,17 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Please fill in the detailed information below',
+                  'Before seeing the notification you get, log in first',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                   ),
                 ),
                 SizedBox(height: 50),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _firstNameController,
-                        decoration: InputDecoration(
-                          labelText: 'First Name',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _lastNameController,
-                        decoration: InputDecoration(
-                          labelText: 'Last Name',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
                 TextFormField(
-                  controller: _phoneNumberController, // Menggunakan controller _phoneNumberController
+                  controller: _idCardController,
                   decoration: InputDecoration(
-                    labelText: 'Phone number',
+                    labelText: 'ID Card Number',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
@@ -94,9 +66,9 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _emailController, // Menggunakan controller _emailController
+                  controller: _genderController,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Gender',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
@@ -104,24 +76,33 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _passwordController,
+                  controller: _dobController,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'Date of birth',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
-                    suffixIcon: IconButton(
-                      icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
                   ),
-                  obscureText: _obscureText,
                 ),
-                
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _addressController,
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      // Action when forgot password button is pressed
+                    },
+                    child: Text("Forgot Password?"),
+                  ),
+                ),
                 SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
@@ -130,19 +111,34 @@ class _RegisterFormState extends State<RegisterForm> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Regst()),
+                        MaterialPageRoute(builder: (context) => Home()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF16A69A), // Background color
                     ),
                     child: Text(
-                      'next',
+                      'Login',
                       style: TextStyle(color: Colors.white), // Text color
                     ),
                   ),
                 ),
                 SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account yet? "),
+                    TextButton(
+                      onPressed: () {
+                        //   Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => Register()),
+                        // );
+                      },
+                      child: Text('Register'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -153,13 +149,12 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _emailController.dispose();
-    _phoneNumberController.dispose();
+    _idCardController.dispose();
+    _genderController.dispose();
+    _dobController.dispose();
+    _addressController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 }
-
 
