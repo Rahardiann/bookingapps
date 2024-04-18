@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/login.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+
+  // final List<Widget> _screens = [
+  //   HomeScreen(),
+  //   BookingScreen(),
+  //   ProfileScreen(),
+  // ];
+
   @override
   Widget build(BuildContext context) {
     // Mengambil lebar layar
@@ -223,6 +236,29 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
             ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: Color(0xFF16A69A), // Warna saat item dipilih
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Color(0xFF16A69A)),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today, color: Color(0xFF16A69A)),
+            label: 'Booking',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, color: Color(0xFF16A69A)),
+            label: 'Profile',
           ),
         ],
       ),
