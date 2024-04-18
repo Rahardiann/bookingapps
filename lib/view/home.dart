@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:booking/view/login.dart';
 
-class HomePage extends StatelessWidget {
+class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Mengambil lebar layar
@@ -13,13 +12,6 @@ class HomePage extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
-            decoration: BoxDecoration(
-              color: Color(0xffD7F0EE),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(25.0),
-                bottomRight: Radius.circular(25.0),
-              ),
-            ),
             child: Column(
               children: [
                 Row(
@@ -37,35 +29,6 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 50),
-                Padding(
-                  padding: EdgeInsets.only(left: 3, bottom: 15),
-                  child: Text(
-                    "Join and enjoy the benefits of being our member",
-                    style: TextStyle(fontSize: 11),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Action when button is pressed
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                    ),
-                    child: Text(
-                      'Login or Register',
-                      style: TextStyle(color: Color(0xFF037F74)),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20), // Tambahkan spasi sebelum carousel
               ],
             ),
           ),
