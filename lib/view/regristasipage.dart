@@ -1,5 +1,7 @@
+import 'package:booking/widget/welcomepage.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
+import 'package:booking/widget/welcomepage.dart';
 
 class Regst extends StatelessWidget {
   @override
@@ -35,7 +37,8 @@ class _RegstFormState extends State<RegstForm> {
       children: [
         SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(bottom: 60.0), // Adjust bottom padding for watermark
+            padding: EdgeInsets.only(
+                bottom: 60.0), // Adjust bottom padding for watermark
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -62,6 +65,10 @@ class _RegstFormState extends State<RegstForm> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 1.0,
+                        horizontal:
+                            15.0), // Atur padding horizontal untuk mengatur lebar
                   ),
                 ),
                 SizedBox(height: 10),
@@ -72,6 +79,10 @@ class _RegstFormState extends State<RegstForm> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 1.0,
+                        horizontal:
+                            15.0),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -100,7 +111,7 @@ class _RegstFormState extends State<RegstForm> {
                     onPressed: () {
                       // Action when forgot password button is pressed
                     },
-                    child: Text("Forgot Password?"),
+                    child: Text("Skip"),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -111,14 +122,14 @@ class _RegstFormState extends State<RegstForm> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Home()),
+                        MaterialPageRoute(builder: (context) => Welcomepage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF16A69A), // Background color
                     ),
                     child: Text(
-                      'Login',
+                      'Sign Up',
                       style: TextStyle(color: Colors.white), // Text color
                     ),
                   ),
@@ -127,7 +138,7 @@ class _RegstFormState extends State<RegstForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account yet? "),
+                    Text("Don't have an account yet?"),
                     TextButton(
                       onPressed: () {
                         //   Navigator.push(
@@ -135,7 +146,7 @@ class _RegstFormState extends State<RegstForm> {
                         //   MaterialPageRoute(builder: (context) => Register()),
                         // );
                       },
-                      child: Text('Register'),
+                      child: Text('Login'),
                     ),
                   ],
                 ),
@@ -157,4 +168,3 @@ class _RegstFormState extends State<RegstForm> {
     super.dispose();
   }
 }
-
