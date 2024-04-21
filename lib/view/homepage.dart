@@ -1,6 +1,8 @@
+import 'package:booking/beforelogin/booknone.dart';
+import 'package:booking/beforelogin/profilenone.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:booking/view/login.dart';
+import 'package:booking/view/login.dart'; // Update import
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,13 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-
-  // final List<Widget> _screens = [
-  //   HomeScreen(),
-  //   BookingScreen(),
-  //   ProfileScreen(),
-  // ];
+  int _bottomNavCurrentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: EdgeInsets.only(left: 3, bottom: 15),
                   child: Text(
-                    "Join and enjoy the benefits of being our member",
+                    "Bergabung dan nikmati keuntungan menjadi anggota kami",
                     style: TextStyle(fontSize: 11),
                   ),
                 ),
@@ -63,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Action when button is pressed
+                      // Aksi ketika tombol ditekan
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => LoginPage()),
@@ -73,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                       primary: Colors.white,
                     ),
                     child: Text(
-                      'Login or Register',
+                      'Login or Regrister',
                       style: TextStyle(color: Color(0xFF037F74)),
                     ),
                   ),
@@ -154,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   icon: Icon(Icons.keyboard_arrow_right),
                   onPressed: () {
-                    // Action when arrow button is pressed
+                    // Aksi ketika tombol panah diklik
                   },
                 ),
               ],
@@ -179,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'New patient discount',
+                        'Routine check-up discounts',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -204,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Routine check-up discounts',
+                        'New patient discount',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -222,17 +218,15 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: ElevatedButton(
               onPressed: () {
-                // Action when button is pressed
+                // Aksi ketika tombol ditekan
               },
               style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(
-                    255, 237, 69, 142), // Background berwarna biru
+                primary: Color.fromARGB(255, 237, 69, 142),
                 side: BorderSide(
-                    color: Color.fromARGB(255, 237, 69, 142),
-                    width: 2), // Border berwarna biru
+                    color: Color.fromARGB(255, 237, 69, 142), width: 2),
               ),
               child: Text(
-                'Show more promo',
+                'Show More Promo',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -240,24 +234,58 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: Color(0xFF16A69A), // Warna saat item dipilih
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
-            _currentIndex = index;
+            _bottomNavCurrentIndex = index;
           });
+          if (index == 1) {
+            // Jika indeks adalah 1 (Booking), navigasi ke halaman Book()
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Book()),
+            );
+          } else if (index == 2) {
+            // Jika indeks adalah 2 (Profile), navigasi ke halaman ProfilePage()
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Profile()),
+            );
+          }
         },
+        currentIndex: _bottomNavCurrentIndex,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Color(0xFF16A69A)),
+            activeIcon: Icon(
+              Icons.home,
+              color: Color(0xFF037F74)
+            ),
+            icon: Icon(
+              Icons.home,
+              color: Colors.grey,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, color: Color(0xFF16A69A)),
+            activeIcon: Icon(
+              Icons.assignment,
+              color: Color(0xFF037F74)
+            ),
+            icon: Icon(
+              Icons.assignment,
+              color: Colors.grey,
+            ),
             label: 'Booking',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Color(0xFF16A69A)),
+            activeIcon: Icon(
+              Icons.people,
+              color: Color(0xFF037F74),
+            ),
+            icon: Icon(
+              Icons.people,
+              color: Colors.grey,
+            ),
             label: 'Profile',
           ),
         ],
