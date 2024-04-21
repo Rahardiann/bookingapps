@@ -16,7 +16,7 @@ class _BookState extends State<Book> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-    appBar: AppBar(
+      appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,19 +56,19 @@ class _BookState extends State<Book> {
           ],
         ),
       ),
-
-
-
-
       body: ListView(
         children: [
           SizedBox(height: 20),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                // Isi halaman booking disini
-              ],
+            child: Center(
+              child: Text(
+                'Booking not found',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey, // Warna abu-abu
+                ),
+              ),
             ),
           ),
         ],
@@ -82,13 +82,16 @@ class _BookState extends State<Book> {
 
           switch (index) {
             case 0:
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
               break;
             case 1:
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Book()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Book()));
               break;
             case 2:
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Profile()));
               break;
           }
         },

@@ -46,31 +46,61 @@ class _ProfileState extends State<Profile> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.black, // Mengatur warna teks tombol
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.arrow_back_ios,
+                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  SizedBox(width: 5),
+                  Text(
+                    'Back',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // Mengatur warna teks
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              'Profile',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // Mengatur warna teks
+              ),
+            ),
+            SizedBox(width: 90),
+          ],
+        ),
+      ),
       body: ListView(
         children: [
+          SizedBox(height: 20),
           Container(
-            padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      Icons.notifications_none_outlined,
-                      size: 30,
-                      color: Colors.black54,
-                    ),
-                    Icon(
-                      Icons.person,
-                      size: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Center(
+              child: Text(
+                'Profile not found',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey, // Warna abu-abu
                 ),
-              ],
+              ),
             ),
           ),
-          SizedBox(height: 20),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
