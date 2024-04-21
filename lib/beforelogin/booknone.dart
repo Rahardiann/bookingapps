@@ -23,18 +23,24 @@ class _BookState extends State<Book> {
             padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
             child: Column(
               children: [
+                SizedBox(height: 2),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.notifications_none_outlined,
-                      size: 30,
-                      color: Colors.black54,
+                    // Tombol Kembali
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    Icon(
-                      Icons.person,
-                      size: 30,
-                      color: Colors.black54,
+                    // Teks Kembali
+                    Text(
+                      'Back',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),

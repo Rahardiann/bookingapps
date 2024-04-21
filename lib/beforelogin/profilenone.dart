@@ -1,5 +1,9 @@
+import 'package:booking/beforelogin/booknone.dart';
+import 'package:booking/view/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:booking/beforelogin/booknone.dart'; // Ganti dengan nama file dan lokasi halaman Booking
+import 'package:booking/view/homepage.dart'; // Ganti dengan nama file dan lokasi halaman Home
 
 class Profile extends StatefulWidget {
   @override
@@ -7,7 +11,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
 
   void _onItemTapped(int index) {
     setState(() {
@@ -15,7 +19,25 @@ class _ProfileState extends State<Profile> {
     });
 
     // Tambahkan logika navigasi di sini sesuai dengan masing-masing index
-    // Misalnya, push ke halaman baru atau tampilkan widget yang sesuai
+    switch (index) {
+      case 0:
+        // Navigasi ke halaman Home
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        break;
+      case 1:
+        // Navigasi ke halaman Booking
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Book()),
+        );
+        break;
+      default:
+        // Tidak perlu navigasi untuk halaman Profile
+        break;
+    }
   }
 
   @override
@@ -58,16 +80,16 @@ class _ProfileState extends State<Profile> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
+            icon: Icon(Icons.assignment),
             label: 'Booking',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Cok',
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF16A69A),
+        selectedItemColor: Color(0xFF16A69A), 
         onTap: _onItemTapped,
       ),
     );

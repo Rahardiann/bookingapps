@@ -254,6 +254,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
         currentIndex: _bottomNavCurrentIndex,
+        selectedItemColor: Color(0xFF16A69A), 
         items: [
           BottomNavigationBarItem(
             activeIcon: Icon(
@@ -279,14 +280,15 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(
-              Icons.people,
+              Icons.person,
               color: Color(0xFF037F74),
             ),
             icon: Icon(
-              Icons.people,
+              Icons.person,
               color: Colors.grey,
             ),
             label: 'Profile',
+            
           ),
         ],
       ),
