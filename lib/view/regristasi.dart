@@ -6,7 +6,35 @@ class Register extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Back'),
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.black, // Mengatur warna teks tombol
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.arrow_back_ios,
+                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  SizedBox(width: 5),
+                  Text(
+                    'Back',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // Mengatur warna teks
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
