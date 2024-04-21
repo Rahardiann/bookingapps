@@ -105,8 +105,8 @@ class _BookState extends State<Book> {
             label: 'Booking',
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(Icons.people, color: Color(0xFF037F74)),
-            icon: Icon(Icons.people, color: Colors.grey),
+            activeIcon: Icon(Icons.person, color: Color(0xFF037F74)),
+            icon: Icon(Icons.person, color: Colors.grey),
             label: 'Profile',
           ),
         ],
