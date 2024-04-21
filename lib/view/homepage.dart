@@ -13,6 +13,12 @@ class _HomePageState extends State<HomePage> {
   int _bottomNavCurrentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _bottomNavCurrentIndex = 0; // Set currentIndex menjadi 0 saat initState
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Mengambil lebar layar
     double screenWidth = MediaQuery.of(context).size.width;

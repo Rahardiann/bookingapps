@@ -9,45 +9,68 @@ class Book extends StatefulWidget {
 }
 
 class _BookState extends State<Book> {
-  int _bottomNavCurrentIndex =
-      1; // Set nilai awal ke 1 untuk menunjukkan halaman Booking
+  int _bottomNavCurrentIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+    appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.black, // Mengatur warna teks tombol
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.arrow_back_ios,
+                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  SizedBox(width: 5),
+                  Text(
+                    'Back',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // Mengatur warna teks
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              'Booking',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // Mengatur warna teks
+              ),
+            ),
+            SizedBox(width: 90),
+          ],
+        ),
+      ),
+
+
+
+
       body: ListView(
         children: [
+          SizedBox(height: 20),
           Container(
-            padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                SizedBox(height: 2),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // Tombol Kembali
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    // Teks Kembali
-                    Text(
-                      'Back',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                // Isi halaman booking disini
               ],
             ),
           ),
-          SizedBox(height: 20),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -57,22 +80,15 @@ class _BookState extends State<Book> {
             _bottomNavCurrentIndex = index;
           });
 
-          // Menggunakan Navigator.push untuk navigasi
           switch (index) {
             case 0:
-              // Jika indeks adalah 0 (Home), navigasi ke halaman HomePage
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
               break;
             case 1:
-              // Jika indeks adalah 1 (Booking), navigasi ke halaman Book
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Book()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Book()));
               break;
             case 2:
-              // Jika indeks adalah 2 (Profile), navigasi ke halaman Profile
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Profile()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
               break;
           }
         },
@@ -80,29 +96,17 @@ class _BookState extends State<Book> {
         items: [
           BottomNavigationBarItem(
             activeIcon: Icon(Icons.home, color: Color(0xFF037F74)),
-            icon: Icon(
-              Icons.home,
-              color: Colors.grey,
-            ),
+            icon: Icon(Icons.home, color: Colors.grey),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(Icons.assignment, color: Color(0xFF037F74)),
-            icon: Icon(
-              Icons.assignment,
-              color: Colors.grey,
-            ),
+            icon: Icon(Icons.assignment, color: Colors.grey),
             label: 'Booking',
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(
-              Icons.people,
-              color: Color(0xFF037F74),
-            ),
-            icon: Icon(
-              Icons.people,
-              color: Colors.grey,
-            ),
+            activeIcon: Icon(Icons.people, color: Color(0xFF037F74)),
+            icon: Icon(Icons.people, color: Colors.grey),
             label: 'Profile',
           ),
         ],
