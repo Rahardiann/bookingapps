@@ -25,35 +25,69 @@ class _HomeState extends State<Home> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: Text('Markocop'),
-                onTap: () {
-                  // Tambahkan aksi ketika dentist dipilih
-                  setState(() {
-                    _selectedDentist =
-                        'Markocop'; // Update nama dentist yang dipilih
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('sugeng'),
-                onTap: () {
-                  // Tambahkan aksi ketika dentist dipilih
-                  setState(() {
-                    _selectedDentist =
-                        'sugeng'; // Update nama dentist yang dipilih
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-              // Tambahkan daftar dentist lainnya sesuai kebutuhan
-            ],
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black, // Mengatur warna teks tombol
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back_ios,
+                          size: 20, color: Colors.black), // Mengatur warna ikon
+                      SizedBox(width: 5),
+                      Text(
+                        'Back',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Mengatur warna teks
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                
+              ],
+            ),
+           
+          ),
+          body: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Text('Markocop'),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedDentist = 'Markocop';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('sugeng'),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedDentist = 'sugeng';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                // Tambahkan daftar dentist lainnya sesuai kebutuhan
+              ],
+            ),
           ),
         );
       },
