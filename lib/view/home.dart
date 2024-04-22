@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
                       color: Colors.black54,
                     ),
                     Icon(
-                      Icons.person,
+                      Icons.account_circle,
                       size: 30,
                       color: Colors.black54,
                     ),

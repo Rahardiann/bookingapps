@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.black54,
                     ),
                     Icon(
-                      Icons.person,
+                      Icons.account_circle,
                       size: 30,
                       color: Colors.black54,
                     ),
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: EdgeInsets.only(left: 3, bottom: 15),
                   child: Text(
-                    "Bergabung dan nikmati keuntungan menjadi anggota kami",
+                    "Join and enjoy the benefits of being our member",
                     style: TextStyle(fontSize: 11),
                   ),
                 ),

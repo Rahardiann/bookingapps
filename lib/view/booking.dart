@@ -191,7 +191,6 @@ class _BookingState extends State<Booking> {
                       'Code booking', // Teks angka (contoh: 20)
                       style: TextStyle(
                         fontSize: 12,
-                      
                         color: Colors.black,
                       ),
                     ),
@@ -200,8 +199,161 @@ class _BookingState extends State<Booking> {
               ),
             ],
           ),
-
-
+           SizedBox(height: 30),
+          // Judul di luar container
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              'Booking detail', // Judul
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFB6366D), // Warna judul
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFD7F0EE),
+              borderRadius:
+                  BorderRadius.circular(15), // Tambahkan border radius di sini
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+                SizedBox(height: 10),
+                TextButton.icon(
+                  onPressed: () {
+                    // Action when date button is pressed
+                  },
+                  icon: Icon(
+                    Icons.person_3_rounded,
+                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Choose a dentist",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor:
+                        Colors.white, // Atur latar belakang putih di sini
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    // Action when date button is pressed
+                  },
+                  icon: Icon(
+                    Icons.calendar_today,
+                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Date",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor:
+                        Colors.white, // Atur latar belakang putih di sini
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    // Action when date button is pressed
+                  },
+                  icon: Icon(
+                    Icons.access_time_filled_sharp,
+                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Time",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor:
+                        Colors.white, // Atur latar belakang putih di sini
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    // Action when date button is pressed
+                  },
+                  icon: Icon(
+                    Icons.production_quantity_limits_outlined,
+                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Promo",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor:
+                        Colors.white, // Atur latar belakang putih di sini
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                // Isi dari booking
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
