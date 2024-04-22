@@ -66,7 +66,40 @@ class _HomeState extends State<Home> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  title: Text('Markocop'),
+                  title: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 5.0,
+                            right: 8.0), // Margin di sebelah kiri ikon profil
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'BOWO', // Ganti dengan nama pengguna yang sesuai
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'Medical record | 001', // Sub judul
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   onTap: () {
                     // Tambahkan aksi ketika dentist dipilih
                     setState(() {
