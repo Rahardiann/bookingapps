@@ -1,5 +1,5 @@
-import 'package:booking/view/home.dart';
 import 'package:flutter/material.dart';
+import 'package:booking/view/home.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/homepage.dart';
 import 'package:booking/beforelogin/profilenone.dart';
@@ -130,15 +130,78 @@ class _BookingState extends State<Booking> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
               ],
             ),
           ),
+          SizedBox(height: 20),
           Container(
             width: double.infinity, // Mengisi lebar layar
             height: 2,
             color: Colors.grey[300], // Warna abu-abu untuk garis bawah
           ),
+          SizedBox(height: 8), // Beri ruang antara garis bawah dan Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 15.0,
+                        right: 8.0), // Margin di sebelah kiri ikon profil
+                    child: Icon(Icons.account_circle,
+                        color: Colors.grey), // Icon profile
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'BOWO', // Ganti dengan nama pengguna yang sesuai
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        'Medical record | 001', // Sub judul
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              // Tambah ruang antara teks dan tanggal booking
+              Padding(
+                padding: EdgeInsets.only(right: 15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '2 April, 9:45 AM', // Tanggal booking
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      'Code booking', // Teks angka (contoh: 20)
+                      style: TextStyle(
+                        fontSize: 12,
+                      
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
