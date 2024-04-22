@@ -11,6 +11,15 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> {
   int _bottomNavCurrentIndex = 1;
+ String _selectedItem = 'Item 1'; // Inisialisasi _selectedItem
+
+
+  List<String> _items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -62,16 +71,46 @@ class _BookingState extends State<Booking> {
           SizedBox(height: 20),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.grey[200], // Warna latar belakang abu-abu
+              borderRadius: BorderRadius.circular(20), // Radius sudut 20px
+            ),
             child: Center(
-              child: Text(
-                'Booking not found',
+              child: DropdownButton<String>(
+                value: _selectedItem,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedItem = newValue!;
+                  });
+                },
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey, // Warna abu-abu
+                  fontSize: 16, // ukuran teks dropdown
+                  color: Colors.black, // warna teks dropdown
                 ),
+                elevation: 4, // elevasi dropdown
+                icon: Icon(Icons.arrow_drop_down), // ikon dropdown
+                underline: Container(
+                  // garis bawah dropdown
+                  height: 2,
+                  color: Colors.transparent, // membuat garis bawah transparan
+                ),
+                isExpanded: true, // membuat dropdown memenuhi lebar container
+                dropdownColor:
+                    Colors.grey[200], // warna latar belakang dropdown
+                items: _items.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Container(
+                      width: double
+                          .infinity, // membuat teks dropdown memenuhi lebar dropdown
+                      child: Text(value),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ),
+
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
