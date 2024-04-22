@@ -1,11 +1,6 @@
-import 'package:booking/beforelogin/booknone.dart';
+import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
-import 'package:booking/view/homepage.dart';
-import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:booking/beforelogin/booknone.dart'; // Ganti dengan nama file dan lokasi halaman Booking
-import 'package:booking/view/homepage.dart'; // Ganti dengan nama file dan lokasi halaman Home
 
 class Profiles extends StatefulWidget {
   @override
@@ -92,15 +87,92 @@ class _ProfilesState extends State<Profiles> {
         children: [
           SizedBox(height: 20),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Center(
-              child: Text(
-                'Profile not found',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey, // Warna abu-abu
+            decoration: BoxDecoration(
+              color: Color(0xFFD7F0EE),
+              borderRadius:
+                  BorderRadius.circular(15), // Tambahkan border radius di sini
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 5.0,
+                      right: 8.0), // Margin di sebelah kiri ikon profil
+                  child: Icon(
+                    Icons.account_circle,
+                    color: Colors.grey,
+                    size: 50,
+                  ),
                 ),
-              ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'BOWO', // Ganti dengan nama pengguna yang sesuai
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      'Medical record | 001', // Sub judul
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFD7F0EE),
+              borderRadius:
+                  BorderRadius.circular(15), // Tambahkan border radius di sini
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 5.0,
+                      right: 8.0), // Margin di sebelah kiri ikon profil
+                  child: CircleAvatar(
+                    backgroundColor:
+                        Colors.white, // Atur latar belakang putih di sini
+                    radius: 25, // Atur radius lingkaran di sini
+                    child: Icon(
+                      Icons.card_membership,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                  ), // Icon profile
+                ),
+                Expanded(
+                  child: Column(
+                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 15,),
+                      Text(
+                        'Membership', // Ganti dengan nama pengguna yang sesuai
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],

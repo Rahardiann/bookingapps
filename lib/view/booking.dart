@@ -3,6 +3,7 @@ import 'package:booking/view/home.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/homepage.dart';
 import 'package:booking/beforelogin/profilenone.dart';
+import 'package:booking/view/profile.dart';
 
 class Booking extends StatefulWidget {
   @override
@@ -156,7 +157,7 @@ class _BookingState extends State<Booking> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'BOWO', // Ganti dengan nama pengguna yang sesuai
+                        'BOWO', 
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -164,7 +165,7 @@ class _BookingState extends State<Booking> {
                         ),
                       ),
                       Text(
-                        'Medical record | 001', // Sub judul
+                        'Medical record | 001', 
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black87,
@@ -174,21 +175,21 @@ class _BookingState extends State<Booking> {
                   ),
                 ],
               ),
-              // Tambah ruang antara teks dan tanggal booking
+          
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '2 April, 9:45 AM', // Tanggal booking
+                      '2 April, 9:45 AM', 
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
                       ),
                     ),
                     Text(
-                      'Code booking', // Teks angka (contoh: 20)
+                      'Code booking', 
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -200,15 +201,17 @@ class _BookingState extends State<Booking> {
             ],
           ),
            SizedBox(height: 30),
+
+
           // Judul di luar container
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'Booking detail', // Judul
+              'Booking detail', 
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFB6366D), // Warna judul
+                color: Color(0xFFB6366D),
               ),
             ),
           ),
@@ -216,7 +219,7 @@ class _BookingState extends State<Booking> {
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
               borderRadius:
-                  BorderRadius.circular(15), // Tambahkan border radius di sini
+                  BorderRadius.circular(15), 
             ),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -227,11 +230,11 @@ class _BookingState extends State<Booking> {
                 SizedBox(height: 10),
                 TextButton.icon(
                   onPressed: () {
-                    // Action when date button is pressed
+                   
                   },
                   icon: Icon(
                     Icons.person_3_rounded,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A), 
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -244,12 +247,12 @@ class _BookingState extends State<Booking> {
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                      SizedBox(width: 8), 
                     ],
                   ),
                   style: TextButton.styleFrom(
                     backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
+                        Colors.white, 
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -258,11 +261,11 @@ class _BookingState extends State<Booking> {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    // Action when date button is pressed
+                   
                   },
                   icon: Icon(
                     Icons.calendar_today,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A), 
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -275,12 +278,12 @@ class _BookingState extends State<Booking> {
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                      SizedBox(width: 8), 
                     ],
                   ),
                   style: TextButton.styleFrom(
                     backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
+                        Colors.white, 
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -289,7 +292,7 @@ class _BookingState extends State<Booking> {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    // Action when date button is pressed
+                    
                   },
                   icon: Icon(
                     Icons.access_time_filled_sharp,
@@ -374,7 +377,7 @@ class _BookingState extends State<Booking> {
               break;
             case 2:
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Profile()));
+                  context, MaterialPageRoute(builder: (context) => Profiles()));
               break;
           }
         },
