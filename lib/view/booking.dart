@@ -11,14 +11,14 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> {
   int _bottomNavCurrentIndex = 1;
- String _selectedItem = 'Item 1'; // Inisialisasi _selectedItem
+ String _selectedItem = 'Bowo'; 
 
 
   List<String> _items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
+    'Bowo',
+    'Budi',
+    'Sugeng',
+    'Dian',
   ];
 
   @override
@@ -69,11 +69,12 @@ class _BookingState extends State<Booking> {
       body: ListView(
         children: [
           SizedBox(height: 20),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+         Container(
+            margin: EdgeInsets.symmetric(
+                horizontal: 23), // Tambahkan margin horizontal
             decoration: BoxDecoration(
               color: Colors.grey[200], // Warna latar belakang abu-abu
-              borderRadius: BorderRadius.circular(20), // Radius sudut 20px
+              borderRadius: BorderRadius.circular(10), // Radius sudut 20px
             ),
             child: Center(
               child: DropdownButton<String>(
@@ -100,9 +101,9 @@ class _BookingState extends State<Booking> {
                 items: _items.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Container(
-                      width: double
-                          .infinity, // membuat teks dropdown memenuhi lebar dropdown
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8), // Tambahkan padding
                       child: Text(value),
                     ),
                   );
@@ -110,6 +111,8 @@ class _BookingState extends State<Booking> {
               ),
             ),
           ),
+
+
 
         ],
       ),
