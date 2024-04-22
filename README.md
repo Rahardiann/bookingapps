@@ -1,6 +1,6 @@
 # booking
 
-A new Flutter project.
+Booking apps passient
 
 ## Getting Started
 
