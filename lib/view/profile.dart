@@ -129,50 +129,306 @@ class _ProfilesState extends State<Profiles> {
               ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFD7F0EE),
-              borderRadius:
-                  BorderRadius.circular(15), // Tambahkan border radius di sini
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 5.0,
-                      right: 8.0), // Margin di sebelah kiri ikon profil
-                  child: CircleAvatar(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
-                    radius: 25, // Atur radius lingkaran di sini
-                    child: Icon(
-                      Icons.card_membership,
-                      color: Colors.grey,
-                      size: 30,
-                    ),
-                  ), // Icon profile
-                ),
-                Expanded(
-                  child: Column(
-                     mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 15,),
-                      Text(
-                        'Membership', // Ganti dengan nama pengguna yang sesuai
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
+          TextButton(
+            onPressed: () {
+              // Tambahkan logika untuk tindakan saat container ditekan
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFD7F0EE),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 25,
+                      child: Icon(
+                        Icons.card_membership,
+                        color: Color(0xFF16A69A),
+                        size: 30,
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Membership',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_ios, size: 15, color: Colors.black,
+                              ),
+                              onPressed: () {
+                                // Tambahkan logika untuk tindakan saat tombol ditekan
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      
+        TextButton(
+            onPressed: () {
+              // Tambahkan logika untuk tindakan saat container ditekan
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFD7F0EE),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin: EdgeInsets.symmetric(
+                  horizontal: 10,), // Hapus jarak vertikal di sini
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 25,
+                      child: Icon(
+                        Icons.qr_code_2,
+                        color: Color(0xFF16A69A),
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Show QR profile',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_ios,
+                                  size: 15, color: Colors.black),
+                              onPressed: () {
+                                // Tambahkan logika untuk tindakan saat tombol ditekan
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+        TextButton(
+            onPressed: () {
+              // Tambahkan logika untuk tindakan saat container ditekan
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFD7F0EE),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin: EdgeInsets.symmetric(
+                horizontal: 10,
+              ), // Hapus jarak vertikal di sini
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 25,
+                      child: Icon(
+                        Icons.person,
+                        color: Color(0xFF16A69A),
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Detail profile',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_ios,
+                                  size: 15, color: Colors.black),
+                              onPressed: () {
+                                // Tambahkan logika untuk tindakan saat tombol ditekan
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          TextButton(
+            onPressed: () {
+              // Tambahkan logika untuk tindakan saat container ditekan
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFD7F0EE),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin: EdgeInsets.symmetric(
+                horizontal: 10,
+              ), // Hapus jarak vertikal di sini
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 25,
+                      child: Icon(
+                        Icons.history_edu,
+                        color: Color(0xFF16A69A),
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Visit history',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_ios,
+                                  size: 15, color: Colors.black),
+                              onPressed: () {
+                                // Tambahkan logika untuk tindakan saat tombol ditekan
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+
+          TextButton(
+            onPressed: () {
+              // Tambahkan logika untuk tindakan saat container ditekan
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFD7F0EE),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin: EdgeInsets.symmetric(
+                horizontal: 10,
+              ), // Hapus jarak vertikal di sini
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 25,
+                      child: Icon(
+                        Icons.people_sharp,
+                        color: Color(0xFF16A69A),
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'User',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_ios,
+                                  size: 15, color: Colors.black),
+                              onPressed: () {
+                                // Tambahkan logika untuk tindakan saat tombol ditekan
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
