@@ -1,9 +1,7 @@
-import 'package:booking/view/booking.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:booking/view/booking.dart';
 import 'package:booking/view/profile.dart';
-
-
 
 class Home extends StatefulWidget {
   @override
@@ -11,17 +9,60 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
- int _bottomNavCurrentIndex = 0;
+  int _bottomNavCurrentIndex = 0;
+  String _selectedDentist = "Choose a dentist";
 
   @override
   void initState() {
     super.initState();
-    _bottomNavCurrentIndex = 0; // Set currentIndex menjadi 0 saat initState
+    _bottomNavCurrentIndex = 0;
+     // Set currentIndex menjadi 0 saat initState
   }
+
+  
+  // Method untuk menampilkan bottom sheet
+  void _showDentistSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: Text('Markocop'),
+                onTap: () {
+                  // Tambahkan aksi ketika dentist dipilih
+                  setState(() {
+                    _selectedDentist =
+                        'Markocop'; // Update nama dentist yang dipilih
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('sugeng'),
+                onTap: () {
+                  // Tambahkan aksi ketika dentist dipilih
+                  setState(() {
+                    _selectedDentist =
+                        'sugeng'; // Update nama dentist yang dipilih
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              // Tambahkan daftar dentist lainnya sesuai kebutuhan
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil lebar layar
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -50,12 +91,11 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(height: 20),
-           Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 SizedBox(height: 10),
                 Text(
                   "Hello!",
@@ -88,13 +128,12 @@ class _HomeState extends State<Home> {
               viewportFraction: 0.8,
             ),
             items: [
-              // Contoh gambar slide
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Image.asset(
                   'assets/slide1.jpeg',
                   fit: BoxFit.cover,
-                  width: screenWidth, // Set lebar gambar menjadi lebar layar
+                  width: screenWidth,
                 ),
               ),
               ClipRRect(
@@ -102,7 +141,7 @@ class _HomeState extends State<Home> {
                 child: Image.asset(
                   'assets/slide2.jpeg',
                   fit: BoxFit.cover,
-                  width: screenWidth, // Set lebar gambar menjadi lebar layar
+                  width: screenWidth,
                 ),
               ),
               ClipRRect(
@@ -110,12 +149,11 @@ class _HomeState extends State<Home> {
                 child: Image.asset(
                   'assets/slide3.jpeg',
                   fit: BoxFit.cover,
-                  width: screenWidth, // Set lebar gambar menjadi lebar layar
+                  width: screenWidth,
                 ),
               ),
             ],
           ),
-
           SizedBox(height: 40),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -131,62 +169,56 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // Container dengan border rounded
               ],
             ),
           ),
-
-          // Container persegi dengan warna latar belakang #D7F0EE
           Container(
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
-              borderRadius:
-                  BorderRadius.circular(15), // Tambahkan border radius di sini
+              borderRadius: BorderRadius.circular(15),
             ),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton.icon(
+                 TextButton.icon(
                   onPressed: () {
-                    // Action when date button is pressed
+                    _showDentistSelectionSheet(
+                        context); // Panggil method bottom sheet
                   },
                   icon: Icon(
                     Icons.person_3_rounded,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Choose a dentist",
+                        _selectedDentist, // Tampilkan nama dentist yang dipilih
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                      SizedBox(width: 8),
                     ],
                   ),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-
+                
                 TextButton.icon(
-                  onPressed: () {
-                    // Action when date button is pressed
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.calendar_today,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -199,23 +231,19 @@ class _HomeState extends State<Home> {
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                      SizedBox(width: 8),
                     ],
                   ),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-
                 TextButton.icon(
-                  onPressed: () {
-                    // Action when date button is pressed
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.access_time_filled_sharp,
                     color: Color(0xFF16A69A), // Atur warna ikon di sini
@@ -243,7 +271,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
                 TextButton.icon(
                   onPressed: () {
                     // Action when date button is pressed
@@ -275,14 +302,9 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
-                SizedBox(height: 10),
-                // Isi dari booking
               ],
             ),
           ),
-
-          // Judul dan subjudul
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -300,7 +322,8 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     SizedBox(
-                        height: 5), // Tambahkan spasi antara judul dan subjudul
+                      height: 5,
+                    ),
                     Text(
                       "Find attractive offers in our promotions",
                       style: TextStyle(
@@ -384,11 +407,11 @@ class _HomeState extends State<Home> {
                 // Action when button is pressed
               },
               style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(
-                    255, 237, 69, 142), // Background berwarna biru
+                primary: Color.fromARGB(255, 237, 69, 142),
                 side: BorderSide(
-                    color: Color.fromARGB(255, 237, 69, 142),
-                    width: 2), // Border berwarna biru
+                  color: Color.fromARGB(255, 237, 69, 142),
+                  width: 2,
+                ),
               ),
               child: Text(
                 'Show more promo',
@@ -396,7 +419,6 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -406,13 +428,11 @@ class _HomeState extends State<Home> {
             _bottomNavCurrentIndex = index;
           });
           if (index == 1) {
-            // Jika indeks adalah 1 (Booking), navigasi ke halaman Book()
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Booking()),
             );
           } else if (index == 2) {
-            // Jika indeks adalah 2 (Profile), navigasi ke halaman ProfilePage()
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Profiles()),
@@ -454,3 +474,4 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
