@@ -11,8 +11,7 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> {
   int _bottomNavCurrentIndex = 1;
- String _selectedItem = 'Bowo'; 
-
+  String _selectedItem = 'Bowo'; //nama yang pertama harus sama dengan ini
 
   List<String> _items = [
     'Bowo',
@@ -69,50 +68,72 @@ class _BookingState extends State<Booking> {
       body: ListView(
         children: [
           SizedBox(height: 20),
-         Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: 23), // Tambahkan margin horizontal
-            decoration: BoxDecoration(
-              color: Colors.grey[200], // Warna latar belakang abu-abu
-              borderRadius: BorderRadius.circular(10), // Radius sudut 20px
-            ),
-            child: Center(
-              child: DropdownButton<String>(
-                value: _selectedItem,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedItem = newValue!;
-                  });
-                },
-                style: TextStyle(
-                  fontSize: 16, // ukuran teks dropdown
-                  color: Colors.black, // warna teks dropdown
-                ),
-                elevation: 4, // elevasi dropdown
-                icon: Icon(Icons.arrow_drop_down), // ikon dropdown
-                underline: Container(
-                  // garis bawah dropdown
-                  height: 2,
-                  color: Colors.transparent, // membuat garis bawah transparan
-                ),
-                isExpanded: true, // membuat dropdown memenuhi lebar container
-                dropdownColor:
-                    Colors.grey[200], // warna latar belakang dropdown
-                items: _items.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8), // Tambahkan padding
-                      child: Text(value),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 23),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: DropdownButton<String>(
+                    value: _selectedItem,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedItem = newValue!;
+                      });
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
                     ),
-                  );
-                }).toList(),
-              ),
+                    elevation: 4,
+                    icon: Icon(Icons.arrow_drop_down),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.transparent,
+                    ),
+                    isExpanded: true,
+                    dropdownColor: Colors.grey[200],
+                    items: _items.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          child: Text(value),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 2, top: 30),
+                  child: Text(
+                    'Congratulations',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 2, top: 4, bottom: 8),
+                  child: Text(
+                    'Your scheduling data is confirmed',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-
-
 
         ],
       ),

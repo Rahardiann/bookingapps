@@ -1,4 +1,5 @@
 import 'package:booking/beforelogin/booknone.dart';
+import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/view/homepage.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _ProfilesState extends State<Profiles> {
         // Navigasi ke halaman Booking
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Book()),
+          MaterialPageRoute(builder: (context) => Booking()),
         );
         break;
       default:
