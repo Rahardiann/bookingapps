@@ -73,7 +73,6 @@ class _BookingState extends State<Booking> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -127,14 +126,19 @@ class _BookingState extends State<Booking> {
                     'Your scheduling data is confirmed',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
+                SizedBox(height: 20),
               ],
             ),
           ),
-
+          Container(
+            width: double.infinity, // Mengisi lebar layar
+            height: 2,
+            color: Colors.grey[300], // Warna abu-abu untuk garis bawah
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
