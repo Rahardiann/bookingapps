@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/profile.dart';
+import 'package:flutter/cupertino.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -156,6 +157,57 @@ class _HomeState extends State<Home> {
                 // Tambahkan daftar dentist lainnya sesuai kebutuhan
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDatePickerSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select Date',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Done',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: DateTime.now(),
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -317,7 +369,10 @@ class _HomeState extends State<Home> {
                 ),
                 
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    _showDatePickerSheet(
+                        context); // Panggil method bottom sheet untuk memilih tanggal
+                  },
                   icon: Icon(
                     Icons.calendar_today,
                     color: Color(0xFF16A69A),
@@ -344,6 +399,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
+                
                 TextButton.icon(
                   onPressed: () {},
                   icon: Icon(
