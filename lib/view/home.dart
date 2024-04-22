@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
                       Padding(
                         padding: EdgeInsets.only(
                             left: 5.0,
-                            right: 8.0), // Margin di sebelah kiri ikon profil
+                            right: 20.0), // Margin di sebelah kiri ikon profil
                         child: Icon(
                           Icons.account_circle,
                           color: Colors.grey,
@@ -82,7 +82,52 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'BOWO', // Ganti dengan nama pengguna yang sesuai
+                            'Markocop', // Ganti dengan nama pengguna yang sesuai
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'Medical record | 001', // Sub judul
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                    ],
+                  ),
+                  
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedDentist = 'Markocop';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 5.0,
+                            right: 20.0), // Margin di sebelah kiri ikon profil
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sugeng', // Ganti dengan nama pengguna yang sesuai
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -100,16 +145,6 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'Markocop';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Text('sugeng'),
                   onTap: () {
                     // Tambahkan aksi ketika dentist dipilih
                     setState(() {
