@@ -1,3 +1,4 @@
+import 'package:booking/view/login.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
@@ -428,6 +429,27 @@ class _ProfilesState extends State<Profiles> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+             
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red[600],
+                // Border berwarna biru
+              ),
+              child: Text(
+                'logout',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),
