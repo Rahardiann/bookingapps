@@ -12,6 +12,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _bottomNavCurrentIndex = 0;
   String _selectedDentist = "Choose a dentist";
+   DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -163,12 +164,12 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _showDatePickerSheet(BuildContext context) {
+ void _showDatePickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 300, // Ubah tinggi Container sesuai kebutuhan Anda
+          height: 300,
           child: Column(
             children: <Widget>[
               Container(
@@ -186,6 +187,7 @@ class _HomeState extends State<Home> {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        // Tidak perlu mengubah _selectedDate di sini
                       },
                       child: Text(
                         'Done',
@@ -201,9 +203,12 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
-                  initialDateTime: DateTime.now(),
+                  initialDateTime: _selectedDate,
                   onDateTimeChanged: (DateTime newDateTime) {
                     // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+                    setState(() {
+                      _selectedDate = newDateTime;
+                    });
                   },
                 ),
               ),
@@ -371,8 +376,7 @@ class _HomeState extends State<Home> {
                 
                 TextButton.icon(
                   onPressed: () {
-                    _showDatePickerSheet(
-                        context); // Panggil method bottom sheet untuk memilih tanggal
+                    _showDatePickerSheet(context);
                   },
                   icon: Icon(
                     Icons.calendar_today,
@@ -382,7 +386,10 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Date",
+                        // Tampilkan tanggal yang dipilih, atau 'Date' jika belum dipilih
+                        _selectedDate != null
+                            ? "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}"
+                            : 'Date',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -400,6 +407,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
+
                 
                 TextButton.icon(
                   onPressed: () {},
