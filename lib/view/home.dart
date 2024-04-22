@@ -1,5 +1,7 @@
+import 'package:booking/view/booking.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:booking/view/profile.dart';
 
 
 
@@ -9,15 +11,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
+ int _bottomNavCurrentIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Tambahkan logika navigasi di sini sesuai dengan masing-masing index
-    // Misalnya, push ke halaman baru atau tampilkan widget yang sesuai
+  @override
+  void initState() {
+    super.initState();
+    _bottomNavCurrentIndex = 0; // Set currentIndex menjadi 0 saat initState
   }
 
   @override
@@ -401,23 +400,56 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            _bottomNavCurrentIndex = index;
+          });
+          if (index == 1) {
+            // Jika indeks adalah 1 (Booking), navigasi ke halaman Book()
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Booking()),
+            );
+          } else if (index == 2) {
+            // Jika indeks adalah 2 (Profile), navigasi ke halaman ProfilePage()
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Profiles()),
+            );
+          }
+        },
+        currentIndex: _bottomNavCurrentIndex,
+        selectedItemColor: Color(0xFF16A69A),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            activeIcon: Icon(Icons.home, color: Color(0xFF037F74)),
+            icon: Icon(
+              Icons.home,
+              color: Colors.grey,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
+            activeIcon: Icon(Icons.assignment, color: Color(0xFF037F74)),
+            icon: Icon(
+              Icons.assignment,
+              color: Colors.grey,
+            ),
             label: 'Booking',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            activeIcon: Icon(
+              Icons.person,
+              color: Color(0xFF037F74),
+            ),
+            icon: Icon(
+              Icons.person,
+              color: Colors.grey,
+            ),
             label: 'Profile',
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF16A69A),
-        onTap: _onItemTapped,
       ),
     );
   }
