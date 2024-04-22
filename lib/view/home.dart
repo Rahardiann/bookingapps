@@ -168,7 +168,7 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 200,
+          height: 300, // Ubah tinggi Container sesuai kebutuhan Anda
           child: Column(
             children: <Widget>[
               Container(
@@ -213,6 +213,7 @@ class _HomeState extends State<Home> {
       },
     );
   }
+
 
 
   @override
