@@ -13,6 +13,8 @@ class _HomeState extends State<Home> {
   int _bottomNavCurrentIndex = 0;
   String _selectedDentist = "Choose a dentist";
    DateTime _selectedDate = DateTime.now();
+   String _selectedTimeText = 'Time';
+
 
   @override
   void initState() {
@@ -219,6 +221,80 @@ class _HomeState extends State<Home> {
     );
   }
 
+void _showTimePickerSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select Time',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Done',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hm,
+                  initialTimerDuration: Duration(
+                    hours: _selectedDate.hour,
+                    minutes: _selectedDate.minute,
+                  ),
+                  onTimerDurationChanged: (Duration newTimerDuration) {
+                    setState(() {
+                      // Mengubah waktu yang dipilih menjadi objek DateTime
+                      _selectedDate = DateTime(
+                        0,
+                        0,
+                        0,
+                        newTimerDuration.inHours,
+                        newTimerDuration.inMinutes % 60,
+                      );
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((_) {
+      // Setelah bottom sheet ditutup, perbarui teks waktu yang ditampilkan
+      setState(() {
+        // Format waktu yang dipilih menjadi string
+        String formattedHour = _selectedDate.hour.toString().padLeft(2, '0');
+        String formattedMinute =
+            _selectedDate.minute.toString().padLeft(2, '0');
+        // Update teks yang ditampilkan
+        _selectedTimeText = '$formattedHour:$formattedMinute';
+      });
+    });
+  }
+
+
 
 
   @override
@@ -408,18 +484,20 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                
-                TextButton.icon(
-                  onPressed: () {},
+
+               TextButton.icon(
+                  onPressed: () {
+                    _showTimePickerSheet(context);
+                  },
                   icon: Icon(
                     Icons.access_time_filled_sharp,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Time",
+                        _selectedTimeText, // Tampilkan waktu yang dipilih
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -438,6 +516,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
+
                 TextButton.icon(
                   onPressed: () {
                     // Action when date button is pressed
