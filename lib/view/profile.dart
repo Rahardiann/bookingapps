@@ -1,3 +1,5 @@
+import 'package:booking/view/form/histori.dart';
+import 'package:booking/view/form/user.dart';
 import 'package:booking/view/login.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
@@ -325,7 +327,12 @@ class _ProfilesState extends State<Profiles> {
 
           TextButton(
             onPressed: () {
-              // Tambahkan logika untuk tindakan saat container ditekan
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        History()), // Sesuaikan dengan route halaman Edit Profile
+              );
             },
             child: Container(
               decoration: BoxDecoration(
@@ -387,7 +394,12 @@ class _ProfilesState extends State<Profiles> {
 
           TextButton(
             onPressed: () {
-              // Tambahkan logika untuk tindakan saat container ditekan
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        User()), // Sesuaikan dengan route halaman Edit Profile
+              );
             },
             child: Container(
               decoration: BoxDecoration(
