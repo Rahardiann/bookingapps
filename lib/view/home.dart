@@ -14,6 +14,7 @@ class _HomeState extends State<Home> {
   String _selectedDentist = "Choose a dentist";
    DateTime _selectedDate = DateTime.now();
    String _selectedTimeText = 'Time';
+   String _selectedPromo = "Promo";
 
 
   @override
@@ -194,7 +195,7 @@ class _HomeState extends State<Home> {
                       child: Text(
                         'Done',
                         style: TextStyle(
-                          color: Colors.blue,
+                           color: Color(0xFFB6366D), 
                           fontSize: 16,
                         ),
                       ),
@@ -220,6 +221,7 @@ class _HomeState extends State<Home> {
       },
     );
   }
+
 
 void _showTimePickerSheet(BuildContext context) {
     showModalBottomSheet(
@@ -248,7 +250,7 @@ void _showTimePickerSheet(BuildContext context) {
                       child: Text(
                         'Done',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: Color(0xFFB6366D), 
                           fontSize: 16,
                         ),
                       ),
@@ -293,6 +295,85 @@ void _showTimePickerSheet(BuildContext context) {
       });
     });
   }
+
+
+void _showPromoSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Promo',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Done',
+                        style: TextStyle(
+                          color: Color(0xFFB6366D), 
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        Icons.local_offer,
+                        color: Color(0xFF16A69A), // Atur warna ikon di sini
+                      ),
+                      title: Text('New patient discount'),
+                      onTap: () {
+                        setState(() {
+                          _selectedPromo = 'New patient discount';
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.local_offer,
+                        color: Color(0xFF16A69A), // Atur warna ikon di sini
+                      ),
+                      title: Text('Routine check-up discount'),
+                      onTap: () {
+                        setState(() {
+                          _selectedPromo = 'Routine check-up discount';
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                    // Tambahkan daftar promo lainnya sesuai kebutuhan
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
 
 
 
@@ -519,17 +600,17 @@ void _showTimePickerSheet(BuildContext context) {
 
                 TextButton.icon(
                   onPressed: () {
-                    // Action when date button is pressed
+                    _showPromoSelectionSheet(context);
                   },
                   icon: Icon(
                     Icons.production_quantity_limits_outlined,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Promo",
+                        _selectedPromo, // Tampilkan promo yang dipilih
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
