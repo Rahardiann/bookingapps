@@ -2,6 +2,7 @@ import 'package:booking/view/login.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
+import 'package:booking/view/form/editprofile.dart';
 
 class Profiles extends StatefulWidget {
   @override
@@ -251,7 +252,12 @@ class _ProfilesState extends State<Profiles> {
 
         TextButton(
             onPressed: () {
-              // Tambahkan logika untuk tindakan saat container ditekan
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        EditProfile()), // Sesuaikan dengan route halaman Edit Profile
+              );
             },
             child: Container(
               decoration: BoxDecoration(
@@ -297,9 +303,16 @@ class _ProfilesState extends State<Profiles> {
                               icon: Icon(Icons.arrow_forward_ios,
                                   size: 15, color: Colors.black),
                               onPressed: () {
-                                // Tambahkan logika untuk tindakan saat tombol ditekan
+                                // Tambahkan logika untuk navigasi ke halaman Edit Profile
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditProfile()), // Sesuaikan dengan route halaman Edit Profile
+                                );
                               },
                             ),
+
                           ],
                         ),
                       ],
