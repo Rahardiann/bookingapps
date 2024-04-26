@@ -5,6 +5,8 @@ import 'package:booking/view/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart'; 
 
+
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -244,75 +246,165 @@ void _showTimePickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Time',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Done',
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black, // Mengatur warna teks tombol
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back_ios,
+                          size: 20, color: Colors.black), // Mengatur warna ikon
+                      SizedBox(width: 5),
+                      Text(
+                        'Back',
                         style: TextStyle(
-                          color: Color(0xFFB6366D), 
-                          fontSize: 16,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Mengatur warna teks
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: CupertinoTimerPicker(
-                  mode: CupertinoTimerPickerMode.hm,
-                  initialTimerDuration: Duration(
-                    hours: _selectedDate.hour,
-                    minutes: _selectedDate.minute,
+                    ],
                   ),
-                  onTimerDurationChanged: (Duration newTimerDuration) {
+                ),
+              ],
+            ),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Container(
+                    alignment:
+                        Alignment.center, // Membuat teks berada di tengah kotak
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey[200], // warna latar belakang kotak
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      '09 : 00', // Ganti dengan nama pengguna yang sesuai
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign
+                          .center, // Membuat teks menjadi berada di tengah kotak
+                    ),
+                  ),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
                     setState(() {
-                      // Mengubah waktu yang dipilih menjadi objek DateTime
-                      _selectedDate = DateTime(
-                        0,
-                        0,
-                        0,
-                        newTimerDuration.inHours,
-                        newTimerDuration.inMinutes % 60,
-                      );
+                      _selectedDentist = 'Markocop';
                     });
+                    Navigator.pop(context);
                   },
                 ),
-              ),
-            ],
+                ListTile(
+                  title: Container(
+                    alignment:
+                        Alignment.center, // Membuat teks berada di tengah kotak
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey[200], // warna latar belakang kotak
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      '10 : 00', // Ganti dengan nama pengguna yang sesuai
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign
+                          .center, // Membuat teks menjadi berada di tengah kotak
+                    ),
+                  ),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedDentist = 'Markocop';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Container(
+                    alignment:
+                        Alignment.center, // Membuat teks berada di tengah kotak
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey[200], // warna latar belakang kotak
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      '11 : 00', // Ganti dengan nama pengguna yang sesuai
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign
+                          .center, // Membuat teks menjadi berada di tengah kotak
+                    ),
+                  ),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedDentist = 'sugeng';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+
+                ListTile(
+                  title:  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Action when button is pressed
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 237, 69, 142),
+                        side: BorderSide(
+                          color: Color.fromARGB(255, 237, 69, 142),
+                          width: 2,
+                        ),
+                      ),
+                      child: Text(
+                        'Show more promo',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedDentist = 'sugeng';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                // Tambahkan daftar dentist lainnya sesuai kebutuhan
+              ],
+            ),
           ),
         );
       },
-    ).then((_) {
-      // Setelah bottom sheet ditutup, perbarui teks waktu yang ditampilkan
-      setState(() {
-        // Format waktu yang dipilih menjadi string
-        String formattedHour = _selectedDate.hour.toString().padLeft(2, '0');
-        String formattedMinute =
-            _selectedDate.minute.toString().padLeft(2, '0');
-        // Update teks yang ditampilkan
-        _selectedTimeText = '$formattedHour:$formattedMinute';
-      });
-    });
+    );
   }
-
 
 void _showPromoSelectionSheet(BuildContext context) {
     showModalBottomSheet(
