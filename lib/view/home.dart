@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/profile.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:dio/dio.dart'; 
 
 class Home extends StatefulWidget {
   @override
@@ -15,16 +16,32 @@ class _HomeState extends State<Home> {
    DateTime _selectedDate = DateTime.now();
    String _selectedTimeText = 'Time';
    String _selectedPromo = "Promo";
+   String _username = "P";
 
 
   @override
   void initState() {
     super.initState();
     _bottomNavCurrentIndex = 0;
-     // Set currentIndex menjadi 0 saat initState
+    fetchData();
+  }
+  
+  void fetchData() async {
+    try {
+      Response response = await Dio().get('http://82.197.95.108:8003/user/');
+      print(
+          response.data); // Cetak respons API untuk memeriksa struktur datanya
+      String usernameFromData =
+          response.data['nama']; // Pastikan strukturnya benar
+      setState(() {
+        _username = usernameFromData;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
-  
+
   // Method untuk menampilkan bottom sheet
   void _showDentistSelectionSheet(BuildContext context) {
     showModalBottomSheet(
@@ -422,7 +439,7 @@ void _showPromoSelectionSheet(BuildContext context) {
                   ),
                 ),
                 Text(
-                  "Bowo",
+                  _username,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

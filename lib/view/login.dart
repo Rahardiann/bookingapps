@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart'; // Import dio package
 import 'package:booking/view/home.dart';
 import 'package:booking/view/regristasi.dart';
 
@@ -16,25 +17,23 @@ class LoginPage extends StatelessWidget {
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(
-                primary: Colors.black, // Mengatur warna teks tombol
+                primary: Colors.black,
               ),
               child: Row(
                 children: [
-                  Icon(Icons.arrow_back_ios,
-                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
                   SizedBox(width: 5),
                   Text(
                     'Back',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black, // Mengatur warna teks
+                      color: Colors.black,
                     ),
                   ),
                 ],
               ),
             ),
-            
           ],
         ),
       ),
@@ -56,13 +55,41 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
+  Future<void> _login() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    try {
+      // Send a POST request with Dio
+      Response response = await Dio().post('http://82.197.95.108:8003/user/login', data: {
+        'email': email,
+        'password': password,
+      });
+
+      // Check if request is successful
+      if (response.statusCode == 200) {
+        // If successful, navigate to home page
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      } else {
+        // Handle other status codes or errors
+        print('Login failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle Dio errors
+      print('Error during login: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(bottom: 60.0), // Adjust bottom padding for watermark
+            padding: EdgeInsets.only(bottom: 60.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -100,7 +127,9 @@ class _LoginFormState extends State<LoginForm> {
                     filled: true,
                     fillColor: Colors.grey[200],
                     suffixIcon: IconButton(
-                      icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
+                      icon: Icon(_obscureText
+                          ? Icons.visibility_off
+                          : Icons.visibility),
                       onPressed: () {
                         setState(() {
                           _obscureText = !_obscureText;
@@ -122,20 +151,15 @@ class _LoginFormState extends State<LoginForm> {
                 SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
-                  height: 45, // Tinggi button
+                  height: 45,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Home()),
-                      );
-                    },
+                    onPressed: _login, // Call the login function
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A), // Background color
+                      primary: Color(0xFF16A69A),
                     ),
                     child: Text(
                       'Login',
-                      style: TextStyle(color: Colors.white), // Text color
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -147,9 +171,9 @@ class _LoginFormState extends State<LoginForm> {
                     TextButton(
                       onPressed: () {
                         Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Register()),
-                      );
+                          context,
+                          MaterialPageRoute(builder: (context) => Register()),
+                        );
                       },
                       child: Text('Register'),
                     ),
@@ -159,25 +183,6 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
         ),
-        // Watermark Andes Studio
-        // Positioned(
-        //   left: 0,
-        //   right: 0,
-        //   bottom: 0,
-        //   child: Container(
-        //     padding: EdgeInsets.all(10),
-        //     color: Colors.white.withOpacity(0.5),
-        //     child: Text(
-        //       'Andes Studio',
-        //       textAlign: TextAlign.center,
-        //       style: TextStyle(
-        //         color: Colors.black,
-        //         fontSize: 12,
-        //         fontStyle: FontStyle.italic,
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }
