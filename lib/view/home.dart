@@ -16,6 +16,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _bottomNavCurrentIndex = 0;
+  String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
    DateTime _selectedDate = DateTime.now();
    String _selectedTimeText = 'Select Time';
@@ -68,6 +69,144 @@ void fetchData() async {
 
 
   // Method untuk menampilkan bottom sheet
+
+  void _showUserSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black, // Mengatur warna teks tombol
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back_ios,
+                          size: 20, color: Colors.black), // Mengatur warna ikon
+                      SizedBox(width: 5),
+                      Text(
+                        'Back',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Mengatur warna teks
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 5.0,
+                            right: 20.0), // Margin di sebelah kiri ikon profil
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bowo', // Ganti dengan nama pengguna yang sesuai
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'Medical record | 001', // Sub judul
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedUser = 'Bowo';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 5.0,
+                            right: 20.0), // Margin di sebelah kiri ikon profil
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Muller', // Ganti dengan nama pengguna yang sesuai
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'Medical record | 002', // Sub judul
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    // Tambahkan aksi ketika dentist dipilih
+                    setState(() {
+                      _selectedUser = 'Muller';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                // Tambahkan daftar dentist lainnya sesuai kebutuhan
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   void _showDentistSelectionSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -646,7 +785,12 @@ void _showPromoSelectionSheet(BuildContext context) {
               ),
             ],
           ),
+
+
           SizedBox(height: 40),
+
+
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -674,13 +818,46 @@ void _showPromoSelectionSheet(BuildContext context) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                TextButton.icon(
+                  onPressed: () {
+                    _showUserSelectionSheet(
+                        context); // Panggil method bottom sheet
+                  },
+                  icon: Icon(
+                    Icons.person,
+                    color: Color(0xFF16A69A),
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        _selectedUser, // Tampilkan nama dentist yang dipilih
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+
                  TextButton.icon(
                   onPressed: () {
                     _showDentistSelectionSheet(
                         context); // Panggil method bottom sheet
                   },
                   icon: Icon(
-                    Icons.person_3_rounded,
+                    Icons.medical_services,
                     color: Color(0xFF16A69A),
                   ),
                   label: Row(
@@ -807,6 +984,8 @@ void _showPromoSelectionSheet(BuildContext context) {
               ],
             ),
           ),
+
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(
