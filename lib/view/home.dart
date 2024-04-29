@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -16,9 +18,9 @@ class _HomeState extends State<Home> {
   int _bottomNavCurrentIndex = 0;
   String _selectedDentist = "Choose a dentist";
    DateTime _selectedDate = DateTime.now();
-   String _selectedTimeText = 'Time';
+   String _selectedTimeText = 'Select Time';
    String _selectedPromo = "Promo";
-   String _username = "P";
+   String _username = "";
 
 
   @override
@@ -28,17 +30,38 @@ class _HomeState extends State<Home> {
     fetchData();
   }
   
-  void fetchData() async {
+void fetchData() async {
     try {
-      Response response = await Dio().get('http://82.197.95.108:8003/user/');
-      print(
-          response.data); // Cetak respons API untuk memeriksa struktur datanya
-      String usernameFromData =
-          response.data['nama']; // Pastikan strukturnya benar
-      setState(() {
-        _username = usernameFromData;
-      });
+      // Ambil email dari SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+
+      if (email != null) {
+        // Panggil API dengan menggunakan email sebagai parameter
+        Response response =
+            await Dio().get('http://82.197.95.108:8003/user/$email');
+
+        // Periksa apakah respons sukses dan memiliki data
+        if (response.statusCode == 200 && response.data['success']) {
+          // Mengakses objek pertama dari list data
+          Map<String, dynamic> userData = response.data['data'][0];
+          String usernameFromData =
+              userData['nama']; // Mengambil nama dari respons
+
+          // Set username
+          setState(() {
+            _username = usernameFromData;
+          });
+        } else {
+          // Handle respons yang tidak sesuai dengan harapan
+          print('Error: ${response.data['message']}');
+        }
+      } else {
+        // Handle jika email tidak tersedia di SharedPreferences
+        print('Email tidak tersedia di SharedPreferences');
+      }
     } catch (e) {
+      // Handle kesalahan saat mengambil atau memproses data
       print('Error: $e');
     }
   }
@@ -241,164 +264,156 @@ class _HomeState extends State<Home> {
     );
   }
 
+void _handleTimeSelection(String selectedTime) {
+    setState(() {
+      _selectedTimeText = selectedTime; // Perbarui nilai waktu yang dipilih
+    });
+  }
+
 
 void _showTimePickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Colors.black, // Mengatur warna teks tombol
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.arrow_back_ios,
-                          size: 20, color: Colors.black), // Mengatur warna ikon
-                      SizedBox(width: 5),
-                      Text(
-                        'Back',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Mengatur warna teks
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        return Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Color(0xFFD7F0EE),
+                width: 2.0,
+              ), // Atur warna dan lebar border atas
             ),
           ),
-          body: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  title: Container(
-                    alignment:
-                        Alignment.center, // Membuat teks berada di tengah kotak
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey[200], // warna latar belakang kotak
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: TextButton.styleFrom(
+                      primary: Colors.black,
                     ),
-                    padding: EdgeInsets.all(8),
-                    child: Text(
-                      '09 : 00', // Ganti dengan nama pengguna yang sesuai
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign
-                          .center, // Membuat teks menjadi berada di tengah kotak
-                    ),
-                  ),
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'Markocop';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Container(
-                    alignment:
-                        Alignment.center, // Membuat teks berada di tengah kotak
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey[200], // warna latar belakang kotak
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Text(
-                      '10 : 00', // Ganti dengan nama pengguna yang sesuai
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign
-                          .center, // Membuat teks menjadi berada di tengah kotak
-                    ),
-                  ),
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'Markocop';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Container(
-                    alignment:
-                        Alignment.center, // Membuat teks berada di tengah kotak
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey[200], // warna latar belakang kotak
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Text(
-                      '11 : 00', // Ganti dengan nama pengguna yang sesuai
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign
-                          .center, // Membuat teks menjadi berada di tengah kotak
-                    ),
-                  ),
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'sugeng';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-
-                ListTile(
-                  title:  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Action when button is pressed
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 237, 69, 142),
-                        side: BorderSide(
-                          color: Color.fromARGB(255, 237, 69, 142),
-                          width: 2,
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_back_ios,
+                            size: 20, color: Colors.black),
+                        SizedBox(width: 5),
+                        Text(
+                          'Back',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'Show more promo',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      ],
                     ),
                   ),
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'sugeng';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                // Tambahkan daftar dentist lainnya sesuai kebutuhan
-              ],
+                ],
+              ),
+            ),
+            body: Container(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // Daftar waktu yang tersedia di sini
+                  ListTile(
+                    title: Container(
+                      alignment: Alignment
+                          .center, // Membuat teks berada di tengah kotak
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color(0xFFD7F0EE), // warna latar belakang kotak
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        '10 : 00', // Ganti dengan nama pengguna yang sesuai
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign
+                            .center, // Membuat teks menjadi berada di tengah kotak
+                      ),
+                    ),
+                    onTap: () {
+                      // Tambahkan aksi ketika dentist dipilih
+                      setState(() {
+                        _handleTimeSelection('10 : 00');
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+
+
+                  ListTile(
+                    title: Container(
+                      alignment: Alignment
+                          .center, // Membuat teks berada di tengah kotak
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color(0xFFD7F0EE), // warna latar belakang kotak
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        '11 : 00', // Ganti dengan nama pengguna yang sesuai
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign
+                            .center, // Membuat teks menjadi berada di tengah kotak
+                      ),
+                    ),
+                    onTap: () {
+                      // Tambahkan aksi ketika dentist dipilih
+                      setState(() {
+                        _handleTimeSelection('11 : 00');
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+
+
+                 ListTile(
+                    title: Container(
+                      alignment: Alignment
+                          .center, // Membuat teks berada di tengah kotak
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color(0xFFD7F0EE), // warna latar belakang kotak
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        '12 : 00', // Ganti dengan nama pengguna yang sesuai
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign
+                            .center, // Membuat teks menjadi berada di tengah kotak
+                      ),
+                    ),
+                    onTap: () {
+                      // Tambahkan aksi ketika dentist dipilih
+                      setState(() {
+                        _handleTimeSelection('12 : 00');
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+
+
+                ],
+              ),
             ),
           ),
         );
@@ -603,7 +618,7 @@ void _showPromoSelectionSheet(BuildContext context) {
               color: Color(0xFFD7F0EE),
               borderRadius: BorderRadius.circular(15),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -712,7 +727,7 @@ void _showPromoSelectionSheet(BuildContext context) {
                     _showPromoSelectionSheet(context);
                   },
                   icon: Icon(
-                    Icons.production_quantity_limits_outlined,
+                    Icons.local_offer,
                     color: Color(0xFF16A69A),
                   ),
                   label: Row(

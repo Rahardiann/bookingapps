@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart'; // Import dio package
 import 'package:booking/view/home.dart';
 import 'package:booking/view/regristasi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginPage extends StatelessWidget {
   @override
@@ -55,19 +57,28 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
-  Future<void> _login() async {
+  void _login() async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
     try {
       // Send a POST request with Dio
-      Response response = await Dio().post('http://82.197.95.108:8003/user/login', data: {
+      Response response =
+          await Dio().post('http://82.197.95.108:8003/user/login', data: {
         'email': email,
         'password': password,
       });
+      print(response.data['data']['email']);
 
       // Check if request is successful
       if (response.statusCode == 200) {
+        // Get user ID from response
+        String email = response.data['data']['email'];
+        SharedPreferences.setMockInitialValues({});
+        // Save user ID to SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', email);
+
         // If successful, navigate to home page
         Navigator.push(
           context,
@@ -82,6 +93,7 @@ class _LoginFormState extends State<LoginForm> {
       print('Error during login: $e');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
