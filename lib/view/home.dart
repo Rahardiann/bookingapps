@@ -276,20 +276,101 @@ void _showTimePickerSheet(BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Color(0xFFD7F0EE),
-                width: 2.0,
-              ), // Atur warna dan lebar border atas
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: TextButton.styleFrom(
+                        primary: Colors.black,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.arrow_back_ios,
+                              size: 20, color: Colors.black),
+                          SizedBox(width: 5),
+                          Text(
+                            'Back',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(16.0),
+                height: 200, // Sesuaikan dengan tinggi maksimum yang diinginkan
+                child: ListView.builder(
+                  itemCount: 17, // Misalnya, tampilkan 10 item
+                  itemBuilder: (context, index) {
+                    final time =
+                        (index + 8).toString().padLeft(2, '0') + ' : 00';
+                    return ListTile(
+                      title: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(0xFFD7F0EE),
+                        ),
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          time,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _handleTimeSelection(time);
+                        });
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
+        );
+      },
+    );
+  }
+
+void _showPromoSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Text(
+                    'Promo',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -316,182 +397,152 @@ void _showTimePickerSheet(BuildContext context) {
                 ],
               ),
             ),
-            body: Container(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // Daftar waktu yang tersedia di sini
-                  ListTile(
-                    title: Container(
-                      alignment: Alignment
-                          .center, // Membuat teks berada di tengah kotak
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFD7F0EE), // warna latar belakang kotak
-                      ),
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        '10 : 00', // Ganti dengan nama pengguna yang sesuai
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign
-                            .center, // Membuat teks menjadi berada di tengah kotak
-                      ),
-                    ),
-                    onTap: () {
-                      // Tambahkan aksi ketika dentist dipilih
+            Expanded(
+              child: ListView(
+                children: [
+                  TextButton(
+                    onPressed: () {
                       setState(() {
-                        _handleTimeSelection('10 : 00');
+                        _selectedPromo = 'New patient discount';
                       });
                       Navigator.pop(context);
+                      // Tambahkan logika untuk tindakan saat container ditekan
                     },
-                  ),
-
-
-                  ListTile(
-                    title: Container(
-                      alignment: Alignment
-                          .center, // Membuat teks berada di tengah kotak
+                    child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFD7F0EE), // warna latar belakang kotak
+                        color: Color(0xFFD7F0EE),
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        '11 : 00', // Ganti dengan nama pengguna yang sesuai
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign
-                            .center, // Membuat teks menjadi berada di tengah kotak
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'New patient discount',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 15,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedPromo =
+                                              'New patient discount';
+                                        });
+                                        Navigator.pop(context);
+                                        // Tambahkan logika untuk tindakan saat tombol ditekan
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                // Tambahkan jarak vertikal antara judul dan deskripsi
+                                Text(
+                                  'Get high quality dental filling treatment at special prices.',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    onTap: () {
-                      // Tambahkan aksi ketika dentist dipilih
+                  ),
+                  TextButton(
+                    onPressed: () {
                       setState(() {
-                        _handleTimeSelection('11 : 00');
+                        _selectedPromo = 'Routine check-up discounts';
                       });
                       Navigator.pop(context);
+                      // Tambahkan logika untuk tindakan saat container ditekan
                     },
-                  ),
-
-
-                 ListTile(
-                    title: Container(
-                      alignment: Alignment
-                          .center, // Membuat teks berada di tengah kotak
+                    child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color(0xFFD7F0EE), // warna latar belakang kotak
+                        color: Color(0xFFD7F0EE),
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        '12 : 00', // Ganti dengan nama pengguna yang sesuai
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign
-                            .center, // Membuat teks menjadi berada di tengah kotak
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Routine check-up discounts',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 15,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedPromo =
+                                              'Routine check-up discounts';
+                                        });
+                                        Navigator.pop(context);
+                                        // Tambahkan logika untuk tindakan saat tombol ditekan
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                // Tambahkan jarak vertikal antara judul dan deskripsi
+                                Text(
+                                  'Get high quality dental filling treatment at special prices.',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    onTap: () {
-                      // Tambahkan aksi ketika dentist dipilih
-                      setState(() {
-                        _handleTimeSelection('12 : 00');
-                      });
-                      Navigator.pop(context);
-                    },
                   ),
 
-
+                  
+                  // Tambahkan daftar promo lainnya sesuai kebutuhan
                 ],
               ),
             ),
-          ),
-        );
-      },
-    );
-  }
-
-void _showPromoSelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 200,
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Promo',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Done',
-                        style: TextStyle(
-                          color: Color(0xFFB6366D), 
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    ListTile(
-                      leading: Icon(
-                        Icons.local_offer,
-                        color: Color(0xFF16A69A), // Atur warna ikon di sini
-                      ),
-                      title: Text('New patient discount'),
-                      onTap: () {
-                        setState(() {
-                          _selectedPromo = 'New patient discount';
-                        });
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(
-                        Icons.local_offer,
-                        color: Color(0xFF16A69A), // Atur warna ikon di sini
-                      ),
-                      title: Text('Routine check-up discount'),
-                      onTap: () {
-                        setState(() {
-                          _selectedPromo = 'Routine check-up discount';
-                        });
-                        Navigator.pop(context);
-                      },
-                    ),
-                    // Tambahkan daftar promo lainnya sesuai kebutuhan
-                  ],
-                ),
-              ),
-            ],
-          ),
+          ],
         );
       },
     );
