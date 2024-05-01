@@ -8,7 +8,71 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:booking/view/form/detailpromo.dart';
 
+class Post {
+  final int id;
+  final String title;
+  final String body;
 
+  Post({required this.id, required this.title, required this.body});
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      id: json['id'],
+      title: json['title'],
+      body: json['body'],
+    );
+  }
+}
+
+class Dentist {
+  final int id;
+  final String nama;
+  
+
+  Dentist({required this.id, required this.nama});
+
+  factory Dentist.fromJson(Map<String, dynamic> json) {
+    return Dentist(
+      id: json['id'],
+      nama: json['nama'],
+      
+    );
+  }
+}
+
+class User {
+  final int id;
+  final String nama;
+  
+
+  User({required this.id, required this.nama});
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      nama: json['nama'],
+      
+    );
+  }
+}
+
+class Jadwal {
+  final int id;
+  final String jadwal;
+  final String jam;
+  
+
+  Jadwal({required this.id, required this.jadwal, required this.jam});
+
+  factory Jadwal.fromJson(Map<String, dynamic> json) {
+    return Jadwal(
+      id: json['id'],
+      jadwal: json['jadwal'],
+      jam: json['jam'],
+      
+    );
+  }
+}
 
 class Home extends StatefulWidget {
   @override
@@ -23,15 +87,153 @@ class _HomeState extends State<Home> {
    String _selectedTimeText = 'Select Time';
    String _selectedPromo = "Promo";
    String _username = "";
-
+   List<Dentist> dentists = [];
+   List<User> user = [];
+   List<Jadwal> jadwal = [];
+   List<Jadwal> jam = [];
+  List<Post> posts = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _bottomNavCurrentIndex = 0;
     fetchData();
+    fetchDentists();
+    fetchUser();
+    fetchJadwal();
   }
   
+Future<void> fetchPosts() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Ganti URL ini dengan URL node yang benar
+      String apiUrl = "http://82.197.95.108:8003/booking";
+      
+      // Membuat instance Dio
+      Dio dio = Dio();
+      
+      // Melakukan HTTP GET request
+      Response response = await dio.post(apiUrl);
+
+      // Mengkonversi data JSON menjadi list of posts
+      List<dynamic> responseData = response.data;
+      List<Post> fetchedPosts = responseData.map((json) => Post.fromJson(json)).toList();
+
+      setState(() {
+        posts = fetchedPosts;
+        isLoading = false;
+      });
+    } catch (e) {
+      // Menampilkan pesan error jika terjadi kesalahan
+      print("Error fetching posts: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+Future<void> fetchDentists() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    String apiUrl = "http://82.197.95.108:8003/dokter";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      print(response.data['data']);
+      List<dynamic> responseData = response.data['data'];
+      List<Dentist> fetchedDentists = responseData.map((json) => Dentist.fromJson(json)).toList();
+
+      setState(() {
+        dentists = fetchedDentists;
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching dentists: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error fetching dentists: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+Future<void> fetchUser() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    String apiUrl = "http://82.197.95.108:8003/user";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      print(response.data['data']);
+      List<dynamic> responseData = response.data['data'];
+      List<User> fetchedUser = responseData.map((json) => User.fromJson(json)).toList();
+
+      setState(() {
+        user = fetchedUser;
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching user: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error fetching dentists: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+Future<void> fetchJadwal() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    String apiUrl = "http://82.197.95.108:8003/jadwal";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      print(response.data['data']);
+      List<dynamic> responseData = response.data['data'];
+      List<Jadwal> fetchedJadwal = responseData.map((json) => Jadwal.fromJson(json)).toList();
+
+      setState(() {
+        jadwal = fetchedJadwal;
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching jadwal: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error fetching dentists: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+
+
 void fetchData() async {
     try {
       // Ambil email dari SharedPreferences
@@ -172,7 +374,7 @@ void fetchData() async {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Muller', // Ganti dengan nama pengguna yang sesuai
+                            'Bowo', // Ganti dengan nama pengguna yang sesuai
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -209,145 +411,93 @@ void fetchData() async {
 
 
   void _showDentistSelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Colors.black, // Mengatur warna teks tombol
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.arrow_back_ios,
-                          size: 20, color: Colors.black), // Mengatur warna ikon
-                      SizedBox(width: 5),
-                      Text(
-                        'Back',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Mengatur warna teks
-                        ),
-                      ),
-                    ],
-                  ),
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  primary: Colors.black,
                 ),
-                
-                
-              ],
-            ),
-           
+                child: Row(
+                  children: [
+                    Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
+                    SizedBox(width: 5),
+                    Text(
+                      'Back',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          body: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  title: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 5.0,
-                            right: 20.0), // Margin di sebelah kiri ikon profil
-                        child: Icon(
-                          Icons.account_circle,
-                          color: Colors.grey,
-                          size: 50,
+        ),
+        body: Container(
+          padding: EdgeInsets.all(16.0),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: dentists.length,
+            itemBuilder: (BuildContext context, int index) {
+              Dentist dentist = dentists[index];
+              return ListTile(
+                title: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                      child: Icon(
+                        Icons.account_circle,
+                        color: Colors.grey,
+                        size: 50,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dentist.nama,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Markocop', // Ganti dengan nama pengguna yang sesuai
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            'Medical record | 001', // Sub judul
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                    ],
-                  ),
-                  
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'Markocop';
-                    });
-                    Navigator.pop(context);
-                  },
+                        
+                      ],
+                    ),
+                  ],
                 ),
-                ListTile(
-                  title: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 5.0,
-                            right: 20.0), // Margin di sebelah kiri ikon profil
-                        child: Icon(
-                          Icons.account_circle,
-                          color: Colors.grey,
-                          size: 50,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Sugeng', // Ganti dengan nama pengguna yang sesuai
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            'Medical record | 001', // Sub judul
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    // Tambahkan aksi ketika dentist dipilih
-                    setState(() {
-                      _selectedDentist = 'sugeng';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                // Tambahkan daftar dentist lainnya sesuai kebutuhan
-              ],
-            ),
+                onTap: () {
+                  setState(() {
+                    _selectedDentist = dentist.nama;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            },
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
+  
+
+  
+
 
  void _showDatePickerSheet(BuildContext context) {
     showModalBottomSheet(
@@ -454,7 +604,7 @@ void _showTimePickerSheet(BuildContext context) {
                 padding: EdgeInsets.all(16.0),
                 height: 200, // Sesuaikan dengan tinggi maksimum yang diinginkan
                 child: ListView.builder(
-                  itemCount: 17, // Misalnya, tampilkan 10 item
+                  itemCount: jadwal.length, // Misalnya, tampilkan 10 item
                   itemBuilder: (context, index) {
                     final time =
                         (index + 8).toString().padLeft(2, '0') + ' : 00';

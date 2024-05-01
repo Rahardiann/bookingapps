@@ -4,12 +4,12 @@ import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/view/form/editprofile.dart';
 
-class User extends StatefulWidget {
+class Userprofile extends StatefulWidget {
   @override
-  _ProfilesState createState() => _ProfilesState();
+  _UserProfilesState createState() => _UserProfilesState();
 }
 
-class _ProfilesState extends State<User> {
+class _UserProfilesState extends State<Userprofile> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
 
   void _onItemTapped(int index) {
