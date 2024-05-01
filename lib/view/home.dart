@@ -6,6 +6,7 @@ import 'package:booking/view/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart'; 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:booking/view/form/detailpromo.dart';
 
 
 
@@ -541,11 +542,10 @@ void _showPromoSelectionSheet(BuildContext context) {
                 children: [
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        _selectedPromo = 'New patient discount';
-                      });
-                      Navigator.pop(context);
-                      // Tambahkan logika untuk tindakan saat container ditekan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Detailpromo()),
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -582,12 +582,7 @@ void _showPromoSelectionSheet(BuildContext context) {
                                         color: Colors.black,
                                       ),
                                       onPressed: () {
-                                        setState(() {
-                                          _selectedPromo =
-                                              'New patient discount';
-                                        });
-                                        Navigator.pop(context);
-                                        // Tambahkan logika untuk tindakan saat tombol ditekan
+                                        
                                       },
                                     ),
                                   ],
@@ -609,11 +604,10 @@ void _showPromoSelectionSheet(BuildContext context) {
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        _selectedPromo = 'Routine check-up discounts';
-                      });
-                      Navigator.pop(context);
-                      // Tambahkan logika untuk tindakan saat container ditekan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Detailpromo()),
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -650,11 +644,7 @@ void _showPromoSelectionSheet(BuildContext context) {
                                         color: Colors.black,
                                       ),
                                       onPressed: () {
-                                        setState(() {
-                                          _selectedPromo =
-                                              'Routine check-up discounts';
-                                        });
-                                        Navigator.pop(context);
+                                        
                                         // Tambahkan logika untuk tindakan saat tombol ditekan
                                       },
                                     ),
@@ -675,7 +665,7 @@ void _showPromoSelectionSheet(BuildContext context) {
                       ),
                     ),
                   ),
-
+                  
                   
                   // Tambahkan daftar promo lainnya sesuai kebutuhan
                 ],
@@ -808,6 +798,8 @@ void _showPromoSelectionSheet(BuildContext context) {
               ],
             ),
           ),
+
+          
           Container(
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
@@ -981,48 +973,93 @@ void _showPromoSelectionSheet(BuildContext context) {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                
+                Row(
                   children: [
-                    Text(
-                      "Promo",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFB6366D),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "Find attractive offers in our promotions",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 1),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Home(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                           
+                            backgroundColor: Color(0xFFE65895),
+                          ),
+                          child: Text(
+                            'Booking',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {
-                    // Action when arrow button is pressed
-                  },
-                ),
+
               ],
             ),
           ),
+
+
+          TextButton(
+             onPressed: () {
+              _showPromoSelectionSheet(context);
+            },
+            child: Container(
+             
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Promo',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                               color: Color(0xFFB6366D),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 15,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                        // Tambahkan jarak vertikal antara judul dan deskripsi
+                        Text(
+                          'Get high quality dental filling treatment at special prices.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
