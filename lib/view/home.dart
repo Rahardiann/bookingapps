@@ -58,7 +58,7 @@ class User {
 
 class Jadwal {
   final int id;
-  final String jadwal;
+  final DateTime  jadwal;
   final String jam;
   
 
@@ -67,9 +67,25 @@ class Jadwal {
   factory Jadwal.fromJson(Map<String, dynamic> json) {
     return Jadwal(
       id: json['id'],
-      jadwal: json['jadwal'],
+      jadwal: DateTime.parse(json['jadwal']),
       jam: json['jam'],
       
+    );
+  }
+}
+
+class Jam {
+  final int id;
+  final DateTime jadwal;
+  final String jam;
+
+  Jam({required this.id, required this.jadwal, required this.jam});
+
+  factory Jam.fromJson(Map<String, dynamic> json) {
+    return Jam(
+      id: json['id'],
+      jadwal: DateTime.parse(json['jadwal']),
+      jam: json['jam'],
     );
   }
 }
@@ -90,7 +106,7 @@ class _HomeState extends State<Home> {
    List<Dentist> dentists = [];
    List<User> user = [];
    List<Jadwal> jadwal = [];
-   List<Jadwal> jam = [];
+   List<Jam> jam = [];
   List<Post> posts = [];
   bool isLoading = false;
 
@@ -102,6 +118,7 @@ class _HomeState extends State<Home> {
     fetchDentists();
     fetchUser();
     fetchJadwal();
+    fetchJam();
   }
   
 Future<void> fetchPosts() async {
@@ -233,6 +250,39 @@ Future<void> fetchJadwal() async {
   }
 }
 
+Future<void> fetchJam() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      String apiUrl = "http://82.197.95.108:8003/jadwal";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
+
+       if (response.statusCode == 200) {
+        print(response.data['data']);
+        List<dynamic> responseData = response.data['data'];
+        List<Jam> fetchedJam =
+            responseData.map((json) => Jam.fromJson(json)).toList();
+
+        setState(() {
+          jam = fetchedJam; // Menyimpan data jam yang diambil
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching jam: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching jam: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
 void fetchData() async {
     try {
@@ -269,7 +319,6 @@ void fetchData() async {
       print('Error: $e');
     }
   }
-
 
   // Method untuk menampilkan bottom sheet
 
@@ -409,7 +458,6 @@ void fetchData() async {
     );
   }
 
-
   void _showDentistSelectionSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -493,11 +541,6 @@ void fetchData() async {
     },
   );
 }
-
-  
-
-  
-
 
  void _showDatePickerSheet(BuildContext context) {
     showModalBottomSheet(
@@ -604,10 +647,8 @@ void _showTimePickerSheet(BuildContext context) {
                 padding: EdgeInsets.all(16.0),
                 height: 200, // Sesuaikan dengan tinggi maksimum yang diinginkan
                 child: ListView.builder(
-                  itemCount: jadwal.length, // Misalnya, tampilkan 10 item
+                  itemCount: jadwal.length,
                   itemBuilder: (context, index) {
-                    final time =
-                        (index + 8).toString().padLeft(2, '0') + ' : 00';
                     return ListTile(
                       title: Container(
                         alignment: Alignment.center,
@@ -617,7 +658,8 @@ void _showTimePickerSheet(BuildContext context) {
                         ),
                         padding: EdgeInsets.all(8),
                         child: Text(
-                          time,
+                          jadwal[index]
+                              .jam, // Menggunakan properti jam dari objek jadwal saat ini
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -627,8 +669,10 @@ void _showTimePickerSheet(BuildContext context) {
                         ),
                       ),
                       onTap: () {
+                        var selectedTime = jadwal[index]
+                            .jam; // Menggunakan properti jam dari objek jadwal saat ini
                         setState(() {
-                          _handleTimeSelection(time);
+                          _handleTimeSelection(selectedTime);
                         });
                         Navigator.pop(context);
                       },
@@ -636,6 +680,7 @@ void _showTimePickerSheet(BuildContext context) {
                   },
                 ),
               ),
+
             ],
           ),
         );
