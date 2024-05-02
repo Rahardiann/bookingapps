@@ -58,7 +58,7 @@ class User {
 
 class Jadwal {
   final int id;
-  final String jadwal;
+  final DateTime  jadwal;
   final String jam;
   
 
@@ -67,7 +67,7 @@ class Jadwal {
   factory Jadwal.fromJson(Map<String, dynamic> json) {
     return Jadwal(
       id: json['id'],
-      jadwal: json['jadwal'],
+      jadwal: DateTime.parse(json['jadwal']),
       jam: json['jam'],
       
     );
@@ -604,10 +604,8 @@ void _showTimePickerSheet(BuildContext context) {
                 padding: EdgeInsets.all(16.0),
                 height: 200, // Sesuaikan dengan tinggi maksimum yang diinginkan
                 child: ListView.builder(
-                  itemCount: jadwal.length, // Misalnya, tampilkan 10 item
+                  itemCount: 10, // Misalnya, tampilkan 10 item
                   itemBuilder: (context, index) {
-                    final time =
-                        (index + 8).toString().padLeft(2, '0') + ' : 00';
                     return ListTile(
                       title: Container(
                         alignment: Alignment.center,
@@ -616,19 +614,25 @@ void _showTimePickerSheet(BuildContext context) {
                           color: Color(0xFFD7F0EE),
                         ),
                         padding: EdgeInsets.all(8),
-                        child: Text(
-                          time,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                        child: TextFormField(
+                          initialValue:
+                              '08 : 00', // Atur nilai awal sesuai kebutuhan Anda
                           textAlign: TextAlign.center,
+                          onChanged: (value) {
+                            // Tambahkan logika di sini untuk menangani perubahan nilai jam
+                          },
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                          ),
                         ),
                       ),
                       onTap: () {
+                        // Tambahkan logika di sini untuk menangani pemilihan jam
+                        var selectedTime =
+                            '08 : 00'; // Ganti dengan nilai waktu yang dipilih
                         setState(() {
-                          _handleTimeSelection(time);
+                          _handleTimeSelection(selectedTime);
                         });
                         Navigator.pop(context);
                       },
@@ -636,6 +640,7 @@ void _showTimePickerSheet(BuildContext context) {
                   },
                 ),
               ),
+
             ],
           ),
         );
