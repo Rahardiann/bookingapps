@@ -1,9 +1,30 @@
 import 'package:booking/widget/welcomepage.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/widget/welcomepage.dart';
 
+import 'regristasi.dart';
+
+
+// class _Regst extends StatelessWidget {
+//   final UserData userData;
+
+//   Regst({required this.userData});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text("email: " + userData.email);
+//   }
+// }
+
 class Regst extends StatelessWidget {
+
+    final UserData userData;
+
+  Regst({required this.userData});
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,24 +61,98 @@ class Regst extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
-        child: RegstForm(),
+        child: RegstForm(userData: userData,),
       ),
     );
   }
 }
 
 class RegstForm extends StatefulWidget {
+
+
+  final UserData userData;
+
+  RegstForm({required this.userData});
+
   @override
-  _RegstFormState createState() => _RegstFormState();
+  _RegstFormState createState() => _RegstFormState(userData: userData);
 }
 
 class _RegstFormState extends State<RegstForm> {
-  final TextEditingController _idCardController = TextEditingController();
+
+      final UserData userData;
+
+  _RegstFormState({required this.userData});
+  final TextEditingController _EmailController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _namaController = TextEditingController();
+  final TextEditingController _no_hpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _no_ktpController = TextEditingController();
   bool _obscureText = true;
+
+  Future<void> _registerUser() async {
+    // Mengambil data dari controller
+    String email = _EmailController.text;
+    String password = _passwordController.text;
+    String nama = _namaController.text;
+    String no_hp = _no_hpController.text;
+    String gender = _genderController.text;
+    String address = _addressController.text;
+    String no_ktp = _no_ktpController.text;
+    
+    
+    // Konfigurasi objek Dio
+    Dio dio = Dio();
+
+    try {
+      // Melakukan request ke endpoint registrasi
+      Response response = await dio.post(
+        'http://82.197.95.108:8003/user/register', // Ganti dengan URL endpoint registrasi yang sesuai
+        data: {
+          'email': userData.email,
+          'gender': gender,
+          'nama': userData.nama,
+          'no_hp': userData.no_hp,
+          'password': userData.password,
+          'alamat': address,
+          'no_ktp': no_ktp,
+          
+        },
+      );
+
+      // Menggunakan data response jika diperlukan
+      print(response.data);
+
+      // Jika registrasi berhasil, arahkan ke halaman Welcomepage
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Welcomepage()),
+      );
+    } catch (error) {
+      // Menangani error jika terjadi
+      print(error.toString());
+      // Tampilkan pesan kesalahan kepada pengguna
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to register. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +182,7 @@ class _RegstFormState extends State<RegstForm> {
                 ),
                 SizedBox(height: 50),
                 TextFormField(
-                  controller: _idCardController,
+                  controller: _no_ktpController,
                   decoration: InputDecoration(
                     labelText: 'ID Card Number',
                     border: InputBorder.none,
@@ -114,15 +209,7 @@ class _RegstFormState extends State<RegstForm> {
                   ),
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  controller: _dobController,
-                  decoration: InputDecoration(
-                    labelText: 'Date of birth',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
+                
                 SizedBox(height: 10),
                 TextFormField(
                   controller: _addressController,
@@ -137,7 +224,10 @@ class _RegstFormState extends State<RegstForm> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      // Action when forgot password button is pressed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Welcomepage()),
+                      );
                     },
                     child: Text("Skip"),
                   ),
@@ -147,12 +237,7 @@ class _RegstFormState extends State<RegstForm> {
                   width: double.infinity,
                   height: 45, // Tinggi button
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Welcomepage()),
-                      );
-                    },
+                    onPressed: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF16A69A), // Background color
                     ),
@@ -188,10 +273,10 @@ class _RegstFormState extends State<RegstForm> {
 
   @override
   void dispose() {
-    _idCardController.dispose();
+    _EmailController.dispose();
     _genderController.dispose();
-    _dobController.dispose();
-    _addressController.dispose();
+    _namaController.dispose();
+    _no_hpController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
