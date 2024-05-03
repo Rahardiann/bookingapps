@@ -56,6 +56,22 @@ class User {
   }
 }
 
+class Jam {
+  final int id;
+  final DateTime jadwal;
+  final String jam;
+
+  Jam({required this.id, required this.jadwal, required this.jam});
+
+  factory Jam.fromJson(Map<String, dynamic> json) {
+    return Jam(
+      id: json['id'],
+      jadwal: DateTime.parse(json['jadwal']),
+      jam: json['jam'],
+    );
+  }
+}
+
 class Jadwal {
   final int id;
   final DateTime  jadwal;
@@ -74,18 +90,20 @@ class Jadwal {
   }
 }
 
-class Jam {
+class Promo {
   final int id;
-  final DateTime jadwal;
-  final String jam;
+  final String  judul;
+  final String subtitle;
+  
 
-  Jam({required this.id, required this.jadwal, required this.jam});
+  Promo({required this.id, required this.judul, required this.subtitle});
 
-  factory Jam.fromJson(Map<String, dynamic> json) {
-    return Jam(
+  factory Promo.fromJson(Map<String, dynamic> json) {
+    return Promo(
       id: json['id'],
-      jadwal: DateTime.parse(json['jadwal']),
-      jam: json['jam'],
+      judul: json['judul'],
+      subtitle: json['subtitle'],
+      
     );
   }
 }
@@ -107,6 +125,7 @@ class _HomeState extends State<Home> {
    List<User> user = [];
    List<Jadwal> jadwal = [];
    List<Jam> jam = [];
+   List<Promo> promo = [];
   List<Post> posts = [];
   bool isLoading = false;
 
@@ -119,6 +138,7 @@ class _HomeState extends State<Home> {
     fetchUser();
     fetchJadwal();
     fetchJam();
+    fetchPromo();
   }
   
 Future<void> fetchPosts() async {
@@ -284,6 +304,38 @@ Future<void> fetchJam() async {
     }
   }
 
+Future<void> fetchPromo() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    String apiUrl = "http://82.197.95.108:8003/promo";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      print(response.data['data']);
+      List<dynamic> responseData = response.data['data'];
+      List<Promo> fetchedPromo = responseData.map((json) => Promo.fromJson(json)).toList();
+
+      setState(() {
+        promo = fetchedPromo;
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching dentists: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error fetching dentists: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
 void fetchData() async {
     try {
       // Ambil email dari SharedPreferences
@@ -688,189 +740,125 @@ void _showTimePickerSheet(BuildContext context) {
     );
   }
 
-void _showPromoSelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Promo',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Promo',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back_ios,
+                          size: 20, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text(
+                        'Back',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: promos.length,
+              itemBuilder: (context, index) {
+                Promo promo = promos[index];
+                return TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Detailpromo()),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD7F0EE),
+                      borderRadius: BorderRadius.circular(15),
                     ),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    margin: EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.arrow_back_ios,
-                            size: 20, color: Colors.black),
-                        SizedBox(width: 5),
-                        Text(
-                          'Back',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    promo.judul,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 15,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      // Tambahkan logika untuk tindakan saat tombol ditekan
+                                    },
+                                  ),
+                                ],
+                              ),
+                              // Tambahkan jarak vertikal antara judul dan deskripsi
+                              Text(
+                                promo.subtitle, // Menggunakan properti subtitle dari objek Promo
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-            Expanded(
-              child: ListView(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Detailpromo()),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFD7F0EE),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'New patient discount',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                // Tambahkan jarak vertikal antara judul dan deskripsi
-                                Text(
-                                  'Get high quality dental filling treatment at special prices.',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Detailpromo()),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFD7F0EE),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Routine check-up discounts',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        
-                                        // Tambahkan logika untuk tindakan saat tombol ditekan
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                // Tambahkan jarak vertikal antara judul dan deskripsi
-                                Text(
-                                  'Get high quality dental filling treatment at special prices.',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  
-                  
-                  // Tambahkan daftar promo lainnya sesuai kebutuhan
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
 
 
 
@@ -1139,7 +1127,7 @@ void _showPromoSelectionSheet(BuildContext context) {
 
                 TextButton.icon(
                   onPressed: () {
-                    _showPromoSelectionSheet(context);
+                    _showPromoSelectionSheet(context,promo);
                   },
                   icon: Icon(
                     Icons.local_offer,
@@ -1202,9 +1190,9 @@ void _showPromoSelectionSheet(BuildContext context) {
           ),
 
 
-          TextButton(
+          TextButton( 
              onPressed: () {
-              _showPromoSelectionSheet(context);
+              _showPromoSelectionSheet(context,promo);
             },
             child: Container(
              

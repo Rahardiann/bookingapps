@@ -1,7 +1,32 @@
 import 'dart:io';
 import 'package:booking/view/home.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+
+class Promo {
+  final int id;
+  final String  judul;
+  final String subtitle;
+  final String gambar;
+  final String deskripsi_1;
+  final String deskripsi_2;
+  
+
+  Promo({required this.id, required this.judul, required this.subtitle, required this.gambar, required this.deskripsi_1, required this.deskripsi_2});
+
+  factory Promo.fromJson(Map<String, dynamic> json) {
+    return Promo(
+      id: json['id'],
+      judul: json['judul'],
+      subtitle: json['subtitle'],
+      gambar: json['gambar'],
+      deskripsi_1: json['deskripsi_1'],
+      deskripsi_2: json['dskripsi_2'],
+      
+    );
+  }
+}
 class Detailpromo extends StatefulWidget {
   @override
   _DetailpromoState createState() => _DetailpromoState();
@@ -9,7 +34,48 @@ class Detailpromo extends StatefulWidget {
 
 class _DetailpromoState extends State<Detailpromo> {
   int _bottomNavCurrentIndex = 1;
+  List<Promo> promo = [];
+  bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _bottomNavCurrentIndex = 0;
+    fetchPromo();
+  }
+
+Future<void> fetchPromo() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    String apiUrl = "http://82.197.95.108:8003/promo";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      print(response.data['data']);
+      List<dynamic> responseData = response.data['data'];
+      List<Promo> fetchedPromo = responseData.map((json) => Promo.fromJson(json)).toList();
+
+      setState(() {
+        promo = fetchedPromo;
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching dentists: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error fetching dentists: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -72,19 +138,20 @@ class _DetailpromoState extends State<Detailpromo> {
                 child: AspectRatio(
                   aspectRatio: 16 / 9, // Adjust the aspect ratio as needed
                   child: Image.asset(
-                    'assets/slide2.jpeg',
+                   "assets/slide2.jpeg",
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               SizedBox(height: 20),
               Text(
-                'New Patient Discount',
+                promo.isNotEmpty ? promo[0].judul : '', // Mengambil judul dari promo pertama dalam list promo jika promo tidak kosong
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               Text(
                 'Sarlita Dental Care',
                 style: TextStyle(fontSize: 16, color: Colors.black38),
@@ -114,7 +181,7 @@ class _DetailpromoState extends State<Detailpromo> {
                   ),
                   Expanded(
                     child: Text(
-                      'This discount is only valid for new customers who have never visited our clinic before.',
+                      promo.isNotEmpty ? promo[0].deskripsi_1 : '', // Mengambil deskripsi_1 dari promo pertama dalam list promo jika promo tidak kosong
                       style: TextStyle(fontSize: 16, color: Colors.black54),
                     ),
                   ),
@@ -174,7 +241,7 @@ class _DetailpromoState extends State<Detailpromo> {
                 ),
               ),
               Text(
-                'We reserve the right to change or delete these terms and conditions without prior notice. This discount cannot be exchanged for cash and is not transferable.',
+                promo.isNotEmpty ? promo[0].deskripsi_2 : '', // Mengambil deskripsi_2 dari promo pertama dalam list promo jika promo tidak kosong
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
               SizedBox(height: 20),
