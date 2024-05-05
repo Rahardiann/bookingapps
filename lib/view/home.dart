@@ -107,6 +107,25 @@ class Promo {
     );
   }
 }
+class BookingData {
+  final int selectedDentistId;
+  final String selectedDentist;
+  final DateTime selectedDate;
+  final String selectedTimeText;
+  final String selectedPromo;
+  
+
+  BookingData({required this.selectedDentistId,
+    required this.selectedDentist,
+    required this.selectedDate,
+    required this.selectedTimeText,
+    required this.selectedPromo,});
+
+  
+}
+
+
+
 
 class Home extends StatefulWidget {
   @override
@@ -115,7 +134,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _bottomNavCurrentIndex = 0;
-  String _selectedUser = "User";
+  // String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
    DateTime _selectedDate = DateTime.now();
    String _selectedTimeText = 'Select Time';
@@ -128,6 +147,18 @@ class _HomeState extends State<Home> {
    List<Promo> promo = [];
   List<Post> posts = [];
   bool isLoading = false;
+  late BookingData bookingData;
+   
+  
+  int _selectedDentistId = 0;
+  int _selectedPromoId = 0;
+  // Melakukan pengambilan data dan membuat objek BookingData
+
+
+// Mengirim data bookingData ke server
+
+
+  
 
   @override
   void initState() {
@@ -139,8 +170,85 @@ class _HomeState extends State<Home> {
     fetchJadwal();
     fetchJam();
     fetchPromo();
+   
+    
   }
   
+  Future<void> _bookingUser() async {
+  Dio dio = Dio();
+
+  try {
+    // Melakukan request ke endpoint booking
+    Response response = await dio.post(
+      'http://82.197.95.108:8003/booking', // Ganti dengan URL endpoint booking yang sesuai
+      data: {
+        'dentist': {
+          'id': _selectedDentistId,
+          'nama': _selectedDentist,
+        },
+        'jadwal': {
+          'id': 1, // Sesuaikan dengan id jadwal jika diperlukan
+          'jadwal': _selectedDate.toIso8601String()
+          
+        },
+        'jam': {
+          'id': 1, // Sesuaikan dengan id jam jika diperlukan
+          'jam': _selectedTimeText
+        },
+        'judul': {
+          'id': _selectedPromoId,
+          'judul': _selectedPromo + "judul"
+          
+        },
+      },
+    );
+
+    // Menggunakan data response jika diperlukan
+    print(response.data);
+     Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => Booking(),
+    settings: RouteSettings(
+      arguments: {
+        'selectedDentistId': _selectedDentistId,
+        'selectedDentist': _selectedDentist,
+        'selectedDate': _selectedDate,
+        'selectedTimeText': _selectedTimeText,
+        'selectedPromo': _selectedPromo,
+        'selectedPromoId': _selectedPromoId,
+      },
+    ),
+  ),
+);
+
+    // Jika booking berhasil, lakukan tindakan selanjutnya
+
+  } catch (error) {
+    // Menangani error jika terjadi
+    print(error.toString());
+    // Tampilkan pesan kesalahan kepada pengguna
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to book. Please try again.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
 Future<void> fetchPosts() async {
     setState(() {
       isLoading = true;
@@ -582,6 +690,7 @@ void fetchData() async {
                 onTap: () {
                   setState(() {
                     _selectedDentist = dentist.nama;
+                    _selectedDentistId = dentist.id;
                   });
                   Navigator.pop(context);
                 },
@@ -1165,12 +1274,13 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                         padding: EdgeInsets.symmetric(horizontal: 1),
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Booking(),
-                              ),
-                            );
+                            _bookingUser();
+                            // Navigator.pushReplacement(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => Booking(),
+                            //   ),
+                            // );
                           },
                           style: ElevatedButton.styleFrom(
                            

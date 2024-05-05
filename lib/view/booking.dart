@@ -8,11 +8,18 @@ import 'package:booking/view/profile.dart';
 class Booking extends StatefulWidget {
   @override
   _BookingState createState() => _BookingState();
+   final Booking bookingData;
+
+  Booking({required this.bookingData});
+
+ 
 }
 
+
 class _BookingState extends State<Booking> {
+  
   int _bottomNavCurrentIndex = 1;
-  String _selectedItem = 'Bowo'; //nama yang pertama harus sama dengan ini
+  String _selectedItem = 'Budi'; //nama yang pertama harus sama dengan ini
 
   List<String> _items = [
     'Bowo',
@@ -24,6 +31,14 @@ class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    Map<String, dynamic> arguments = ModalRoute.of(context).settings.arguments;
+    String selectedDentistId = arguments['selectedDentistId'];
+    String selectedDentist = arguments['selectedDentist'];
+    DateTime selectedDate = arguments['selectedDate'];
+    String selectedTimeText = arguments['selectedTimeText'];
+    String selectedPromo = arguments['selectedPromo'];
+
+   
 
     return Scaffold(
       appBar: AppBar(
@@ -240,7 +255,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Choose a dentist",
+                        selectedDentist,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -271,7 +286,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Date",
+                         selectedDate.toString(),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -302,7 +317,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Time",
+                        selectedTimeText,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -333,7 +348,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Promo",
+                        selectedPromo,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
