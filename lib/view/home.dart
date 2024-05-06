@@ -113,13 +113,17 @@ class BookingData {
   final DateTime selectedDate;
   final String selectedTimeText;
   final String selectedPromo;
+  final int selectedPromoId;
+  final int selectedJadwalId;
   
 
   BookingData({required this.selectedDentistId,
     required this.selectedDentist,
     required this.selectedDate,
     required this.selectedTimeText,
-    required this.selectedPromo,});
+    required this.selectedPromo,
+    required this.selectedPromoId,
+    required this.selectedJadwalId,});
 
   
 }
@@ -152,6 +156,7 @@ class _HomeState extends State<Home> {
   
   int _selectedDentistId = 0;
   int _selectedPromoId = 0;
+  int _selectedJadwalId = 0;
   // Melakukan pengambilan data dan membuat objek BookingData
 
 
@@ -187,12 +192,12 @@ class _HomeState extends State<Home> {
           'nama': _selectedDentist,
         },
         'jadwal': {
-          'id': 1, // Sesuaikan dengan id jadwal jika diperlukan
+          'id': _selectedJadwalId, // Sesuaikan dengan id jadwal jika diperlukan
           'jadwal': _selectedDate.toIso8601String()
           
         },
         'jam': {
-          'id': 1, // Sesuaikan dengan id jam jika diperlukan
+          'id': _selectedJadwalId, // Sesuaikan dengan id jam jika diperlukan
           'jam': _selectedTimeText
         },
         'judul': {
@@ -213,6 +218,7 @@ class _HomeState extends State<Home> {
       arguments: {
         'selectedDentistId': _selectedDentistId,
         'selectedDentist': _selectedDentist,
+        'selectjadwalId': _selectedJadwalId,
         'selectedDate': _selectedDate,
         'selectedTimeText': _selectedTimeText,
         'selectedPromo': _selectedPromo,
@@ -747,6 +753,7 @@ void fetchData() async {
                     // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
                     setState(() {
                       _selectedDate = newDateTime;
+                      
                     });
                   },
                 ),
@@ -834,6 +841,7 @@ void _showTimePickerSheet(BuildContext context) {
                             .jam; // Menggunakan properti jam dari objek jadwal saat ini
                         setState(() {
                           _handleTimeSelection(selectedTime);
+                          
                         });
                         Navigator.pop(context);
                       },
@@ -902,6 +910,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                   onPressed: () {
                     setState(() {
                       _selectedPromo = promo.judul;
+                      _selectedPromoId = promo.id;
                     });
                     Navigator.pop(context);
                   },
