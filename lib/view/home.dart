@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart'; 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:booking/view/form/detailpromo.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Post {
   final int id;
@@ -27,14 +28,16 @@ class Post {
 class Dentist {
   final int id;
   final String nama;
+  final String gambar;
   
 
-  Dentist({required this.id, required this.nama});
+  Dentist({required this.id, required this.nama, required this.gambar});
 
   factory Dentist.fromJson(Map<String, dynamic> json) {
     return Dentist(
       id: json['id'],
       nama: json['nama'],
+      gambar: json['gambar'],
       
     );
   }
@@ -94,15 +97,21 @@ class Promo {
   final int id;
   final String  judul;
   final String subtitle;
+  final String gambar;
+  final String deskripsi_1;
+  final String deskripsi_2;
   
 
-  Promo({required this.id, required this.judul, required this.subtitle});
+  Promo({required this.id, required this.judul, required this.subtitle, required this.gambar, required this.deskripsi_1, required this.deskripsi_2});
 
   factory Promo.fromJson(Map<String, dynamic> json) {
     return Promo(
       id: json['id'],
       judul: json['judul'],
       subtitle: json['subtitle'],
+      gambar: json['gambar'],
+      deskripsi_1: json['deskripsi_1'],
+      deskripsi_2: json['deskripsi_2'],
       
     );
   }
@@ -218,7 +227,7 @@ class _HomeState extends State<Home> {
       arguments: {
         'selectedDentistId': _selectedDentistId,
         'selectedDentist': _selectedDentist,
-        'selectjadwalId': _selectedJadwalId,
+        'selectJadwalId': _selectedJadwalId,
         'selectedDate': _selectedDate,
         'selectedTimeText': _selectedTimeText,
         'selectedPromo': _selectedPromo,
@@ -305,6 +314,7 @@ Future<void> fetchDentists() async {
       setState(() {
         dentists = fetchedDentists;
         isLoading = false;
+        
       });
     } else {
       print("Error fetching dentists: ${response.statusCode}");
@@ -667,31 +677,16 @@ void fetchData() async {
             itemBuilder: (BuildContext context, int index) {
               Dentist dentist = dentists[index];
               return ListTile(
-                title: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 5.0, right: 20.0),
-                      child: Icon(
-                        Icons.account_circle,
-                        color: Colors.grey,
-                        size: 50,
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          dentist.nama,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        
-                      ],
-                    ),
-                  ],
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage("http://82.197.95.108:8003/uploads/image/${dentist.gambar}"),
+                ),
+                title: Text(
+                  dentist.nama,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   setState(() {
@@ -841,6 +836,7 @@ void _showTimePickerSheet(BuildContext context) {
                             .jam; // Menggunakan properti jam dari objek jadwal saat ini
                         setState(() {
                           _handleTimeSelection(selectedTime);
+                          _selectedJadwalId = jadwal[index].id;
                           
                         });
                         Navigator.pop(context);
@@ -1344,12 +1340,13 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                                 color: Colors.black,
                               ),
                               onPressed: () {
-                                 Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Detailpromo(),
-                              ),
-                            );
+                                int promoId = 0; // ID promo yang dipilih, bisa diganti dengan yang lain
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Detailpromo(_selectedPromoId: _selectedPromoId),
+                                ),
+                              );
                               },
                             ),
                           ],
