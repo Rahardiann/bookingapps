@@ -1341,12 +1341,12 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                               ),
                               onPressed: () {
                                 int promoId = 0; // ID promo yang dipilih, bisa diganti dengan yang lain
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Detailpromo(_selectedPromoId: _selectedPromoId),
-                                ),
-                              );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Detailpromo(_selectedPromoId: _selectedPromoId),
+                              ),
+                            );
                               },
                             ),
                           ],
