@@ -68,16 +68,18 @@ class _LoginFormState extends State<LoginForm> {
         'email': email,
         'password': password,
       });
-      print(response.data['data']['email']);
+      print(response.data['data']);
 
       // Check if request is successful
       if (response.statusCode == 200) {
         // Get user ID from response
         String email = response.data['data']['email'];
+        int id = response.data['data']['id'];
         SharedPreferences.setMockInitialValues({});
         // Save user ID to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('email', email);
+        await prefs.setInt('id', id);
 
         // If successful, navigate to home page
         Navigator.push(

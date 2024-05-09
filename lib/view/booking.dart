@@ -1,24 +1,56 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/homepage.dart';
 import 'package:booking/beforelogin/profilenone.dart';
 import 'package:booking/view/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Booking extends StatefulWidget {
+  final BookingData? bookingData; // Ubah menjadi nullable (opsional)
+
+  Booking({this.bookingData}); // Tandai sebagai opsional dengan '?'
+
   @override
   _BookingState createState() => _BookingState();
-   
-
- 
 }
 
+class HistoryData {
+  final int id;
+  final String nama_dokter;
+  final DateTime jadwal;
+  final String jam;
+  final String promo;
+
+  
+
+  HistoryData({required this.id, required this.nama_dokter, required this.jadwal, required this.jam, required this.promo});
+
+  factory HistoryData.fromJson(Map<String, dynamic> json) {
+    return HistoryData(
+      id: json['id'],
+      nama_dokter: json['dokter']['nama'],
+      jadwal: DateTime.parse(json['jadwal']['jadwal']),
+      jam: json['jadwal']['jam'],
+      promo: json['promo']['judul'],
+    );
+  }
+}
 
 class _BookingState extends State<Booking> {
-  
   int _bottomNavCurrentIndex = 1;
-  String _selectedItem = 'Budi'; //nama yang pertama harus sama dengan ini
-
+  String _selectedItem = 'Budi';
+  String _selectedDentist = "Choose a dentist";
+  DateTime _selectedDate = DateTime.now();
+  String _selectedTimeText = 'Select Time';
+  String _selectedPromo = "Promo";
+  String _username = "";
+  int _selectedDentistId = 0;
+  int _selectedPromoId = 0;
+  int _selectedJadwalId = 0; //nama yang pertama harus sama dengan ini
+  bool isLoading = false;
+  List<HistoryData> history = [];
   List<String> _items = [
     'Bowo',
     'Budi',
@@ -27,11 +59,67 @@ class _BookingState extends State<Booking> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    fetchBooking();
+  }
+
+  Future<void> fetchBooking() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id');
+    
+    String apiUrl = "http://82.197.95.108:8003/booking/$id";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      dynamic responseData = response.data;
+      if (responseData is List) {
+        List<HistoryData> fetchedhistory =
+            responseData.map((json) => HistoryData.fromJson(json)).toList();
+        setState(() {
+          history = fetchedhistory;
+          isLoading = false;
+        });
+        print(history);
+      } else if (responseData is Map<String, dynamic>) {
+        // Handle single object response
+        List<HistoryData> fetchedhistory = [HistoryData.fromJson(responseData)];
+        setState(() {
+          history = fetchedhistory;
+          isLoading = false;
+        });
+        print(history);
+      } else {
+        print("Error fetching booking: Unexpected data format");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } else {
+      print("Error fetching user: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error fetching booking: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+
+
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-   
-
-   
 
     return Scaffold(
       appBar: AppBar(
@@ -44,19 +132,18 @@ class _BookingState extends State<Booking> {
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(
-                primary: Colors.black, // Mengatur warna teks tombol
+                primary: Colors.black,
               ),
               child: Row(
                 children: [
-                  Icon(Icons.arrow_back_ios,
-                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
                   SizedBox(width: 5),
                   Text(
                     'Back',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black, // Mengatur warna teks
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -67,7 +154,7 @@ class _BookingState extends State<Booking> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Mengatur warna teks
+                color: Colors.black,
               ),
             ),
             SizedBox(width: 90),
@@ -144,28 +231,25 @@ class _BookingState extends State<Booking> {
           ),
           SizedBox(height: 20),
           Container(
-            width: double.infinity, // Mengisi lebar layar
+            width: double.infinity,
             height: 2,
-            color: Colors.grey[300], // Warna abu-abu untuk garis bawah
+            color: Colors.grey[300],
           ),
-          SizedBox(height: 8), // Beri ruang antara garis bawah dan Row
+          SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: 15.0,
-                        right: 8.0), // Margin di sebelah kiri ikon profil
-                    child: Icon(Icons.account_circle,
-                        color: Colors.grey), // Icon profile
+                    padding: EdgeInsets.only(left: 15.0, right: 8.0),
+                    child: Icon(Icons.account_circle, color: Colors.grey),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'BOWO', 
+                        'BOWO',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -173,7 +257,7 @@ class _BookingState extends State<Booking> {
                         ),
                       ),
                       Text(
-                        'Medical record | 001', 
+                        'Medical record | 001',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black87,
@@ -183,21 +267,20 @@ class _BookingState extends State<Booking> {
                   ),
                 ],
               ),
-          
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '2 April, 9:45 AM', 
+                      '2 April, 9:45 AM',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
                       ),
                     ),
                     Text(
-                      'Code booking', 
+                      'Code booking',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -208,14 +291,11 @@ class _BookingState extends State<Booking> {
               ),
             ],
           ),
-           SizedBox(height: 30),
-
-
-          // Judul di luar container
+          SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'Booking detail', 
+              'Booking detail',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -226,41 +306,36 @@ class _BookingState extends State<Booking> {
           Container(
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
-              borderRadius:
-                  BorderRadius.circular(15), 
+              borderRadius: BorderRadius.circular(15),
             ),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 SizedBox(height: 10),
                 TextButton.icon(
-                  onPressed: () {
-                   
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.person_3_rounded,
-                    color: Color(0xFF16A69A), 
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "selectedDentist",
+                        _selectedDentist,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), 
+                      SizedBox(width: 8),
                     ],
                   ),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, 
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -268,30 +343,27 @@ class _BookingState extends State<Booking> {
                   ),
                 ),
                 TextButton.icon(
-                  onPressed: () {
-                   
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.calendar_today,
-                    color: Color(0xFF16A69A), 
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                         "selectedDate.toString()",
+                        _selectedDate.toString(),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), 
+                      SizedBox(width: 8),
                     ],
                   ),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, 
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -299,30 +371,27 @@ class _BookingState extends State<Booking> {
                   ),
                 ),
                 TextButton.icon(
-                  onPressed: () {
-                    
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.access_time_filled_sharp,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "selectedTimeText",
+                        _selectedTimeText,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                      SizedBox(width: 8),
                     ],
                   ),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -335,25 +404,24 @@ class _BookingState extends State<Booking> {
                   },
                   icon: Icon(
                     Icons.production_quantity_limits_outlined,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
+                    color: Color(0xFF16A69A),
                   ),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "selectedPromo",
+                        _selectedPromo,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
+                      SizedBox(width: 8),
                     ],
                   ),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -361,7 +429,6 @@ class _BookingState extends State<Booking> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // Isi dari booking
               ],
             ),
           ),
@@ -380,9 +447,9 @@ class _BookingState extends State<Booking> {
                   context, MaterialPageRoute(builder: (context) => Home()));
               break;
             case 1:
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Booking()));
-              break;
+            // Navigator.push(
+            //     context, MaterialPageRoute(builder: (context) => Booking(bookingData: BookingData,)));
+            // break;
             case 2:
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Profiles()));

@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/profile.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:dio/dio.dart'; 
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:booking/view/form/detailpromo.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -29,7 +28,6 @@ class Dentist {
   final int id;
   final String nama;
   final String gambar;
-  
 
   Dentist({required this.id, required this.nama, required this.gambar});
 
@@ -38,7 +36,6 @@ class Dentist {
       id: json['id'],
       nama: json['nama'],
       gambar: json['gambar'],
-      
     );
   }
 }
@@ -46,7 +43,6 @@ class Dentist {
 class User {
   final int id;
   final String nama;
-  
 
   User({required this.id, required this.nama});
 
@@ -54,7 +50,6 @@ class User {
     return User(
       id: json['id'],
       nama: json['nama'],
-      
     );
   }
 }
@@ -77,9 +72,8 @@ class Jam {
 
 class Jadwal {
   final int id;
-  final DateTime  jadwal;
+  final DateTime jadwal;
   final String jam;
-  
 
   Jadwal({required this.id, required this.jadwal, required this.jam});
 
@@ -88,21 +82,25 @@ class Jadwal {
       id: json['id'],
       jadwal: DateTime.parse(json['jadwal']),
       jam: json['jam'],
-      
     );
   }
 }
 
 class Promo {
   final int id;
-  final String  judul;
+  final String judul;
   final String subtitle;
   final String gambar;
   final String deskripsi_1;
   final String deskripsi_2;
-  
 
-  Promo({required this.id, required this.judul, required this.subtitle, required this.gambar, required this.deskripsi_1, required this.deskripsi_2});
+  Promo(
+      {required this.id,
+      required this.judul,
+      required this.subtitle,
+      required this.gambar,
+      required this.deskripsi_1,
+      required this.deskripsi_2});
 
   factory Promo.fromJson(Map<String, dynamic> json) {
     return Promo(
@@ -112,10 +110,10 @@ class Promo {
       gambar: json['gambar'],
       deskripsi_1: json['deskripsi_1'],
       deskripsi_2: json['deskripsi_2'],
-      
     );
   }
 }
+
 class BookingData {
   final int selectedDentistId;
   final String selectedDentist;
@@ -124,21 +122,17 @@ class BookingData {
   final String selectedPromo;
   final int selectedPromoId;
   final int selectedJadwalId;
-  
 
-  BookingData({required this.selectedDentistId,
+  BookingData({
+    required this.selectedDentistId,
     required this.selectedDentist,
     required this.selectedDate,
     required this.selectedTimeText,
     required this.selectedPromo,
     required this.selectedPromoId,
-    required this.selectedJadwalId,});
-
-  
+    required this.selectedJadwalId,
+  });
 }
-
-
-
 
 class Home extends StatefulWidget {
   @override
@@ -149,30 +143,25 @@ class _HomeState extends State<Home> {
   int _bottomNavCurrentIndex = 0;
   // String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
-   DateTime _selectedDate = DateTime.now();
-   String _selectedTimeText = 'Select Time';
-   String _selectedPromo = "Promo";
-   String _username = "";
-   List<Dentist> dentists = [];
-   List<User> user = [];
-   List<Jadwal> jadwal = [];
-   List<Jam> jam = [];
-   List<Promo> promo = [];
+  DateTime _selectedDate = DateTime.now();
+  String _selectedTimeText = 'Select Time';
+  String _selectedPromo = "Promo";
+  String _username = "";
+  List<Dentist> dentists = [];
+  List<User> user = [];
+  List<Jadwal> jadwal = [];
+  List<Jam> jam = [];
+  List<Promo> promo = [];
   List<Post> posts = [];
   bool isLoading = false;
-  late BookingData bookingData;
-   
-  
+  BookingData? bookingData;
+
   int _selectedDentistId = 0;
   int _selectedPromoId = 0;
   int _selectedJadwalId = 0;
   // Melakukan pengambilan data dan membuat objek BookingData
 
-
 // Mengirim data bookingData ke server
-
-
-  
 
   @override
   void initState() {
@@ -184,87 +173,86 @@ class _HomeState extends State<Home> {
     fetchJadwal();
     fetchJam();
     fetchPromo();
-   
-    
   }
-  
+
   Future<void> _bookingUser() async {
-  Dio dio = Dio();
+    Dio dio = Dio();
 
-  try {
-    // Melakukan request ke endpoint booking
-    Response response = await dio.post(
-      'http://82.197.95.108:8003/booking', // Ganti dengan URL endpoint booking yang sesuai
-      data: {
-        'dentist': {
-          'id': _selectedDentistId,
-          'nama': _selectedDentist,
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id');
+      // Melakukan request ke endpoint booking
+      Response response = await dio.post(
+        'http://82.197.95.108:8003/booking', // Ganti dengan URL endpoint booking yang sesuai
+        data: {
+          'user': {
+            'id': id,
+          },
+          'dentist': {
+            'id': _selectedDentistId,
+            'nama': _selectedDentist,
+          },
+          'jadwal': {
+            'id':
+                _selectedJadwalId, // Sesuaikan dengan id jadwal jika diperlukan
+            'jadwal': _selectedDate.toIso8601String()
+          },
+          'jam': {
+            'id': _selectedJadwalId, // Sesuaikan dengan id jam jika diperlukan
+            'jam': _selectedTimeText
+          },
+          'judul': {'id': _selectedPromoId, 'judul': _selectedPromo + "judul"},
         },
-        'jadwal': {
-          'id': _selectedJadwalId, // Sesuaikan dengan id jadwal jika diperlukan
-          'jadwal': _selectedDate.toIso8601String()
-          
-        },
-        'jam': {
-          'id': _selectedJadwalId, // Sesuaikan dengan id jam jika diperlukan
-          'jam': _selectedTimeText
-        },
-        'judul': {
-          'id': _selectedPromoId,
-          'judul': _selectedPromo + "judul"
-          
-        },
-      },
-    );
+      );
 
-    // Menggunakan data response jika diperlukan
-    print(response.data);
-     Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => Booking(),
-    settings: RouteSettings(
-      arguments: {
-        'selectedDentistId': _selectedDentistId,
-        'selectedDentist': _selectedDentist,
-        'selectJadwalId': _selectedJadwalId,
-        'selectedDate': _selectedDate,
-        'selectedTimeText': _selectedTimeText,
-        'selectedPromo': _selectedPromo,
-        'selectedPromoId': _selectedPromoId,
-      },
-    ),
-  ),
-);
+      // Menggunakan data response jika diperlukan
+      print(response.data);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Booking(
+            bookingData: bookingData,
+          ),
+          settings: RouteSettings(
+            arguments: {
+              'selectedDentistId': _selectedDentistId,
+              'selectedDentist': _selectedDentist,
+              'selectJadwalId': _selectedJadwalId,
+              'selectedDate': _selectedDate,
+              'selectedTimeText': _selectedTimeText,
+              'selectedPromo': _selectedPromo,
+              'selectedPromoId': _selectedPromoId,
+            },
+          ),
+        ),
+      );
 
-    // Jika booking berhasil, lakukan tindakan selanjutnya
-
-  } catch (error) {
-    // Menangani error jika terjadi
-    print(error.toString());
-    // Tampilkan pesan kesalahan kepada pengguna
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to book. Please try again.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+      // Jika booking berhasil, lakukan tindakan selanjutnya
+    } catch (error) {
+      // Menangani error jika terjadi
+      print(error.toString());
+      // Tampilkan pesan kesalahan kepada pengguna
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to book. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
 
-
-Future<void> fetchPosts() async {
+  Future<void> fetchPosts() async {
     setState(() {
       isLoading = true;
     });
@@ -272,16 +260,17 @@ Future<void> fetchPosts() async {
     try {
       // Ganti URL ini dengan URL node yang benar
       String apiUrl = "http://82.197.95.108:8003/booking";
-      
+
       // Membuat instance Dio
       Dio dio = Dio();
-      
+
       // Melakukan HTTP GET request
       Response response = await dio.post(apiUrl);
 
       // Mengkonversi data JSON menjadi list of posts
       List<dynamic> responseData = response.data;
-      List<Post> fetchedPosts = responseData.map((json) => Post.fromJson(json)).toList();
+      List<Post> fetchedPosts =
+          responseData.map((json) => Post.fromJson(json)).toList();
 
       setState(() {
         posts = fetchedPosts;
@@ -296,105 +285,75 @@ Future<void> fetchPosts() async {
     }
   }
 
-Future<void> fetchDentists() async {
-  setState(() {
-    isLoading = true;
-  });
+  Future<void> fetchDentists() async {
+    setState(() {
+      isLoading = true;
+    });
 
-  try {
-    String apiUrl = "http://82.197.95.108:8003/dokter";
-    Dio dio = Dio();
-    Response response = await dio.get(apiUrl);
+    try {
+      String apiUrl = "http://82.197.95.108:8003/dokter";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
 
-    if (response.statusCode == 200) {
-      print(response.data['data']);
-      List<dynamic> responseData = response.data['data'];
-      List<Dentist> fetchedDentists = responseData.map((json) => Dentist.fromJson(json)).toList();
+      if (response.statusCode == 200) {
+        print(response.data['data']);
+        List<dynamic> responseData = response.data['data'];
+        List<Dentist> fetchedDentists =
+            responseData.map((json) => Dentist.fromJson(json)).toList();
 
-      setState(() {
-        dentists = fetchedDentists;
-        isLoading = false;
-        
-      });
-    } else {
-      print("Error fetching dentists: ${response.statusCode}");
+        setState(() {
+          dentists = fetchedDentists;
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching dentists: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching dentists: $e");
       setState(() {
         isLoading = false;
       });
     }
-  } catch (e) {
-    print("Error fetching dentists: $e");
-    setState(() {
-      isLoading = false;
-    });
   }
-}
-Future<void> fetchUser() async {
-  setState(() {
-    isLoading = true;
-  });
 
-  try {
-    String apiUrl = "http://82.197.95.108:8003/user";
-    Dio dio = Dio();
-    Response response = await dio.get(apiUrl);
+  Future<void> fetchUser() async {
+    setState(() {
+      isLoading = true;
+    });
 
-    if (response.statusCode == 200) {
-      print(response.data['data']);
-      List<dynamic> responseData = response.data['data'];
-      List<User> fetchedUser = responseData.map((json) => User.fromJson(json)).toList();
+    try {
+      String apiUrl = "http://82.197.95.108:8003/user";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
 
-      setState(() {
-        user = fetchedUser;
-        isLoading = false;
-      });
-    } else {
-      print("Error fetching user: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        print(response.data['data']);
+        List<dynamic> responseData = response.data['data'];
+        List<User> fetchedUser =
+            responseData.map((json) => User.fromJson(json)).toList();
+
+        setState(() {
+          user = fetchedUser;
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching user: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching dentists: $e");
       setState(() {
         isLoading = false;
       });
     }
-  } catch (e) {
-    print("Error fetching dentists: $e");
-    setState(() {
-      isLoading = false;
-    });
   }
-}
-Future<void> fetchJadwal() async {
-  setState(() {
-    isLoading = true;
-  });
 
-  try {
-    String apiUrl = "http://82.197.95.108:8003/jadwal";
-    Dio dio = Dio();
-    Response response = await dio.get(apiUrl);
-
-    if (response.statusCode == 200) {
-      print(response.data['data']);
-      List<dynamic> responseData = response.data['data'];
-      List<Jadwal> fetchedJadwal = responseData.map((json) => Jadwal.fromJson(json)).toList();
-
-      setState(() {
-        jadwal = fetchedJadwal;
-        isLoading = false;
-      });
-    } else {
-      print("Error fetching jadwal: ${response.statusCode}");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  } catch (e) {
-    print("Error fetching dentists: $e");
-    setState(() {
-      isLoading = false;
-    });
-  }
-}
-
-Future<void> fetchJam() async {
+  Future<void> fetchJadwal() async {
     setState(() {
       isLoading = true;
     });
@@ -404,7 +363,41 @@ Future<void> fetchJam() async {
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
 
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
+        print(response.data['data']);
+        List<dynamic> responseData = response.data['data'];
+        List<Jadwal> fetchedJadwal =
+            responseData.map((json) => Jadwal.fromJson(json)).toList();
+
+        setState(() {
+          jadwal = fetchedJadwal;
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching jadwal: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching dentists: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchJam() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      String apiUrl = "http://82.197.95.108:8003/jadwal";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
+
+      if (response.statusCode == 200) {
         print(response.data['data']);
         List<dynamic> responseData = response.data['data'];
         List<Jam> fetchedJam =
@@ -428,39 +421,41 @@ Future<void> fetchJam() async {
     }
   }
 
-Future<void> fetchPromo() async {
-  setState(() {
-    isLoading = true;
-  });
+  Future<void> fetchPromo() async {
+    setState(() {
+      isLoading = true;
+    });
 
-  try {
-    String apiUrl = "http://82.197.95.108:8003/promo";
-    Dio dio = Dio();
-    Response response = await dio.get(apiUrl);
+    try {
+      String apiUrl = "http://82.197.95.108:8003/promo";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
 
-    if (response.statusCode == 200) {
-      print(response.data['data']);
-      List<dynamic> responseData = response.data['data'];
-      List<Promo> fetchedPromo = responseData.map((json) => Promo.fromJson(json)).toList();
+      if (response.statusCode == 200) {
+        print(response.data['data']);
+        List<dynamic> responseData = response.data['data'];
+        List<Promo> fetchedPromo =
+            responseData.map((json) => Promo.fromJson(json)).toList();
 
-      setState(() {
-        promo = fetchedPromo;
-        isLoading = false;
-      });
-    } else {
-      print("Error fetching dentists: ${response.statusCode}");
+        setState(() {
+          promo = fetchedPromo;
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching dentists: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching dentists: $e");
       setState(() {
         isLoading = false;
       });
     }
-  } catch (e) {
-    print("Error fetching dentists: $e");
-    setState(() {
-      isLoading = false;
-    });
   }
-}
-void fetchData() async {
+
+  void fetchData() async {
     try {
       // Ambil email dari SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -635,76 +630,77 @@ void fetchData() async {
   // }
 
   void _showDentistSelectionSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(
-                  primary: Colors.black,
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
-                    SizedBox(width: 5),
-                    Text(
-                      'Back',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text(
+                        'Back',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        body: Container(
-          padding: EdgeInsets.all(16.0),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: dentists.length,
-            itemBuilder: (BuildContext context, int index) {
-              Dentist dentist = dentists[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage("http://82.197.95.108:8003/uploads/image/${dentist.gambar}"),
-                ),
-                title: Text(
-                  dentist.nama,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    ],
                   ),
                 ),
-                onTap: () {
-                  setState(() {
-                    _selectedDentist = dentist.nama;
-                    _selectedDentistId = dentist.id;
-                  });
-                  Navigator.pop(context);
-                },
-              );
-            },
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+          body: Container(
+            padding: EdgeInsets.all(16.0),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: dentists.length,
+              itemBuilder: (BuildContext context, int index) {
+                Dentist dentist = dentists[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        "http://82.197.95.108:8003/uploads/image/${dentist.gambar}"),
+                  ),
+                  title: Text(
+                    dentist.nama,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedDentist = dentist.nama;
+                      _selectedDentistId = dentist.id;
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
 
- void _showDatePickerSheet(BuildContext context) {
+  void _showDatePickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -732,7 +728,7 @@ void fetchData() async {
                       child: Text(
                         'Done',
                         style: TextStyle(
-                           color: Color(0xFFB6366D), 
+                          color: Color(0xFFB6366D),
                           fontSize: 16,
                         ),
                       ),
@@ -748,7 +744,6 @@ void fetchData() async {
                     // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
                     setState(() {
                       _selectedDate = newDateTime;
-                      
                     });
                   },
                 ),
@@ -760,14 +755,13 @@ void fetchData() async {
     );
   }
 
-void _handleTimeSelection(String selectedTime) {
+  void _handleTimeSelection(String selectedTime) {
     setState(() {
       _selectedTimeText = selectedTime; // Perbarui nilai waktu yang dipilih
     });
   }
 
-
-void _showTimePickerSheet(BuildContext context) {
+  void _showTimePickerSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -837,7 +831,6 @@ void _showTimePickerSheet(BuildContext context) {
                         setState(() {
                           _handleTimeSelection(selectedTime);
                           _selectedJadwalId = jadwal[index].id;
-                          
                         });
                         Navigator.pop(context);
                       },
@@ -845,7 +838,6 @@ void _showTimePickerSheet(BuildContext context) {
                   },
                 ),
               ),
-
             ],
           ),
         );
@@ -853,132 +845,127 @@ void _showTimePickerSheet(BuildContext context) {
     );
   }
 
-void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Promo',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Colors.black,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.arrow_back_ios,
-                          size: 20, color: Colors.black),
-                      SizedBox(width: 5),
-                      Text(
-                        'Back',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: promos.length,
-              itemBuilder: (context, index) {
-                Promo promo = promos[index];
-                return TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedPromo = promo.judul;
-                      _selectedPromoId = promo.id;
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD7F0EE),
-                      borderRadius: BorderRadius.circular(15),
+  void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Promo',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    margin: EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: TextButton.styleFrom(
+                      primary: Colors.black,
+                    ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    promo.judul,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 15,
-                                      color: Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      // Tambahkan logika untuk tindakan saat tombol ditekan
-                                    },
-                                  ),
-                                ],
-                              ),
-                              // Tambahkan jarak vertikal antara judul dan deskripsi
-                              Text(
-                                promo.subtitle, // Menggunakan properti subtitle dari objek Promo
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
+                        Icon(Icons.arrow_back_ios,
+                            size: 20, color: Colors.black),
+                        SizedBox(width: 5),
+                        Text(
+                          'Back',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                       ],
                     ),
                   ),
-                );
-              },
+                ],
+              ),
             ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-
-
-
-
-
-
-
+            Expanded(
+              child: ListView.builder(
+                itemCount: promos.length,
+                itemBuilder: (context, index) {
+                  Promo promo = promos[index];
+                  return TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedPromo = promo.judul;
+                        _selectedPromoId = promo.id;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFD7F0EE),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      promo.judul,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 15,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // Tambahkan logika untuk tindakan saat tombol ditekan
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                // Tambahkan jarak vertikal antara judul dan deskripsi
+                                Text(
+                                  promo
+                                      .subtitle, // Menggunakan properti subtitle dari objek Promo
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1073,12 +1060,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
               ),
             ],
           ),
-
-
           SizedBox(height: 40),
-
-
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -1096,8 +1078,6 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
               ],
             ),
           ),
-
-          
           Container(
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
@@ -1108,7 +1088,6 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 // TextButton.icon(
                 //   onPressed: () {
                 //     _showUserSelectionSheet(
@@ -1141,7 +1120,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                 //   ),
                 // ),
 
-                 TextButton.icon(
+                TextButton.icon(
                   onPressed: () {
                     _showDentistSelectionSheet(
                         context); // Panggil method bottom sheet
@@ -1172,7 +1151,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                     ),
                   ),
                 ),
-                
+
                 TextButton.icon(
                   onPressed: () {
                     _showDatePickerSheet(context);
@@ -1207,8 +1186,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                   ),
                 ),
 
-
-               TextButton.icon(
+                TextButton.icon(
                   onPressed: () {
                     _showTimePickerSheet(context);
                   },
@@ -1242,7 +1220,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
 
                 TextButton.icon(
                   onPressed: () {
-                    _showPromoSelectionSheet(context,promo);
+                    _showPromoSelectionSheet(context, promo);
                   },
                   icon: Icon(
                     Icons.local_offer,
@@ -1271,7 +1249,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                     ),
                   ),
                 ),
-                
+
                 Row(
                   children: [
                     Expanded(
@@ -1288,7 +1266,6 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                             // );
                           },
                           style: ElevatedButton.styleFrom(
-                           
                             backgroundColor: Color(0xFFE65895),
                           ),
                           child: Text(
@@ -1300,18 +1277,14 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
-
-
-          TextButton( 
-             onPressed: () {
-              _showPromoSelectionSheet(context,promo);
+          TextButton(
+            onPressed: () {
+              _showPromoSelectionSheet(context, promo);
             },
             child: Container(
-             
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -1330,7 +1303,7 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                               color: Color(0xFFB6366D),
+                                color: Color(0xFFB6366D),
                               ),
                             ),
                             IconButton(
@@ -1340,13 +1313,14 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
                                 color: Colors.black,
                               ),
                               onPressed: () {
-                                int promoId = 0; // ID promo yang dipilih, bisa diganti dengan yang lain
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Detailpromo(_selectedPromoId: _selectedPromoId),
-                              ),
-                            );
+                                int promoId =
+                                    0; // ID promo yang dipilih, bisa diganti dengan yang lain
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Detailpromo(),
+                                  ),
+                                );
                               },
                             ),
                           ],
@@ -1366,7 +1340,6 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
               ),
             ),
           ),
-
           SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1455,7 +1428,10 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Booking()),
+              MaterialPageRoute(
+                  builder: (context) => Booking(
+                        bookingData: bookingData,
+                      )),
             );
           } else if (index == 2) {
             Navigator.push(
@@ -1499,4 +1475,3 @@ void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
     );
   }
 }
-
