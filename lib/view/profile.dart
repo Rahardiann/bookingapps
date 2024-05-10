@@ -1,4 +1,5 @@
 import 'package:booking/view/form/barcode.dart';
+import 'package:booking/view/form/detailhistory.dart';
 import 'package:booking/view/form/histori.dart';
 import 'package:booking/view/form/user.dart';
 import 'package:booking/view/login.dart';
@@ -337,7 +338,7 @@ class _ProfilesState extends State<Profiles> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        History()), // Sesuaikan dengan route halaman Edit Profile
+                        DetailHistory()), // Sesuaikan dengan route halaman Edit Profile
               );
             },
             child: Container(
