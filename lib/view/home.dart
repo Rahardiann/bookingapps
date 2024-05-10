@@ -205,8 +205,11 @@ class _HomeState extends State<Home> {
         },
       );
 
-      // Menggunakan data response jika diperlukan
       print(response.data);
+      int id_booking = response.data['data']['id'];
+      SharedPreferences.setMockInitialValues({});
+      await prefs.setInt('id_booking', id_booking);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -673,8 +676,8 @@ class _HomeState extends State<Home> {
                 Dentist dentist = dentists[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "http://82.197.95.108:8003/uploads/image/${dentist.gambar}"),
+                    // backgroundImage: NetworkImage(
+                    //     "http://82.197.95.108:8003/uploads/image/${dentist.gambar}"),
                   ),
                   title: Text(
                     dentist.nama,

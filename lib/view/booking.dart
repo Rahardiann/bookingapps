@@ -17,31 +17,36 @@ class Booking extends StatefulWidget {
 }
 
 class HistoryData {
-  final int id;
   final String nama_dokter;
-  final DateTime jadwal;
+  final String jadwal;
   final String jam;
   final String promo;
 
-  
-
-  HistoryData({required this.id, required this.nama_dokter, required this.jadwal, required this.jam, required this.promo});
+  HistoryData(
+      {
+      required this.nama_dokter,
+      required this.jadwal,
+      required this.jam,
+      required this.promo});
 
   factory HistoryData.fromJson(Map<String, dynamic> json) {
     return HistoryData(
-      id: json['id'],
-      nama_dokter: json['dokter']['nama'],
-      jadwal: DateTime.parse(json['jadwal']['jadwal']),
-      jam: json['jadwal']['jam'],
-      promo: json['promo']['judul'],
+      nama_dokter: json['nama'],
+      jadwal: json['jadwal'],
+      jam: json['jam'],
+      promo: json['judul'],
     );
   }
 }
 
 class _BookingState extends State<Booking> {
   int _bottomNavCurrentIndex = 1;
+  String nama_dokter = "";
+  DateTime jadwal = DateTime.now();
+  String jam = "";
+  String promo = "";
   String _selectedItem = 'Budi';
-  String _selectedDentist = "Choose a dentist";
+  String _selectedDentist = "";
   DateTime _selectedDate = DateTime.now();
   String _selectedTimeText = 'Select Time';
   String _selectedPromo = "Promo";
@@ -51,6 +56,7 @@ class _BookingState extends State<Booking> {
   int _selectedJadwalId = 0; //nama yang pertama harus sama dengan ini
   bool isLoading = false;
   List<HistoryData> history = [];
+  
   List<String> _items = [
     'Bowo',
     'Budi',
@@ -65,57 +71,43 @@ class _BookingState extends State<Booking> {
   }
 
   Future<void> fetchBooking() async {
-  setState(() {
-    isLoading = true;
-  });
+    setState(() {
+      isLoading = true;
+    });
 
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? id = prefs.getInt('id');
-    
-    String apiUrl = "http://82.197.95.108:8003/booking/$id";
-    Dio dio = Dio();
-    Response response = await dio.get(apiUrl);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_booking');
 
-    if (response.statusCode == 200) {
-      dynamic responseData = response.data;
-      if (responseData is List) {
-        List<HistoryData> fetchedhistory =
+      String apiUrl = "http://82.197.95.108:8003/booking/id/$id";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
+      print(response.data['data']);
+
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = response.data['data'];
+        // print(responseData);
+        List<HistoryData> fetchedBooking =
             responseData.map((json) => HistoryData.fromJson(json)).toList();
+
         setState(() {
-          history = fetchedhistory;
+          history = fetchedBooking;
           isLoading = false;
         });
-        print(history);
-      } else if (responseData is Map<String, dynamic>) {
-        // Handle single object response
-        List<HistoryData> fetchedhistory = [HistoryData.fromJson(responseData)];
-        setState(() {
-          history = fetchedhistory;
-          isLoading = false;
-        });
-        print(history);
+        // print("OK");
       } else {
-        print("Error fetching booking: Unexpected data format");
+        print("Error fetching dentists: ${response.statusCode}");
         setState(() {
           isLoading = false;
         });
       }
-    } else {
-      print("Error fetching user: ${response.statusCode}");
+    } catch (e) {
+      print("Error bawah: $e");
       setState(() {
         isLoading = false;
       });
     }
-  } catch (e) {
-    print("Error fetching booking: $e");
-    setState(() {
-      isLoading = false;
-    });
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +316,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedDentist,
+                        history.isNotEmpty ? history[0].nama_dokter : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -352,7 +344,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedDate.toString(),
+                        history.isNotEmpty ? history[0].jadwal.toString() : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -380,7 +372,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedTimeText,
+                        history.isNotEmpty ? history[0].jam : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -410,7 +402,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedPromo,
+                        history.isNotEmpty ? history[0].promo : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
