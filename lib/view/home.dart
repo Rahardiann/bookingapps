@@ -467,7 +467,7 @@ class _HomeState extends State<Home> {
       if (email != null) {
         // Panggil API dengan menggunakan email sebagai parameter
         Response response =
-            await Dio().get('http://82.197.95.108:8003/user/$email');
+            await Dio().get('http://82.197.95.108:8003/user/1/$email');
 
         // Periksa apakah respons sukses dan memiliki data
         if (response.statusCode == 200 && response.data['success']) {
@@ -869,6 +869,7 @@ class _HomeState extends State<Home> {
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      
                     },
                     style: TextButton.styleFrom(
                       primary: Colors.black,
@@ -940,6 +941,12 @@ class _HomeState extends State<Home> {
                                         color: Colors.black,
                                       ),
                                       onPressed: () {
+                                        Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Detailpromo(),
+                                        ),
+                                      );
                                         // Tambahkan logika untuk tindakan saat tombol ditekan
                                       },
                                     ),
@@ -1318,12 +1325,7 @@ class _HomeState extends State<Home> {
                               onPressed: () {
                                 int promoId =
                                     0; // ID promo yang dipilih, bisa diganti dengan yang lain
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Detailpromo(),
-                                  ),
-                                );
+                                
                               },
                             ),
                           ],

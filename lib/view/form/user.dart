@@ -1,8 +1,11 @@
+import 'package:booking/view/profile.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/login.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/view/form/editprofile.dart';
+
 
 class Userprofile extends StatefulWidget {
   @override
@@ -10,6 +13,29 @@ class Userprofile extends StatefulWidget {
 }
 
 class _UserProfilesState extends State<Userprofile> {
+  final TextEditingController NameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
+  late UserData userData;
+
+  // Method to validate the form fields
+  bool _validateForm() {
+    if (NameController.text.isEmpty ||
+        _phoneNumberController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      // Show a snackbar or toast to inform the user to fill all fields
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill in all fields.'),
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
 
   void _onItemTapped(int index) {
@@ -36,6 +62,61 @@ class _UserProfilesState extends State<Userprofile> {
       default:
         // Tidak perlu navigasi untuk halaman Profile
         break;
+    }
+  }
+  Future<void> _registerUser() async {
+    // Mengambil data dari controller
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String nama = NameController.text;
+    String no_hp = _phoneNumberController.text;
+    
+
+
+Dio dio = Dio();
+
+    try {
+      // Melakukan request ke endpoint registrasi
+      Response response = await dio.post(
+        'http://82.197.95.108:8003/user/register', // Ganti dengan URL endpoint registrasi yang sesuai
+        data: {
+          'email': email,
+          'nama': nama,
+          'no_hp': no_hp,
+          'password': password,
+          
+        },
+      );
+
+      // Menggunakan data response jika diperlukan
+      print(response.data);
+
+      // Jika registrasi berhasil, arahkan ke halaman Welcomepage
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Profiles()),
+      );
+    } catch (error) {
+      // Menangani error jika terjadi
+      print(error.toString());
+      // Tampilkan pesan kesalahan kepada pengguna
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to register. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

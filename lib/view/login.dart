@@ -74,12 +74,12 @@ class _LoginFormState extends State<LoginForm> {
       if (response.statusCode == 200) {
         // Get user ID from response
         String email = response.data['data']['email'];
-        int id = response.data['data']['id'];
+        int id_user = response.data['data']['id'];
         SharedPreferences.setMockInitialValues({});
         // Save user ID to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('email', email);
-        await prefs.setInt('id', id);
+        await prefs.setInt('id_user', id_user);
 
         // If successful, navigate to home page
         Navigator.push(

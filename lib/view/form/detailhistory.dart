@@ -1,17 +1,91 @@
 import 'package:booking/view/login.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/view/form/editprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailHistory extends StatefulWidget {
   @override
   _ProfilesState createState() => _ProfilesState();
 }
+class VisitData {
+  final String nama_dokter;
+  final String jadwal;
+  final String jam;
+  final String promo;
+
+  VisitData(
+      {
+      required this.nama_dokter,
+      required this.jadwal,
+      required this.jam,
+      required this.promo});
+
+  factory VisitData.fromJson(Map<String, dynamic> json) {
+    return VisitData(
+      nama_dokter: json['dokter']['nama'],
+      jadwal: json['jadwal']['jadwal'],
+      jam: json['jadwal']['jam'],
+      promo: json['promo']['judul'],
+    );
+  }
+}
 
 class _ProfilesState extends State<DetailHistory> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
 
+String nama_dokter = "";
+  DateTime jadwal = DateTime.now();
+  String jam = "";
+  String promo = "";
+  List<VisitData> visit = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchVisit();
+  }
+Future<void> fetchVisit() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_user');
+
+      String apiUrl = "http://82.197.95.108:8003/booking/$id";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
+      print(response.data['data']);
+
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = response.data['data'];
+        // print(responseData);
+        List<VisitData> fetchedVisit =
+            responseData.map((json) => VisitData.fromJson(json)).toList();
+
+        setState(() {
+          visit = fetchedVisit;
+          isLoading = false;
+        });
+        // print("OK");
+      } else {
+        print("Error fetching dentists: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error bawah: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -156,7 +230,7 @@ class _ProfilesState extends State<DetailHistory> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Dr.s Sutiaju",
+                        visit.isNotEmpty ? visit[0].nama_dokter : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -184,7 +258,7 @@ class _ProfilesState extends State<DetailHistory> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "24/5/2025",
+                        visit.isNotEmpty ? visit[0].jadwal.toString() : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -212,7 +286,7 @@ class _ProfilesState extends State<DetailHistory> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "10:00",
+                        visit.isNotEmpty ? visit[0].jam : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -243,7 +317,7 @@ class _ProfilesState extends State<DetailHistory> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "NewPatient",
+                        visit.isNotEmpty ? visit[0].promo : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
