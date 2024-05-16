@@ -68,6 +68,7 @@ class _BookingState extends State<Booking> {
   void initState() {
     super.initState();
     fetchBooking();
+    fetchData();
   }
 
   Future<void> fetchBooking() async {
@@ -106,6 +107,42 @@ class _BookingState extends State<Booking> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  void fetchData() async {
+    try {
+      // Ambil email dari SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+
+      if (email != null) {
+        // Panggil API dengan menggunakan email sebagai parameter
+        Response response =
+            await Dio().get('http://82.197.95.108:8003/user/1/$email');
+
+        // Periksa apakah respons sukses dan memiliki data
+        if (response.statusCode == 200 && response.data['success']) {
+          // Mengakses objek pertama dari list data
+          Map<String, dynamic> userData = response.data['data'][0];
+          String usernameFromData =
+              userData['nama']; // Mengambil nama dari respons
+
+          // Set username
+          setState(() {
+            _username = usernameFromData;
+          });
+        } else {
+          // Handle respons yang tidak sesuai dengan harapan
+          print('Error: ${response.data['message']}');
+        }
+      } else {
+        // Handle jika email tidak tersedia di SharedPreferences
+        print('Email tidak tersedia di SharedPreferences');
+      }
+    } catch (e) {
+      // Handle kesalahan saat mengambil atau memproses data
+      print('Error: $e');
     }
   }
 
@@ -241,7 +278,7 @@ class _BookingState extends State<Booking> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'BOWO',
+                        _username,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
