@@ -22,6 +22,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
   }
 
+  Future<void> addNotification(String notification) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> updatedNotifications = [...notifications, notification];
+    await prefs.setStringList('notifications', updatedNotifications);
+    setState(() {
+      notifications = updatedNotifications;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

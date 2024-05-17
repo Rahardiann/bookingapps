@@ -42,7 +42,7 @@ class NotificationService {
     NotificationData notification = NotificationData(
       id: 0, // Sesuaikan dengan id notifikasi Anda
       title: 'Booking Successful',
-      body: 'Your appointment has been booked',
+      body: 'Your Booking has been accept by Admin',
     );
     await flutterLocalNotificationsPlugin.show(
       notification.id,

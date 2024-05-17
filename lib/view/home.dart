@@ -1,3 +1,4 @@
+import 'package:booking/view/notif/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/booking.dart';
@@ -9,6 +10,7 @@ import 'package:booking/view/form/detailpromo.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:booking/view/notif/notif.dart';
 import 'package:booking/view/notif/notificationScreen.dart';
+import 'package:booking/view/notif/reminder.dart';
 
 
 class Post {
@@ -144,6 +146,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
    final NotificationService _notificationService = NotificationService();
+  final NotificationRemindedr _notificationRemindedr = NotificationRemindedr();
 
   int _bottomNavCurrentIndex = 0;
   // String _selectedUser = "User";
@@ -172,7 +175,9 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _notificationService.initialize(context);
+    _notificationRemindedr.initNotification();
     _bottomNavCurrentIndex = 0;
+    
     fetchData();
     fetchDentists();
     fetchUser();
@@ -732,7 +737,12 @@ class _HomeState extends State<Home> {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        // Tidak perlu mengubah _selectedDate di sini
+                        debugPrint('Notification Scheduled for $_selectedDate');
+                        _notificationRemindedr.scheduleNotification(
+                          title: 'Scheduled Notification',
+                          body: '$_selectedDate',
+                          scheduledNotificationDateTime: _selectedDate,
+                        );
                       },
                       child: Text(
                         'Done',
@@ -742,6 +752,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ),
