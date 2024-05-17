@@ -735,15 +735,28 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
+                   onPressed: () {
+                        // Menutup layar saat tombol ditekan
                         Navigator.pop(context);
-                        debugPrint('Notification Scheduled for $_selectedDate');
+
+                        // Menjadwalkan notifikasi untuk muncul setelah 5 detik dari sekarang
+                        DateTime scheduledTime =
+                            DateTime.now().add(Duration(seconds: 10));
+
+                        // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
+                        String formattedDate =
+                            scheduledTime.toIso8601String().substring(0, 10);
+
+                        debugPrint('Notification Scheduled for $formattedDate');
+
                         _notificationRemindedr.scheduleNotification(
-                          title: 'Scheduled Notification',
-                          body: '$_selectedDate',
-                          scheduledNotificationDateTime: _selectedDate,
+                          title: 'Reminder',
+                          body:
+                              'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!', 
+                          scheduledNotificationDateTime: scheduledTime,
                         );
                       },
+
                       child: Text(
                         'Done',
                         style: TextStyle(
