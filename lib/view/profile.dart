@@ -3,18 +3,22 @@ import 'package:booking/view/form/detailhistory.dart';
 import 'package:booking/view/form/histori.dart';
 import 'package:booking/view/form/user.dart';
 import 'package:booking/view/login.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/view/form/editprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profiles extends StatefulWidget {
   @override
   _ProfilesState createState() => _ProfilesState();
 }
 
+
 class _ProfilesState extends State<Profiles> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
+String _username = "";
 
   void _onItemTapped(int index) {
     setState(() {
@@ -40,6 +44,46 @@ class _ProfilesState extends State<Profiles> {
       default:
         // Tidak perlu navigasi untuk halaman Profile
         break;
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+  void fetchData() async {
+    try {
+      // Ambil email dari SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+
+      if (email != null) {
+        // Panggil API dengan menggunakan email sebagai parameter
+        Response response =
+            await Dio().get('http://82.197.95.108:8003/user/1/$email');
+
+        // Periksa apakah respons sukses dan memiliki data
+        if (response.statusCode == 200 && response.data['success']) {
+          // Mengakses objek pertama dari list data
+          Map<String, dynamic> userData = response.data['data'][0];
+          String usernameFromData =
+              userData['nama']; // Mengambil nama dari respons
+
+          // Set username
+          setState(() {
+            _username = usernameFromData;
+          });
+        } else {
+          // Handle respons yang tidak sesuai dengan harapan
+          print('Error: ${response.data['message']}');
+        }
+      } else {
+        // Handle jika email tidak tersedia di SharedPreferences
+        print('Email tidak tersedia di SharedPreferences');
+      }
+    } catch (e) {
+      // Handle kesalahan saat mengambil atau memproses data
+      print('Error: $e');
     }
   }
 
@@ -116,7 +160,7 @@ class _ProfilesState extends State<Profiles> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'BOWO', // Ganti dengan nama pengguna yang sesuai
+                      _username, // Ganti dengan nama pengguna yang sesuai
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
