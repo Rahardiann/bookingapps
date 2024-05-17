@@ -7,6 +7,9 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:booking/view/form/detailpromo.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:booking/view/notif/notif.dart';
+import 'package:booking/view/notif/notificationScreen.dart';
+
 
 class Post {
   final int id;
@@ -140,6 +143,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+   final NotificationService _notificationService = NotificationService();
+
   int _bottomNavCurrentIndex = 0;
   // String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
@@ -166,6 +171,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    _notificationService.initialize(context);
     _bottomNavCurrentIndex = 0;
     fetchData();
     fetchDentists();
@@ -977,6 +983,8 @@ class _HomeState extends State<Home> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -991,10 +999,16 @@ class _HomeState extends State<Home> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.notifications_none_outlined,
-                      size: 30,
-                      color: Colors.black54,
+                    IconButton(
+                      icon: Icon(
+                        Icons.notifications_none_outlined,
+                        size: 30,
+                        color: Colors.black54,
+                      ),
+                      onPressed: () {
+                        // Navigasi ke NotificationScreen saat ikon notifikasi ditekan
+                        Navigator.pushNamed(context, '/notifikasi');
+                      },
                     ),
                     Icon(
                       Icons.account_circle,
@@ -1268,6 +1282,7 @@ class _HomeState extends State<Home> {
                         child: ElevatedButton(
                           onPressed: () {
                             _bookingUser();
+                            _notificationService.showNotification();
                             // Navigator.pushReplacement(
                             //   context,
                             //   MaterialPageRoute(
