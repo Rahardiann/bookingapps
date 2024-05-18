@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Barcode extends StatefulWidget {
   @override
@@ -9,6 +11,9 @@ class Barcode extends StatefulWidget {
 
 class _ProfilesState extends State<Barcode> {
   int _selectedIndex = 2;
+  String _username="";
+  String _address="";
+  String _no_hp="";
 
   void _onItemTapped(int index) {
     setState(() {
@@ -30,6 +35,54 @@ class _ProfilesState extends State<Barcode> {
         break;
       default:
         break;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+  void fetchData() async {
+    try {
+      // Ambil email dari SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+
+      if (email != null) {
+        // Panggil API dengan menggunakan email sebagai parameter
+        Response response =
+            await Dio().get('http://82.197.95.108:8003/user/1/$email');
+
+        // Periksa apakah respons sukses dan memiliki data
+        if (response.statusCode == 200 && response.data['success']) {
+          // Mengakses objek pertama dari list data
+          Map<String, dynamic> userData = response.data['data'][0];
+          String usernameFromData =
+              userData['nama']; // Mengambil nama dari respons
+          String alamatFromData =
+              userData['alamat']; // Mengambil nama dari respons
+          String no_hpFromData =
+              userData['no_hp']; // Mengambil nama dari respons
+             // Mengambil nama dari respons
+
+          // Set username
+          setState(() {
+            _username = usernameFromData;
+            _address = alamatFromData;
+            _no_hp = no_hpFromData;
+          });
+        } else {
+          // Handle respons yang tidak sesuai dengan harapan
+          print('Error: ${response.data['message']}');
+        }
+      } else {
+        // Handle jika email tidak tersedia di SharedPreferences
+        print('Email tidak tersedia di SharedPreferences');
+      }
+    } catch (e) {
+      // Handle kesalahan saat mengambil atau memproses data
+      print('Error: $e');
     }
   }
 
@@ -126,7 +179,7 @@ class _ProfilesState extends State<Barcode> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Jacob More',
+                                _username,
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -156,7 +209,7 @@ class _ProfilesState extends State<Barcode> {
                                   SizedBox(width: 5),
                                   Expanded(
                                     child: Text(
-                                      'Jl S Supriadi Gg 7 No 88228 Pangkalan Sudirman Blok 888 no 443',
+                                      _address,
                                       style: TextStyle(fontSize: 11),
                                     ),
                                   ),
@@ -176,7 +229,7 @@ class _ProfilesState extends State<Barcode> {
                                   ),
                                   SizedBox(width: 5),
                                   Text(
-                                    '+6281234567822',
+                                    _no_hp,
                                     style: TextStyle(fontSize: 12),
                                   ),
                                 ],

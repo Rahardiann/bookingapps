@@ -198,42 +198,42 @@ class _BookingState extends State<Booking> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: DropdownButton<String>(
-                    value: _selectedItem,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedItem = newValue!;
-                      });
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                    elevation: 4,
-                    icon: Icon(Icons.arrow_drop_down),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.transparent,
-                    ),
-                    isExpanded: true,
-                    dropdownColor: Colors.grey[200],
-                    items: _items.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     color: Colors.grey[200],
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   child: DropdownButton<String>(
+                //     value: _selectedItem,
+                //     onChanged: (String? newValue) {
+                //       setState(() {
+                //         _selectedItem = newValue!;
+                //       });
+                //     },
+                //     style: TextStyle(
+                //       fontSize: 16,
+                //       color: Colors.black,
+                //     ),
+                //     elevation: 4,
+                //     icon: Icon(Icons.arrow_drop_down),
+                //     underline: Container(
+                //       height: 2,
+                //       color: Colors.transparent,
+                //     ),
+                //     isExpanded: true,
+                //     dropdownColor: Colors.grey[200],
+                //     // items: _items.map<DropdownMenuItem<String>>((String value) {
+                //     //   return DropdownMenuItem<String>(
+                //     //     value: value,
+                //     //     child: Padding(
+                //     //       padding:
+                //     //           EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                //     //       child: Text(value),
+                //     //     ),
+                //     //   );
+                //     // }).toList(),
+                //   ),
+                // ),
                 Padding(
                   padding: EdgeInsets.only(left: 2, top: 30),
                   child: Text(
