@@ -684,8 +684,8 @@ class _HomeState extends State<Home> {
                 Dentist dentist = dentists[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    // backgroundImage: NetworkImage(
-                    //     "http://82.197.95.108:8003/uploads/image/${dentist.gambar}"),
+                    backgroundImage: NetworkImage(
+                        "http://82.197.95.108:8003/dokter/gambar/${dentist.gambar}"),
                   ),
                   title: Text(
                     dentist.nama,
@@ -1081,8 +1081,8 @@ class _HomeState extends State<Home> {
             items: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: Image.asset(
-                  'assets/slide1.jpeg',
+                child: Image.network(
+                  "http://82.197.95.108:8003/dokter/gambar/${dentists[0].gambar}",
                   fit: BoxFit.cover,
                   width: screenWidth,
                 ),
