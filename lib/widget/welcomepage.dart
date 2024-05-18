@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:booking/view/home.dart';
+import 'package:booking/view/login.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/homepage.dart';
 
@@ -78,7 +79,7 @@ class _WelcomepageState extends State<Welcomepage> {
                   onPressed: () {
                      Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Home()),
+                      MaterialPageRoute(builder: (context) => LoginPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

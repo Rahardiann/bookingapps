@@ -206,9 +206,6 @@ class _HomeState extends State<Home> {
       );
 
       print(response.data);
-      int id_booking = response.data['data']['id'];
-      SharedPreferences.setMockInitialValues({});
-      await prefs.setInt('id_booking', id_booking);
 
       Navigator.push(
         context,

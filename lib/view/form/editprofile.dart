@@ -2,18 +2,20 @@ import 'package:booking/view/form/user.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
-import 'package:booking/view/regristasi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class UserData {
+
+
+class VisitUser {
   final String nama;
   final String email;
   final String no_hp;
   final String password;
   final String gender;
   final String alamat;
-  final String no_ktp;
+  final int no_ktp;
 
-  UserData({
+  VisitUser({
     required this.nama,
     required this.email,
     required this.no_hp,
@@ -22,6 +24,18 @@ class UserData {
     required this.alamat,
     required this.no_ktp,
   });
+
+  factory VisitUser.fromJson(Map<String, dynamic> json) {
+    return VisitUser(
+      nama: json['nama'],
+      email: json['email'],
+      no_hp: json['no_hp'],
+      password: json['password'],
+      gender: json['gender'],
+      alamat: json['alamat'],
+      no_ktp: json['no_ktp'],
+    );
+  }
 }
 
 class EditProfile extends StatelessWidget {
@@ -38,19 +52,18 @@ class EditProfile extends StatelessWidget {
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(
-                primary: Colors.black, // Mengatur warna teks tombol
+                primary: Colors.black,
               ),
               child: Row(
                 children: [
-                  Icon(Icons.arrow_back_ios,
-                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
                   SizedBox(width: 5),
                   Text(
                     'Back',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black, // Mengatur warna teks
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -61,7 +74,7 @@ class EditProfile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Mengatur warna teks
+                color: Colors.black,
               ),
             ),
             SizedBox(width: 90),
@@ -88,20 +101,27 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _noKtpController = TextEditingController();
-
   bool _obscureText = true;
   String? _gender;
+  VisitUser? _visitUser;
+  bool isLoading = false;
 
-  Future<void> _registerUser() async {
+  @override
+  void initState() {
+    super.initState();
+    fetchVisit();
+  }
+
+  Future<void> _editUser() async {
     String email = _emailController.text;
     String password = _passwordController.text;
     String nama = _nameController.text;
     String no_hp = _phoneNumberController.text;
     String gender = _gender ?? '';
     String alamat = _addressController.text;
-    String no_ktp = _noKtpController.text;
+    int no_ktp = int.tryParse(_noKtpController.text) ?? 0;
 
-    UserData userData = UserData(
+    VisitUser _visitUser = VisitUser(
       email: email,
       password: password,
       nama: nama,
@@ -114,19 +134,22 @@ class _RegistrationFormState extends State<RegistrationForm> {
     Dio dio = Dio();
 
     try {
-      Response response = await dio.post(
-        'http://82.197.95.108:8003/user/register',
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_user');
+      Response response = await dio.put(
+        'http://82.197.95.108:8003/user/$id',
         data: {
-          'email': userData.email,
-          'nama': userData.nama,
-          'no_hp': userData.no_hp,
-          'password': userData.password,
-          'gender': userData.gender,
-          'alamat': userData.alamat,
-          'no_ktp': userData.no_ktp,
+          'email': _visitUser.email,
+          'nama': _visitUser.nama,
+          'no_hp': _visitUser.no_hp,
+          'password': _visitUser.password,
+          'gender': _visitUser.gender,
+          'alamat': _visitUser.alamat,
+          'no_ktp': _visitUser.no_ktp,
         },
       );
 
+      
       print(response.data);
 
       Navigator.push(
@@ -140,7 +163,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Error'),
-            content: Text('Failed to register. Please try again.'),
+            content: Text('Failed to update profile. Please try again.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -155,129 +178,183 @@ class _RegistrationFormState extends State<RegistrationForm> {
     }
   }
 
-  @override
+  Future<void> fetchVisit() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id_user');
+
+    String apiUrl = "http://82.197.95.108:8003/user/$id";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+    print(response.data['data']);
+
+    if (response.statusCode == 200) {
+      var responseData = response.data['data'];
+      if (responseData is List) {
+        if (responseData.isNotEmpty) {
+          responseData = responseData.first;
+        } else {
+          throw Exception("User data list is empty");
+        }
+      }
+
+      _visitUser = VisitUser.fromJson(responseData);
+
+      setState(() {
+        String password = '';
+        _emailController.text = _visitUser?.email ?? '';
+        _passwordController.text = password ;
+        _nameController.text = _visitUser?.nama ?? '';
+        _phoneNumberController.text = _visitUser?.no_hp ?? '';
+        _gender = _visitUser?.gender ?? '';
+        _addressController.text = _visitUser?.alamat ?? '';
+       _noKtpController.text = (_visitUser?.no_ktp ?? 0).toString();
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching user data: ${response.statusCode}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print("Error: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+
+
+  @override 
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 60.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 60.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 10),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                        obscureText: _obscureText,
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: 'Nama',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _phoneNumberController,
+                        decoration: InputDecoration(
+                          labelText: 'Nomor Hp',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Gender',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Radio(
+                            value: 'pria',
+                            groupValue: _gender,
+                            onChanged: (value) {
+                              setState(() {
+                                _gender = value.toString();
+                              });
+                            },
+                          ),
+                          Text('Male'),
+                          Radio(
+                            value: 'wanita',
+                            groupValue: _gender,
+                            onChanged: (value) {
+                              setState(() {
+                                _gender = value.toString();
+                              });
+                            },
+                          ),
+                          Text('Female'),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _addressController,
+                        decoration: InputDecoration(
+                          labelText: 'Alamat',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _noKtpController,
+                        decoration: InputDecoration(
+                          labelText: 'No KTP',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: _editUser,
+                          style: ElevatedButton.styleFrom(
+                            primary: Color(0xFF16A69A),
+                          ),
+                          child: Text(
+                            'Update',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
                   ),
                 ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                  obscureText: _obscureText,
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Nama',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _phoneNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Nomor Hp',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Gender',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Radio(
-                      value: 'pria',
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value.toString();
-                        });
-                      },
-                    ),
-                    Text('Male'),
-                    Radio(
-                      value: 'wanita',
-                      groupValue: _gender,
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value.toString();
-                        });
-                      },
-                    ),
-                    Text('Female'),
-                  ],
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _addressController,
-                  decoration: InputDecoration(
-                    labelText: 'Alamat',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _noKtpController,
-                  decoration: InputDecoration(
-                    labelText: 'No KTP',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 45,
-                  child: ElevatedButton(
-                    onPressed: _registerUser,
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A),
-                    ),
-                    child: Text(
-                      'Register',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+              ),
+            ],
+          );
   }
 
   @override

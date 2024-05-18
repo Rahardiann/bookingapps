@@ -78,9 +78,9 @@ class _BookingState extends State<Booking> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int? id = prefs.getInt('id_booking');
+      int? id = prefs.getInt('id_user');
 
-      String apiUrl = "http://82.197.95.108:8003/booking/id/$id";
+      String apiUrl = "http://82.197.95.108:8003/booking/last/$id";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
       print(response.data['data']);
