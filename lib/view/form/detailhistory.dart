@@ -158,44 +158,79 @@ class _DetailHistoryState extends State<DetailHistory> {
           return Container(
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
-              borderRadius: BorderRadius.circular(15),
             ),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            margin: EdgeInsets.only(bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
-                Text(
-                  'Doctor: ${visit[index].nama_dokter}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.person, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
+                      Text(
+                        ' ${visit[index].nama_dokter}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  'Schedule: ${visit[index].jadwal}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
+                      Text(
+                        ' ${visit[index].jadwal}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  'Time: ${visit[index].jam}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.access_time, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
+                      Text(
+                        '${visit[index].jam}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  'Promo: ${visit[index].promo}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.local_offer, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
+                      Text(
+                        '${visit[index].promo}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 10),
@@ -204,6 +239,8 @@ class _DetailHistoryState extends State<DetailHistory> {
           );
         },
       ),
+
+
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
