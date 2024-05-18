@@ -8,20 +8,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailHistory extends StatefulWidget {
   @override
-  _ProfilesState createState() => _ProfilesState();
+  _DetailHistoryState createState() => _DetailHistoryState();
 }
+
 class VisitData {
   final String nama_dokter;
   final String jadwal;
   final String jam;
   final String promo;
 
-  VisitData(
-      {
-      required this.nama_dokter,
-      required this.jadwal,
-      required this.jam,
-      required this.promo});
+  VisitData({
+    required this.nama_dokter,
+    required this.jadwal,
+    required this.jam,
+    required this.promo,
+  });
 
   factory VisitData.fromJson(Map<String, dynamic> json) {
     return VisitData(
@@ -33,13 +34,9 @@ class VisitData {
   }
 }
 
-class _ProfilesState extends State<DetailHistory> {
+class _DetailHistoryState extends State<DetailHistory> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
 
-String nama_dokter = "";
-  DateTime jadwal = DateTime.now();
-  String jam = "";
-  String promo = "";
   List<VisitData> visit = [];
   bool isLoading = false;
 
@@ -48,7 +45,8 @@ String nama_dokter = "";
     super.initState();
     fetchVisit();
   }
-Future<void> fetchVisit() async {
+
+  Future<void> fetchVisit() async {
     setState(() {
       isLoading = true;
     });
@@ -60,11 +58,9 @@ Future<void> fetchVisit() async {
       String apiUrl = "http://82.197.95.108:8003/booking/$id";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
-      print(response.data['data']);
 
       if (response.statusCode == 200) {
         List<dynamic> responseData = response.data['data'];
-        // print(responseData);
         List<VisitData> fetchedVisit =
             responseData.map((json) => VisitData.fromJson(json)).toList();
 
@@ -72,20 +68,20 @@ Future<void> fetchVisit() async {
           visit = fetchedVisit;
           isLoading = false;
         });
-        // print("OK");
       } else {
-        print("Error fetching dentists: ${response.statusCode}");
+        print("Error fetching data: ${response.statusCode}");
         setState(() {
           isLoading = false;
         });
       }
     } catch (e) {
-      print("Error bawah: $e");
+      print("Error: $e");
       setState(() {
         isLoading = false;
       });
     }
   }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -115,9 +111,6 @@ Future<void> fetchVisit() async {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil lebar layar
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -159,192 +152,95 @@ Future<void> fetchVisit() async {
           ],
         ),
       ),
-      body: ListView(
-        children: [
-          SizedBox(height: 20),
-          
-          Container(
+      body: ListView.builder(
+        itemCount: visit.length,
+        itemBuilder: (context, index) {
+          return Container(
             decoration: BoxDecoration(
               color: Color(0xFFD7F0EE),
-              borderRadius:
-                  BorderRadius.circular(15), // Tambahkan border radius di sini
             ),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 5.0,
-                      right: 8.0), // Margin di sebelah kiri ikon profil
-                  child: Icon(
-                    Icons.account_circle,
-                    color: Colors.grey,
-                    size: 50,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sugeng', // Ganti dengan nama pengguna yang sesuai
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'Medical record | 001', // Sub judul
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-
-
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFD7F0EE),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            margin: EdgeInsets.only(bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.person_3_rounded,
-                    color: Color(0xFF16A69A),
-                  ),
-                  label: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
                     children: [
-                      Text(
-                        visit.isNotEmpty ? visit[0].nama_dokter : '',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
+                      Icon(Icons.person, color: Color(0xFF16A69A)),
                       SizedBox(width: 8),
-                    ],
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.calendar_today,
-                    color: Color(0xFF16A69A),
-                  ),
-                  label: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
                       Text(
-                        visit.isNotEmpty ? visit[0].jadwal.toString() : '',
+                        ' ${visit[index].nama_dokter}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Color(0xFF16A69A)),
                       SizedBox(width: 8),
-                    ],
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.access_time_filled_sharp,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
-                  ),
-                  label: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
                       Text(
-                        visit.isNotEmpty ? visit[0].jam : '',
+                        ' ${visit[index].jadwal}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
                     ],
                   ),
-                  style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
                 ),
-                TextButton.icon(
-                  onPressed: () {
-                    // Action when date button is pressed
-                  },
-                  icon: Icon(
-                    Icons.production_quantity_limits_outlined,
-                    color: Color(0xFF16A69A), // Atur warna ikon di sini
-                  ),
-                  label: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
                     children: [
+                      Icon(Icons.access_time, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
                       Text(
-                        visit.isNotEmpty ? visit[0].promo : '',
+                        '${visit[index].jam}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(width: 8), // Berikan jarak antara ikon dan teks
                     ],
                   ),
-                  style: TextButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Atur latar belakang putih di sini
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.local_offer, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
+                      Text(
+                        '${visit[index].promo}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 10),
-                // Isi dari booking
               ],
             ),
-          ),
-
-          
-        ],
+          );
+        },
       ),
+
+
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

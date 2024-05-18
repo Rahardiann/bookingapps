@@ -1,3 +1,5 @@
+import 'package:booking/view/booking.dart';
+import 'package:booking/view/notif/notificationScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/widget/splash.dart';
 
@@ -6,14 +8,20 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Presensi',
       debugShowCheckedModeBanner: false,
-      home: Splashscreen(),
+      // Tambahkan properti routes
+      routes: {
+        '/': (context) => Splashscreen(), // Rute beranda
+        '/notifikasi': (context) => NotificationScreen(), // Rute notifikasi
+        '/booking': (context) => Booking(), 
+      },
+      initialRoute: '/', // Rute awal ketika aplikasi dimulai
     );
   }
 }

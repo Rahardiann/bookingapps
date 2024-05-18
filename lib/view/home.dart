@@ -1,3 +1,4 @@
+import 'package:booking/view/notif/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:booking/view/booking.dart';
@@ -7,6 +8,10 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:booking/view/form/detailpromo.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:booking/view/notif/notif.dart';
+import 'package:booking/view/notif/notificationScreen.dart';
+import 'package:booking/view/notif/reminder.dart';
+
 
 class Post {
   final int id;
@@ -140,6 +145,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+   final NotificationService _notificationService = NotificationService();
+  final NotificationRemindedr _notificationRemindedr = NotificationRemindedr();
+
   int _bottomNavCurrentIndex = 0;
   // String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
@@ -166,7 +174,10 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    _notificationService.initialize(context);
+    _notificationRemindedr.initNotification();
     _bottomNavCurrentIndex = 0;
+    
     fetchData();
     fetchDentists();
     fetchUser();
@@ -721,10 +732,28 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
+                   onPressed: () {
+                        // Menutup layar saat tombol ditekan
                         Navigator.pop(context);
-                        // Tidak perlu mengubah _selectedDate di sini
+
+                        // Menjadwalkan notifikasi untuk muncul setelah 5 detik dari sekarang
+                        DateTime scheduledTime =
+                            DateTime.now().add(Duration(seconds: 10));
+
+                        // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
+                        String formattedDate =
+                            scheduledTime.toIso8601String().substring(0, 10);
+
+                        debugPrint('Notification Scheduled for $formattedDate');
+
+                        _notificationRemindedr.scheduleNotification(
+                          title: 'Reminder',
+                          body:
+                              'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!', 
+                          scheduledNotificationDateTime: scheduledTime,
+                        );
                       },
+
                       child: Text(
                         'Done',
                         style: TextStyle(
@@ -733,6 +762,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ),
@@ -974,6 +1004,8 @@ class _HomeState extends State<Home> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -988,10 +1020,16 @@ class _HomeState extends State<Home> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.notifications_none_outlined,
-                      size: 30,
-                      color: Colors.black54,
+                    IconButton(
+                      icon: Icon(
+                        Icons.notifications_none_outlined,
+                        size: 30,
+                        color: Colors.black54,
+                      ),
+                      onPressed: () {
+                        // Navigasi ke NotificationScreen saat ikon notifikasi ditekan
+                        Navigator.pushNamed(context, '/notifikasi');
+                      },
                     ),
                     Icon(
                       Icons.account_circle,
@@ -1265,6 +1303,7 @@ class _HomeState extends State<Home> {
                         child: ElevatedButton(
                           onPressed: () {
                             _bookingUser();
+                            _notificationService.showNotification();
                             // Navigator.pushReplacement(
                             //   context,
                             //   MaterialPageRoute(
