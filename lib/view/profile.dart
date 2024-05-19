@@ -19,6 +19,7 @@ class Profiles extends StatefulWidget {
 class _ProfilesState extends State<Profiles> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
 String _username = "";
+int _rekam=0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -67,11 +68,14 @@ String _username = "";
           // Mengakses objek pertama dari list data
           Map<String, dynamic> userData = response.data['data'][0];
           String usernameFromData =
-              userData['nama']; // Mengambil nama dari respons
+              userData['nama']; 
+               int rekamFromData =
+              userData['no_rekam_medis'];// Mengambil nama dari respons
 
           // Set username
           setState(() {
             _username = usernameFromData;
+            _rekam = rekamFromData;
           });
         } else {
           // Handle respons yang tidak sesuai dengan harapan
@@ -168,7 +172,7 @@ String _username = "";
                       ),
                     ),
                     Text(
-                      'Medical record | 001', // Sub judul
+                      'Medical record | ${_rekam}', // Sub judul
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black87,

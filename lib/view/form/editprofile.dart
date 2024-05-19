@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class VisitUser {
   final String nama;
   final String email;
+  final int no_rekam_medis;
   final String no_hp;
   final String password;
   final String gender;
@@ -18,6 +19,7 @@ class VisitUser {
   VisitUser({
     required this.nama,
     required this.email,
+    required this.no_rekam_medis,
     required this.no_hp,
     required this.password,
     required this.gender,
@@ -29,6 +31,7 @@ class VisitUser {
     return VisitUser(
       nama: json['nama'],
       email: json['email'],
+      no_rekam_medis: json['no_rekam_medis'],
       no_hp: json['no_hp'],
       password: json['password'],
       gender: json['gender'],
@@ -97,6 +100,7 @@ class RegistrationForm extends StatefulWidget {
 class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rekamController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -115,6 +119,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   Future<void> _editUser() async {
     String email = _emailController.text;
     String password = _passwordController.text;
+    int no_rekam_medis = int.tryParse(_rekamController.text) ?? 0;
     String nama = _nameController.text;
     String no_hp = _phoneNumberController.text;
     String gender = _gender ?? '';
@@ -124,6 +129,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     VisitUser _visitUser = VisitUser(
       email: email,
       password: password,
+      no_rekam_medis: no_rekam_medis,
       nama: nama,
       no_hp: no_hp,
       gender: gender,
@@ -141,6 +147,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         data: {
           'email': _visitUser.email,
           'nama': _visitUser.nama,
+          'no_rekam_medis': _visitUser.no_rekam_medis,
           'no_hp': _visitUser.no_hp,
           'password': _visitUser.password,
           'gender': _visitUser.gender,
@@ -208,6 +215,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         String password = '';
         _emailController.text = _visitUser?.email ?? '';
         _passwordController.text = password ;
+        _rekamController.text = (_visitUser?.no_rekam_medis ?? 0).toString();
         _nameController.text = _visitUser?.nama ?? '';
         _phoneNumberController.text = _visitUser?.no_hp ?? '';
         _gender = _visitUser?.gender ?? '';
@@ -263,6 +271,18 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         ),
                         obscureText: _obscureText,
                       ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _rekamController,
+                        decoration: InputDecoration(
+                          labelText: 'No Rekam Medis',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                        
+                      ),
+                     
                       SizedBox(height: 20),
                       TextFormField(
                         controller: _nameController,
