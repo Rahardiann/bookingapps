@@ -149,7 +149,7 @@ class _HomeState extends State<Home> {
   final NotificationRemindedr _notificationRemindedr = NotificationRemindedr();
 
   int _bottomNavCurrentIndex = 0;
-  // String _selectedUser = "User";
+  String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
   DateTime _selectedDate = DateTime.now();
   String _selectedTimeText = 'Select Time';
@@ -504,141 +504,138 @@ class _HomeState extends State<Home> {
 
   // Method untuk menampilkan bottom sheet
 
-  // void _showUserSelectionSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return Scaffold(
-  //         appBar: AppBar(
-  //           automaticallyImplyLeading: false,
-  //           title: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pop(context);
-  //                 },
-  //                 style: TextButton.styleFrom(
-  //                   primary: Colors.black, // Mengatur warna teks tombol
-  //                 ),
-  //                 child: Row(
-  //                   children: [
-  //                     Icon(Icons.arrow_back_ios,
-  //                         size: 20, color: Colors.black), // Mengatur warna ikon
-  //                     SizedBox(width: 5),
-  //                     Text(
-  //                       'Back',
-  //                       style: TextStyle(
-  //                         fontSize: 14,
-  //                         fontWeight: FontWeight.bold,
-  //                         color: Colors.black, // Mengatur warna teks
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         body: Container(
-  //           padding: EdgeInsets.all(16.0),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: <Widget>[
-  //               ListTile(
-  //                 title: Row(
-  //                   children: [
-  //                     Padding(
-  //                       padding: EdgeInsets.only(
-  //                           left: 5.0,
-  //                           right: 20.0), // Margin di sebelah kiri ikon profil
-  //                       child: Icon(
-  //                         Icons.account_circle,
-  //                         color: Colors.grey,
-  //                         size: 50,
-  //                       ),
-  //                     ),
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           'Bowo', // Ganti dengan nama pengguna yang sesuai
-  //                           style: TextStyle(
-  //                             fontSize: 16,
-  //                             fontWeight: FontWeight.bold,
-  //                             color: Colors.black,
-  //                           ),
-  //                         ),
-  //                         Text(
-  //                           'Medical record | 001', // Sub judul
-  //                           style: TextStyle(
-  //                             fontSize: 12,
-  //                             color: Colors.black87,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 onTap: () {
-  //                   // Tambahkan aksi ketika dentist dipilih
-  //                   setState(() {
-  //                     _selectedUser = 'Bowo';
-  //                   });
-  //                   Navigator.pop(context);
-  //                 },
-  //               ),
-  //               ListTile(
-  //                 title: Row(
-  //                   children: [
-  //                     Padding(
-  //                       padding: EdgeInsets.only(
-  //                           left: 5.0,
-  //                           right: 20.0), // Margin di sebelah kiri ikon profil
-  //                       child: Icon(
-  //                         Icons.account_circle,
-  //                         color: Colors.grey,
-  //                         size: 50,
-  //                       ),
-  //                     ),
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           'Bowo', // Ganti dengan nama pengguna yang sesuai
-  //                           style: TextStyle(
-  //                             fontSize: 16,
-  //                             fontWeight: FontWeight.bold,
-  //                             color: Colors.black,
-  //                           ),
-  //                         ),
-  //                         Text(
-  //                           'Medical record | 002', // Sub judul
-  //                           style: TextStyle(
-  //                             fontSize: 12,
-  //                             color: Colors.black87,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 onTap: () {
-  //                   // Tambahkan aksi ketika dentist dipilih
-  //                   setState(() {
-  //                     _selectedUser = 'Muller';
-  //                   });
-  //                   Navigator.pop(context);
-  //                 },
-  //               ),
-  //               // Tambahkan daftar dentist lainnya sesuai kebutuhan
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+ void _showUserSelectionSheet(BuildContext context) {
+    int _enteredNumber = 0;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_back_ios,
+                                size: 20, color: Colors.black),
+                            SizedBox(width: 5),
+                            Text(
+                              'Back',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  title: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bowo',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            'Medical record | 001',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedUser = 'Bowo';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(height: 20), // Jarak antara ListTile dan TextField
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10.0, left: 10.0),
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'No Rekam Medic',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal:
+                                    15), // Atur padding konten Text Field
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _enteredNumber = int.tryParse(value) ?? 0;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        print(
+                            'Add button pressed with number: $_enteredNumber');
+                      },
+                      child: Text('Add', style: TextStyle(
+                          color: Color(0xFFB6366D),
+                        ),),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 80), // Jarak tambahan di bawah TextField
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+
 
   void _showDentistSelectionSheet(BuildContext context) {
     showModalBottomSheet(
@@ -1133,37 +1130,37 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // TextButton.icon(
-                //   onPressed: () {
-                //     _showUserSelectionSheet(
-                //         context); // Panggil method bottom sheet
-                //   },
-                //   icon: Icon(
-                //     Icons.person,
-                //     color: Color(0xFF16A69A),
-                //   ),
-                //   label: Row(
-                //     mainAxisAlignment: MainAxisAlignment.start,
-                //     children: [
-                //       Text(
-                //         _selectedUser, // Tampilkan nama dentist yang dipilih
-                //         style: TextStyle(
-                //           fontSize: 14,
-                //           fontWeight: FontWeight.bold,
-                //           color: Colors.black,
-                //         ),
-                //       ),
-                //       SizedBox(width: 8),
-                //     ],
-                //   ),
-                //   style: TextButton.styleFrom(
-                //     backgroundColor: Colors.white,
-                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(10),
-                //     ),
-                //   ),
-                // ),
+                TextButton.icon(
+                  onPressed: () {
+                    _showUserSelectionSheet(
+                        context); // Panggil method bottom sheet
+                  },
+                  icon: Icon(
+                    Icons.person,
+                    color: Color(0xFF16A69A),
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        _selectedUser, 
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
 
                 TextButton.icon(
                   onPressed: () {
