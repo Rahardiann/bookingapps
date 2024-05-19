@@ -14,6 +14,7 @@ class _ProfilesState extends State<Barcode> {
   String _username="";
   String _address="";
   String _no_hp="";
+  int _rekam=0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -63,7 +64,9 @@ class _ProfilesState extends State<Barcode> {
           String alamatFromData =
               userData['alamat']; // Mengambil nama dari respons
           String no_hpFromData =
-              userData['no_hp']; // Mengambil nama dari respons
+              userData['no_hp']; 
+               int rekamFromData =
+              userData['no_rekam_medis'];// Mengambil nama dari respons
              // Mengambil nama dari respons
 
           // Set username
@@ -71,6 +74,7 @@ class _ProfilesState extends State<Barcode> {
             _username = usernameFromData;
             _address = alamatFromData;
             _no_hp = no_hpFromData;
+            _rekam = rekamFromData;
           });
         } else {
           // Handle respons yang tidak sesuai dengan harapan
@@ -187,7 +191,7 @@ class _ProfilesState extends State<Barcode> {
                               ),
                               SizedBox(height: 5),
                               Text(
-                                'Medical record | 001',
+                                'Medical record | ${_rekam}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,

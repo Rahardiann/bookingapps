@@ -17,6 +17,7 @@ class Booking extends StatefulWidget {
 }
 
 class HistoryData {
+  final String nama_user;
   final String nama_dokter;
   final String jadwal;
   final String jam;
@@ -24,6 +25,7 @@ class HistoryData {
 
   HistoryData(
       {
+      required this.nama_user,
       required this.nama_dokter,
       required this.jadwal,
       required this.jam,
@@ -31,7 +33,8 @@ class HistoryData {
 
   factory HistoryData.fromJson(Map<String, dynamic> json) {
     return HistoryData(
-      nama_dokter: json['nama'],
+      nama_user: json['nama_user'],
+      nama_dokter: json['nama_dokter'],
       jadwal: json['jadwal'],
       jam: json['jam'],
       promo: json['judul'],
@@ -51,6 +54,7 @@ class _BookingState extends State<Booking> {
   String _selectedTimeText = 'Select Time';
   String _selectedPromo = "Promo";
   String _username = "";
+  int _rekam=0;
   int _selectedDentistId = 0;
   int _selectedPromoId = 0;
   int _selectedJadwalId = 0; //nama yang pertama harus sama dengan ini
@@ -127,10 +131,13 @@ class _BookingState extends State<Booking> {
           Map<String, dynamic> userData = response.data['data'][0];
           String usernameFromData =
               userData['nama']; // Mengambil nama dari respons
+          int rekamFromData =
+              userData['no_rekam_medis']; // Mengambil nama dari respons
 
           // Set username
           setState(() {
             _username = usernameFromData;
+            _rekam = rekamFromData;
           });
         } else {
           // Handle respons yang tidak sesuai dengan harapan
@@ -286,7 +293,7 @@ class _BookingState extends State<Booking> {
                         ),
                       ),
                       Text(
-                        'Medical record | 001',
+                        'Medical record | ${_rekam}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black87,
@@ -343,6 +350,35 @@ class _BookingState extends State<Booking> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
+                TextButton.icon(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.person_3_rounded,
+                    color: Color(0xFF16A69A),
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        history.isNotEmpty ? history[0].nama_user : '',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                    ],
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
                 TextButton.icon(
                   onPressed: () {},
                   icon: Icon(

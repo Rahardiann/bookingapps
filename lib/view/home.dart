@@ -48,13 +48,15 @@ class Dentist {
 class User {
   final int id;
   final String nama;
+  final int no_rekam_medis;
 
-  User({required this.id, required this.nama});
+  User({required this.id, required this.nama, required this.no_rekam_medis});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
       nama: json['nama'],
+      no_rekam_medis: json['no_rekam_medis'],
     );
   }
 }
@@ -149,6 +151,7 @@ class _HomeState extends State<Home> {
   final NotificationRemindedr _notificationRemindedr = NotificationRemindedr();
 
   int _bottomNavCurrentIndex = 0;
+  int _enteredNumber = 0;
   String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
   DateTime _selectedDate = DateTime.now();
@@ -164,7 +167,7 @@ class _HomeState extends State<Home> {
   bool isLoading = false;
   BookingData? bookingData;
 
-  int _selectedDentistId = 0;
+  int   _selectedDentistId = 0;
   int _selectedPromoId = 0;
   int _selectedJadwalId = 0;
   // Melakukan pengambilan data dan membuat objek BookingData
@@ -262,6 +265,7 @@ class _HomeState extends State<Home> {
       );
     }
   }
+  
 
   Future<void> fetchPosts() async {
     setState(() {
@@ -336,7 +340,9 @@ class _HomeState extends State<Home> {
     });
 
     try {
-      String apiUrl = "http://82.197.95.108:8003/user";
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_user');
+      String apiUrl = "http://82.197.95.108:8003/user/$id";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
 
@@ -505,134 +511,145 @@ class _HomeState extends State<Home> {
   // Method untuk menampilkan bottom sheet
 
  void _showUserSelectionSheet(BuildContext context) {
-    int _enteredNumber = 0;
+  int _enteredNumber = 0;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: TextButton.styleFrom(
-                          primary: Colors.black,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.arrow_back_ios,
-                                size: 20, color: Colors.black),
-                            SizedBox(width: 5),
-                            Text(
-                              'Back',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: TextButton.styleFrom(
+                        primary: Colors.black,
                       ),
-                    ],
-                  ),
-                ),
-                ListTile(
-                  title: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 5.0, right: 20.0),
-                        child: Icon(
-                          Icons.account_circle,
-                          color: Colors.grey,
-                          size: 50,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
+                          Icon(Icons.arrow_back_ios,
+                              size: 20, color: Colors.black),
+                          SizedBox(width: 5),
                           Text(
-                            'Bowo',
+                            'Back',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
                           ),
-                          Text(
-                            'Medical record | 001',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
                         ],
                       ),
-                    ],
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _selectedUser = 'Bowo';
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(height: 20), // Jarak antara ListTile dan TextField
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10.0, left: 10.0),
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: 'No Rekam Medic',
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal:
-                                    15), // Atur padding konten Text Field
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _enteredNumber = int.tryParse(value) ?? 0;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        print(
-                            'Add button pressed with number: $_enteredNumber');
-                      },
-                      child: Text('Add', style: TextStyle(
-                          color: Color(0xFFB6366D),
-                        ),),
                     ),
                   ],
                 ),
-                SizedBox(height: 80), // Jarak tambahan di bawah TextField
-              ],
-            ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: user.length,
+                itemBuilder: (BuildContext context, int index) {
+                  User currentUser = user[index];
+                  return ListTile(
+                    title: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                          child: Icon(
+                            Icons.account_circle,
+                            color: Colors.grey,
+                            size: 50,
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              currentUser.nama,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              'Medical record | ${currentUser.no_rekam_medis}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _selectedUser = currentUser.nama;
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+              SizedBox(height: 20), // Jarak antara ListTile dan TextField
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10.0, left: 10.0),
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'No Rekam Medic',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 15),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _enteredNumber = int.tryParse(value) ?? 0;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedUser = _enteredNumber.toString();
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Add',
+                      style: TextStyle(
+                        color: Color(0xFFB6366D),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 80), // Jarak tambahan di bawah TextField
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
 
 
@@ -873,133 +890,127 @@ class _HomeState extends State<Home> {
   }
 
   void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Promo',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Promo',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      
-                    },
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.arrow_back_ios,
-                            size: 20, color: Colors.black),
-                        SizedBox(width: 5),
-                        Text(
-                          'Back',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text(
+                        'Back',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: promos.length,
-                itemBuilder: (context, index) {
-                  Promo promo = promos[index];
-                  return TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedPromo = promo.judul;
-                        _selectedPromoId = promo.id;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFD7F0EE),
-                        borderRadius: BorderRadius.circular(15),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      promo.judul,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: promos.length,
+              itemBuilder: (context, index) {
+                Promo promo = promos[index];
+                return TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedPromo = promo.judul;
+                      _selectedPromoId = promo.id;
+                    });
+                    
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD7F0EE),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    promo.judul,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                     ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 15,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => Detailpromo(),
                                         ),
                                       );
-                                        // Tambahkan logika untuk tindakan saat tombol ditekan
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                // Tambahkan jarak vertikal antara judul dan deskripsi
-                                Text(
-                                  promo
-                                      .subtitle, // Menggunakan properti subtitle dari objek Promo
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black54,
+                                    },
                                   ),
+                                ],
+                              ),
+                              Text(
+                                promo.subtitle,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black54,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        );
-      },
-    );
-  }
+          ),
+        ],
+      );
+    },
+  );
+}
 
 
 
@@ -1078,8 +1089,8 @@ class _HomeState extends State<Home> {
             items: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: Image.network(
-                  "http://82.197.95.108:8003/dokter/gambar/${dentists[0].gambar}",
+                child: Image.asset(
+                  'assets/slide2.jpeg',
                   fit: BoxFit.cover,
                   width: screenWidth,
                 ),

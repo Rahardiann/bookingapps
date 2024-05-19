@@ -34,8 +34,10 @@ class Promo {
 }
 
 class Detailpromo extends StatefulWidget {
+
   @override
   _DetailpromoState createState() => _DetailpromoState();
+  
 }
 
 class _DetailpromoState extends State<Detailpromo> {
@@ -147,7 +149,7 @@ class _DetailpromoState extends State<Detailpromo> {
                           child: AspectRatio(
                             aspectRatio: 16 / 9, // Adjust the aspect ratio as needed
                             child: Image.asset(
-                            "http://82.197.95.108:8003/promo/gambar/${promo[0].gambar}"
+                            'assets/slide3.jpeg'
                            ,
                           width: screenWidth * 0.4,
                           fit: BoxFit.cover,
