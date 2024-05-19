@@ -147,7 +147,8 @@ class _DetailpromoState extends State<Detailpromo> {
                           child: AspectRatio(
                             aspectRatio: 16 / 9, // Adjust the aspect ratio as needed
                             child: Image.asset(
-                          'assets/slide2.jpeg',
+                            "http://82.197.95.108:8003/promo/gambar/${promo[0].gambar}"
+                           ,
                           width: screenWidth * 0.4,
                           fit: BoxFit.cover,
                         ),
