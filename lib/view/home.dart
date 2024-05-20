@@ -61,6 +61,18 @@ class User {
   }
 }
 
+class NoRM{
+  final int no_rekam_medis;
+
+  NoRM({required this.no_rekam_medis});
+
+  factory NoRM.fromJson(Map<String, dynamic> json) {
+    return NoRM(
+      no_rekam_medis: json['no_rekam_medis'],
+    );
+  }
+}
+
 class Jam {
   final int id;
   final DateTime jadwal;
@@ -79,15 +91,15 @@ class Jam {
 
 class Jadwal {
   final int id;
-  final DateTime jadwal;
+  // final DateTime jadwal;
   final String jam;
 
-  Jadwal({required this.id, required this.jadwal, required this.jam});
+  Jadwal({required this.id, required this.jam});
 
   factory Jadwal.fromJson(Map<String, dynamic> json) {
     return Jadwal(
       id: json['id'],
-      jadwal: DateTime.parse(json['jadwal']),
+      // jadwal: DateTime.parse(json['jadwal']),
       jam: json['jam'],
     );
   }
@@ -166,8 +178,9 @@ class _HomeState extends State<Home> {
   List<Post> posts = [];
   bool isLoading = false;
   BookingData? bookingData;
+  NoRM? noRM;
 
-  int   _selectedDentistId = 0;
+  int _selectedDentistId = 0;
   int _selectedPromoId = 0;
   int _selectedJadwalId = 0;
   // Melakukan pengambilan data dan membuat objek BookingData
@@ -184,8 +197,7 @@ class _HomeState extends State<Home> {
     fetchData();
     fetchDentists();
     fetchUser();
-    fetchJadwal();
-    fetchJam();
+    // fetchJadwal();
     fetchPromo();
   }
 
@@ -194,13 +206,16 @@ class _HomeState extends State<Home> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int? id = prefs.getInt('id');
+      int? id = prefs.getInt('id_user');
       // Melakukan request ke endpoint booking
       Response response = await dio.post(
         'http://82.197.95.108:8003/booking', // Ganti dengan URL endpoint booking yang sesuai
         data: {
           'user': {
             'id': id,
+          },
+          'no_rm': {
+            'no_rekam_medis': noRM?.no_rekam_medis,
           },
           'dentist': {
             'id': _selectedDentistId,
@@ -313,15 +328,45 @@ class _HomeState extends State<Home> {
       if (response.statusCode == 200) {
         print(response.data['data']);
         List<dynamic> responseData = response.data['data'];
-        List<Dentist> fetchedDentists =
+        List<Dentist> fetchedRM =
             responseData.map((json) => Dentist.fromJson(json)).toList();
 
         setState(() {
-          dentists = fetchedDentists;
+          dentists = fetchedRM;
           isLoading = false;
         });
       } else {
         print("Error fetching dentists: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching dentists: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchRM(String namaUser) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      String apiUrl = "http://82.197.95.108:8003/user/$namaUser";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
+
+      if (response.statusCode == 200) {
+        print(response.data['data']);
+        setState(() {
+          noRM = NoRM.fromJson(response.data['data']);
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching RM: ${response.statusCode}");
         setState(() {
           isLoading = false;
         });
@@ -342,7 +387,7 @@ class _HomeState extends State<Home> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int? id = prefs.getInt('id_user');
-      String apiUrl = "http://82.197.95.108:8003/user/$id";
+      String apiUrl = "http://82.197.95.108:8003/user/2/$id";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
 
@@ -370,13 +415,13 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> fetchJadwal() async {
+  Future<void> fetchJadwal(int dentistID) async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      String apiUrl = "http://82.197.95.108:8003/jadwal";
+      String apiUrl = "http://82.197.95.108:8003/jadwal/$dentistID";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
 
@@ -404,39 +449,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> fetchJam() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      String apiUrl = "http://82.197.95.108:8003/jadwal";
-      Dio dio = Dio();
-      Response response = await dio.get(apiUrl);
-
-      if (response.statusCode == 200) {
-        print(response.data['data']);
-        List<dynamic> responseData = response.data['data'];
-        List<Jam> fetchedJam =
-            responseData.map((json) => Jam.fromJson(json)).toList();
-
-        setState(() {
-          jam = fetchedJam; // Menyimpan data jam yang diambil
-          isLoading = false;
-        });
-      } else {
-        print("Error fetching jam: ${response.statusCode}");
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print("Error fetching jam: $e");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  
 
   Future<void> fetchPromo() async {
     setState(() {
@@ -594,11 +607,12 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         _selectedUser = currentUser.nama;
                       });
                       Navigator.pop(context);
+                       await fetchRM(_selectedUser);
                     },
                   );
                 },
@@ -619,7 +633,7 @@ class _HomeState extends State<Home> {
                         ),
                         onChanged: (value) {
                           setState(() {
-                            _enteredNumber = int.tryParse(value) ?? 0;
+                            noRM = NoRM(no_rekam_medis: int.parse(value));
                           });
                         },
                       ),
@@ -709,12 +723,13 @@ class _HomeState extends State<Home> {
                       color: Colors.black,
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     setState(() {
                       _selectedDentist = dentist.nama;
                       _selectedDentistId = dentist.id;
                     });
                     Navigator.pop(context);
+                    await fetchJadwal(_selectedDentistId);
                   },
                 );
               },
@@ -890,127 +905,133 @@ class _HomeState extends State<Home> {
   }
 
   void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Promo',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Colors.black,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
-                      SizedBox(width: 5),
-                      Text(
-                        'Back',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: promos.length,
-              itemBuilder: (context, index) {
-                Promo promo = promos[index];
-                return TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedPromo = promo.judul;
-                      _selectedPromoId = promo.id;
-                    });
-                    
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD7F0EE),
-                      borderRadius: BorderRadius.circular(15),
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Promo',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    margin: EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      
+                    },
+                    style: TextButton.styleFrom(
+                      primary: Colors.black,
+                    ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    promo.judul,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 15,
-                                      color: Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Detailpromo(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                promo.subtitle,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
+                        Icon(Icons.arrow_back_ios,
+                            size: 20, color: Colors.black),
+                        SizedBox(width: 5),
+                        Text(
+                          'Back',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                       ],
                     ),
                   ),
-                );
-              },
+                ],
+              ),
             ),
-          ),
-        ],
-      );
-    },
-  );
-}
+            Expanded(
+              child: ListView.builder(
+                itemCount: promos.length,
+                itemBuilder: (context, index) {
+                  Promo promo = promos[index];
+                  return TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedPromo = promo.judul;
+                        _selectedPromoId = promo.id;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFD7F0EE),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      promo.judul,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 15,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Detailpromo(),
+                                        ),
+                                      );
+                                        // Tambahkan logika untuk tindakan saat tombol ditekan
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                // Tambahkan jarak vertikal antara judul dan deskripsi
+                                Text(
+                                  promo
+                                      .subtitle, // Menggunakan properti subtitle dari objek Promo
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 
 
