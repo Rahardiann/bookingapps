@@ -1,19 +1,23 @@
+import 'package:booking/view/form/addpassword.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/regristasipage.dart';
-import 'package:flutter/services.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/widget/welcomepage.dart';
- 
+import 'package:booking/view/form/addpassword.dart';
+
 class UserData {
   final String nama;
   final String email;
   final String no_hp;
   final String password;
 
-  UserData({required this.nama, required this.email, required this.no_hp, required this.password});
+  UserData(
+      {required this.nama,
+      required this.email,
+      required this.no_hp,
+      required this.password});
 }
-
 
 class Register extends StatelessWidget {
   @override
@@ -94,21 +98,18 @@ class _RegisterFormState extends State<RegisterForm> {
     String password = _passwordController.text;
     String nama = NameController.text;
     String no_hp = _phoneNumberController.text;
-    
 
-
-Dio dio = Dio();
+    Dio dio = Dio();
 
     try {
       // Melakukan request ke endpoint registrasi
       Response response = await dio.post(
-        'http://82.197.95.108:8003/user/register', // Ganti dengan URL endpoint registrasi yang sesuai
+        'http://82.197.95.108:8003/user/registerlogin', // Ganti dengan URL endpoint registrasi yang sesuai
         data: {
           'email': email,
           'nama': nama,
           'no_hp': no_hp,
           'password': password,
-          
         },
       );
 
@@ -116,32 +117,104 @@ Dio dio = Dio();
       print(response.data);
 
       // Jika registrasi berhasil, arahkan ke halaman Welcomepage
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Welcomepage()),
-      );
+      if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Regst(userData: userData)),
+        );
+      }
     } catch (error) {
       // Menangani error jika terjadi
-      print(error.toString());
-      // Tampilkan pesan kesalahan kepada pengguna
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to register. Please try again.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      if (error is DioError) {
+        if (error.response?.statusCode == 400) {
+          // Status code 400 menunjukkan data sudah ada
+          _showUserExistsDialog();
+        } else {
+          print(error.toString());
+          _showErrorDialog();
+        }
+      } else {
+        print(error.toString());
+        _showErrorDialog();
+      }
     }
+  }
+
+  void _showUserExistsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('User Already Exists'),
+          content: Text(
+              'This user already exists. Would you like to create a new password?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Navigate to password creation screen with the email
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        AddPasswordPage(email: _emailController.text),
+                  ),
+                );
+              },
+              child: Text('Create Password'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  void _showBadRequestDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Bad Request'),
+          content: Text(
+              'The request was not valid. Please check your input and try again.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to register. Please try again.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -149,13 +222,15 @@ Dio dio = Dio();
     super.initState();
     userData = UserData(nama: '', email: '', no_hp: '', password: '');
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(bottom: 60.0), // Adjust bottom padding for watermark
+            padding: EdgeInsets.only(
+                bottom: 60.0), // Adjust bottom padding for watermark
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -177,7 +252,8 @@ Dio dio = Dio();
                 SizedBox(height: 50),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _phoneNumberController, // Menggunakan controller _phoneNumberController
+                  controller:
+                      _phoneNumberController, // Menggunakan controller _phoneNumberController
                   decoration: InputDecoration(
                     labelText: 'Phone number',
                     border: InputBorder.none,
@@ -187,7 +263,8 @@ Dio dio = Dio();
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: NameController, // Menggunakan controller _phoneNumberController
+                  controller:
+                      NameController, // Menggunakan controller _phoneNumberController
                   decoration: InputDecoration(
                     labelText: 'Name',
                     border: InputBorder.none,
@@ -197,7 +274,8 @@ Dio dio = Dio();
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _emailController, // Menggunakan controller _emailController
+                  controller:
+                      _emailController, // Menggunakan controller _emailController
                   decoration: InputDecoration(
                     labelText: 'Email',
                     border: InputBorder.none,
@@ -214,7 +292,9 @@ Dio dio = Dio();
                     filled: true,
                     fillColor: Colors.grey[200],
                     suffixIcon: IconButton(
-                      icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
+                      icon: Icon(_obscureText
+                          ? Icons.visibility_off
+                          : Icons.visibility),
                       onPressed: () {
                         setState(() {
                           _obscureText = !_obscureText;
@@ -224,38 +304,34 @@ Dio dio = Dio();
                   ),
                   obscureText: _obscureText,
                 ),
-                
                 SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   height: 45, // Tinggi button
                   child: ElevatedButton(
-                  onPressed: () {
-                    if (_validateForm()) {
-                      // Save user data
-                      userData = UserData(
-                        nama: NameController.text,
-                        email: _emailController.text,
-                        no_hp: _phoneNumberController.text,
-                        password: _passwordController.text,
-                      );
+                    onPressed: () {
+                      if (_validateForm()) {
+                        // Save user data
+                        userData = UserData(
+                          nama: NameController.text,
+                          email: _emailController.text,
+                          no_hp: _phoneNumberController.text,
+                          password: _passwordController.text,
+                        );
 
-                      // Navigate to next page with user data
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Regst(userData: userData)),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
+                        // Check if user already exists in the database
+                        _registerUser();
+
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
                       primary: Color(0xFF16A69A), // Background color
                     ),
                     child: Text(
-                      'next',
+                      'Next',
                       style: TextStyle(color: Colors.white), // Text color
                     ),
-                  // Button styling
-                ),
+                  ),
                 ),
                 SizedBox(height: 10),
               ],

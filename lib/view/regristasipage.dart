@@ -157,118 +157,134 @@ class _RegstFormState extends State<RegstForm> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: 60.0), // Adjust bottom padding for watermark
-            child: Column(
+  children: [
+    SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.only(
+            bottom: 60.0), // Adjust bottom padding for watermark
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Hello! Welcome 👋',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Before seeing the notification you get, log in first',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 50),
+            TextFormField(
+              controller: _no_ktpController,
+              decoration: InputDecoration(
+                labelText: 'ID Card Number',
+                border: InputBorder.none,
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 1.0,
+                    horizontal: 15.0), // Atur padding horizontal untuk mengatur lebar
+              ),
+            ),
+            SizedBox(height: 10),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              children: [
                 Text(
-                  'Hello! Welcome 👋',
+                  'Gender',
                   style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'Before seeing the notification you get, log in first',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                RadioListTile<String>(
+                  title: const Text('Male'),
+                  value: 'Male',
+                  groupValue: _genderController.text,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _genderController.text = value!;
+                    });
+                  },
                 ),
-                SizedBox(height: 50),
-                TextFormField(
-                  controller: _no_ktpController,
-                  decoration: InputDecoration(
-                    labelText: 'ID Card Number',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 1.0,
-                        horizontal:
-                            15.0), // Atur padding horizontal untuk mengatur lebar
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _genderController,
-                  decoration: InputDecoration(
-                    labelText: 'Gender',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 1.0,
-                        horizontal:
-                            15.0),
-                  ),
-                ),
-                SizedBox(height: 10),
-                
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _addressController,
-                  decoration: InputDecoration(
-                    labelText: 'Address',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Welcomepage()),
-                      );
-                    },
-                    child: Text("Skip"),
-                  ),
-                ),
-                SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 45, // Tinggi button
-                  child: ElevatedButton(
-                    onPressed: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A), // Background color
-                    ),
-                    child: Text(
-                      'Sign Up',
-                      style: TextStyle(color: Colors.white), // Text color
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Don't have an account yet?"),
-                    TextButton(
-                      onPressed: () {
-                        //   Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => Register()),
-                        // );
-                      },
-                      child: Text('Login'),
-                    ),
-                  ],
+                RadioListTile<String>(
+                  title: const Text('Female'),
+                  value: 'Female',
+                  groupValue: _genderController.text,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _genderController.text = value!;
+                    });
+                  },
                 ),
               ],
             ),
-          ),
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _addressController,
+              decoration: InputDecoration(
+                labelText: 'Address',
+                border: InputBorder.none,
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Welcomepage()),
+                  );
+                },
+                child: Text("Skip"),
+              ),
+            ),
+            SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              height: 45, // Tinggi button
+              child: ElevatedButton(
+                onPressed: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF16A69A), // Background color
+                ),
+                child: Text(
+                  'Sign Up',
+                  style: TextStyle(color: Colors.white), // Text color
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Don't have an account yet?"),
+                TextButton(
+                  onPressed: () {
+                    //   Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => Register()),
+                    // );
+                  },
+                  child: Text('Login'),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
-    );
+      ),
+    ),
+  ],
+);
+
   }
 
   @override
