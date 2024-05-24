@@ -5,6 +5,7 @@ import 'package:booking/view/regristasipage.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/widget/welcomepage.dart';
 import 'package:booking/view/form/addpassword.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData {
   final String nama;
@@ -118,6 +119,12 @@ class _RegisterFormState extends State<RegisterForm> {
 
       // Jika registrasi berhasil, arahkan ke halaman Welcomepage
       if (response.statusCode == 200) {
+
+        int id_exist = response.data['data']['id'];
+        SharedPreferences.setMockInitialValues({});
+        // Save user ID to SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('id_exist', id_exist);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Regst(userData: userData)),

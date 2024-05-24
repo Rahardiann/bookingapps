@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:booking/widget/welcomepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddPasswordPage extends StatefulWidget {
   final String email;
@@ -30,11 +31,12 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
 
     try {
       // Make a request to the endpoint to add password
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_exist');
       Dio dio = Dio();
       Response response = await dio.put(
-        'http://82.197.95.108:8003/user/exist/.2id', // Replace with your endpoint
+        'http://82.197.95.108:8003/user/exist/$id', // Replace with your endpoint
         data: {
-          'email': widget.email,
           'password': _passwordController.text,
         },
       );
@@ -67,7 +69,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           );
         },
       );
-    }
+    } 
   }
 
   @override

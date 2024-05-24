@@ -109,7 +109,7 @@ class _RegstFormState extends State<RegstForm> {
     try {
       // Melakukan request ke endpoint registrasi
       Response response = await dio.post(
-        'http://82.197.95.108:8003/user/register', // Ganti dengan URL endpoint registrasi yang sesuai
+        'http://82.197.95.108:8003/user/registeruser', // Ganti dengan URL endpoint registrasi yang sesuai
         data: {
           'email': userData.email,
           'gender': gender,
@@ -205,7 +205,7 @@ class _RegstFormState extends State<RegstForm> {
                 ),
                 RadioListTile<String>(
                   title: const Text('Male'),
-                  value: 'Male',
+                  value: 'pria',
                   groupValue: _genderController.text,
                   onChanged: (String? value) {
                     setState(() {
@@ -215,7 +215,7 @@ class _RegstFormState extends State<RegstForm> {
                 ),
                 RadioListTile<String>(
                   title: const Text('Female'),
-                  value: 'Female',
+                  value: 'wanita',
                   groupValue: _genderController.text,
                   onChanged: (String? value) {
                     setState(() {

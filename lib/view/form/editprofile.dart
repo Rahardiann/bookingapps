@@ -9,37 +9,38 @@ import 'package:shared_preferences/shared_preferences.dart';
 class VisitUser {
   final String nama;
   final String email;
-  final int no_rekam_medis;
-  final String no_hp;
-  final String password;
-  final String gender;
-  final String alamat;
-  final int no_ktp;
+  final int? no_rekam_medis;
+  final String? no_hp;
+  final String? password;
+  final String? gender;
+  final String? alamat;
+  final int? no_ktp;
 
   VisitUser({
     required this.nama,
     required this.email,
-    required this.no_rekam_medis,
-    required this.no_hp,
-    required this.password,
-    required this.gender,
-    required this.alamat,
-    required this.no_ktp,
+    this.no_rekam_medis,
+    this.no_hp,
+    this.password,
+    this.gender,
+    this.alamat,
+    this.no_ktp,
   });
 
   factory VisitUser.fromJson(Map<String, dynamic> json) {
     return VisitUser(
-      nama: json['nama'],
-      email: json['email'],
+      nama: json['nama'] ?? '',
+      email: json['email'] ?? '',
       no_rekam_medis: json['no_rekam_medis'],
-      no_hp: json['no_hp'],
-      password: json['password'],
-      gender: json['gender'],
-      alamat: json['alamat'],
+      no_hp: json['no_hp'] ?? '',
+      password: json['password'] ?? '',
+      gender: json['gender'] ?? '',
+      alamat: json['alamat'] ?? '',
       no_ktp: json['no_ktp'],
     );
   }
 }
+
 
 class EditProfile extends StatelessWidget {
   @override
@@ -194,7 +195,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? id = prefs.getInt('id_user');
 
-    String apiUrl = "http://82.197.95.108:8003/user/$id";
+    String apiUrl = "http://82.197.95.108:8003/user/2/$id";
     Dio dio = Dio();
     Response response = await dio.get(apiUrl);
     print(response.data['data']);
