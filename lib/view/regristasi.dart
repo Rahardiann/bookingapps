@@ -89,7 +89,7 @@ bool _validateForm() {
       );
       return false;
     } else if (_emailController.text.isEmpty ||
-        !_emailController.text.contains('@gmail.com')) {
+        !_emailController.text.contains('@')) {
       // Show a snackbar or toast to inform the user to enter a valid email
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -97,9 +97,18 @@ bool _validateForm() {
         ),
       );
       return false;
+    } else if (_passwordController.text.length < 8) {
+      // Show a snackbar or toast to inform the user about the minimum password length
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password must be at least 8 characters.'),
+        ),
+      );
+      return false;
     }
     return true;
   }
+
 
   Future<void> _registerUser() async {
     // Mengambil data dari controller
@@ -325,7 +334,7 @@ bool _validateForm() {
                 ),
 
                 SizedBox(height: 10),
-                TextFormField(
+               TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -342,36 +351,49 @@ bool _validateForm() {
                         });
                       },
                     ),
+                    // Set errorText jika panjang kata sandi kurang dari 8 karakter
+                    errorText: _passwordController.text.isNotEmpty &&
+                            _passwordController.text.length < 8
+                        ? 'Password must be at least 8 characters.'
+                        : null,
                   ),
                   obscureText: _obscureText,
                 ),
+
                 SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   height: 45, // Tinggi button
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_validateForm()) {
-                        // Save user data
-                        userData = UserData(
-                          nama: NameController.text,
-                          email: _emailController.text,
-                          no_hp: _phoneNumberController.text,
-                          password: _passwordController.text,
-                        );
+                      onPressed: () {
+                        // Validasi formulir
+                        bool isValid = _validateForm();
 
-                        // Check if user already exists in the database
-                        _registerUser();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A), // Background color
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white), // Text color
-                    ),
-                  ),
+                        // Perbarui tampilan pesan kesalahan pada TextField
+                        setState(() {});
+
+                        if (isValid) {
+                          // Simpan data pengguna
+                          userData = UserData(
+                            nama: NameController.text,
+                            email: _emailController.text,
+                            no_hp: _phoneNumberController.text,
+                            password: _passwordController.text,
+                          );
+
+                          // Periksa apakah pengguna sudah ada di database
+                          _registerUser();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF16A69A), // Warna latar belakang
+                      ),
+                      child: Text(
+                        'Next',
+                        style: TextStyle(color: Colors.white), // Warna teks
+                      ),
+                    )
+
                 ),
                 SizedBox(height: 10),
               ],
