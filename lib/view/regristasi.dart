@@ -77,15 +77,23 @@ class _RegisterFormState extends State<RegisterForm> {
   late UserData userData;
 
   // Method to validate the form fields
-  bool _validateForm() {
+bool _validateForm() {
     if (NameController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
-        _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
       // Show a snackbar or toast to inform the user to fill all fields
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please fill in all fields.'),
+        ),
+      );
+      return false;
+    } else if (_emailController.text.isEmpty ||
+        !_emailController.text.contains('@gmail.com')) {
+      // Show a snackbar or toast to inform the user to enter a valid email
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter a valid email address.'),
         ),
       );
       return false;
@@ -237,7 +245,8 @@ class _RegisterFormState extends State<RegisterForm> {
         SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
-                bottom: 60.0), // Adjust bottom padding for watermark
+              bottom: 60.0, // Adjust bottom padding for watermark
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -257,21 +266,41 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                 ),
                 SizedBox(height: 50),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller:
-                      _phoneNumberController, // Menggunakan controller _phoneNumberController
-                  decoration: InputDecoration(
-                    labelText: 'Phone number',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        '+62',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(
+                        width:
+                            8.0), // Memberikan sedikit ruang antara +62 dan TextFormField
+                    Expanded(
+                      child: TextFormField(
+                        controller: _phoneNumberController,
+                        decoration: InputDecoration(
+                          labelText: 'Phone number',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                        keyboardType: TextInputType.phone,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10),
                 TextFormField(
                   controller:
-                      NameController, // Menggunakan controller _phoneNumberController
+                      NameController, // Menggunakan controller NameController
                   decoration: InputDecoration(
                     labelText: 'Name',
                     border: InputBorder.none,
@@ -281,15 +310,20 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller:
-                      _emailController, // Menggunakan controller _emailController
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    errorText: !_emailController.text.contains('@gmail.com') &&
+                            _emailController.text.isNotEmpty
+                        ? 'Please enter a valid email address.'
+                        : null,
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
+
                 SizedBox(height: 10),
                 TextFormField(
                   controller: _passwordController,
@@ -328,7 +362,6 @@ class _RegisterFormState extends State<RegisterForm> {
 
                         // Check if user already exists in the database
                         _registerUser();
-
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -347,6 +380,7 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
       ],
     );
+
   }
 
   @override
