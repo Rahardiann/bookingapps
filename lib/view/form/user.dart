@@ -1,3 +1,4 @@
+import 'package:booking/view/form/adduser.dart';
 import 'package:booking/view/profile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -265,11 +266,11 @@ Dio dio = Dio();
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      EditProfile()), // Sesuaikan dengan route halaman Edit Profile
+                      Adduser()), // Sesuaikan dengan route halaman Edit Profile
             );
           },
           label: Text(
-            'Edit User',
+            'Add User',
             style: TextStyle(
                 color: Colors.white), // Mengatur warna teks menjadi putih
           ),
