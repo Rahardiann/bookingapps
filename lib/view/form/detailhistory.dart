@@ -13,12 +13,14 @@ class DetailHistory extends StatefulWidget {
 
 class VisitData {
   final String nama_dokter;
+  final String nama_user;
   final String jadwal;
   final String jam;
   final String promo;
 
   VisitData({
     required this.nama_dokter,
+    required this.nama_user,
     required this.jadwal,
     required this.jam,
     required this.promo,
@@ -27,6 +29,7 @@ class VisitData {
   factory VisitData.fromJson(Map<String, dynamic> json) {
     return VisitData(
       nama_dokter: json['dokter']['nama'],
+      nama_user: json['user']['nama'],
       jadwal: json['jadwal']['jadwal'],
       jam: json['jadwal']['jam'],
       promo: json['promo']['judul'],
@@ -58,7 +61,7 @@ class _DetailHistoryState extends State<DetailHistory> {
       String apiUrl = "http://82.197.95.108:8003/booking/$id";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
-
+      print(response.data['data']);
       if (response.statusCode == 200) {
         List<dynamic> responseData = response.data['data'];
         List<VisitData> fetchedVisit =
@@ -165,6 +168,23 @@ class _DetailHistoryState extends State<DetailHistory> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.person, color: Color(0xFF16A69A)),
+                      SizedBox(width: 8),
+                      Text(
+                        ' ${visit[index].nama_user}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(

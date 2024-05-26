@@ -46,15 +46,15 @@ class Dentist {
 }
 
 class User {
-  final int id_login;
+  final int id;
   final String nama;
 
 
-  User({required this.id_login, required this.nama});
+  User({required this.id, required this.nama});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id_login: json['id_login'],
+      id: json['id'],
       nama: json['nama'],
       
     );
@@ -135,6 +135,7 @@ class Promo {
 
 class BookingData {
   final int selectedDentistId;
+  final int selectedUserId;
   final String selectedDentist;
   final DateTime selectedDate;
   final String selectedTimeText;
@@ -144,6 +145,7 @@ class BookingData {
 
   BookingData({
     required this.selectedDentistId,
+    required this.selectedUserId,
     required this.selectedDentist,
     required this.selectedDate,
     required this.selectedTimeText,
@@ -180,7 +182,9 @@ class _HomeState extends State<Home> {
   BookingData? bookingData;
   NoRM? noRM;
 
+
   int _selectedDentistId = 0;
+  int _selectedUserId = 0;
   int _selectedPromoId = 0;
   int _selectedJadwalId = 0;
   // Melakukan pengambilan data dan membuat objek BookingData
@@ -212,11 +216,11 @@ class _HomeState extends State<Home> {
         'http://82.197.95.108:8003/booking', // Ganti dengan URL endpoint booking yang sesuai
         data: {
           'user': {
-            'id': id,
+            'id': _selectedUserId,
           },
-          'no_rm': {
-            'no_rekam_medis': noRM?.no_rekam_medis,
-          },
+          // 'no_rm': {
+          //   'no_rekam_medis': noRM?.no_rekam_medis,
+          // },
           'dentist': {
             'id': _selectedDentistId,
             'nama': _selectedDentist,
@@ -244,6 +248,7 @@ class _HomeState extends State<Home> {
           ),
           settings: RouteSettings(
             arguments: {
+              'selectedUserId' : _selectedUserId,
               'selectedDentistId': _selectedDentistId,
               'selectedDentist': _selectedDentist,
               'selectJadwalId': _selectedJadwalId,
@@ -603,6 +608,7 @@ class _HomeState extends State<Home> {
                       onTap: () async {
                         setState(() {
                           _selectedUser = currentUser.nama;
+                          _selectedUserId = currentUser.id;
                         });
                         Navigator.pop(context);
                         await fetchRM(_selectedUser);
