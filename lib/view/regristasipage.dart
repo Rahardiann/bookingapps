@@ -6,7 +6,6 @@ import 'package:booking/widget/welcomepage.dart';
 
 import 'regristasi.dart';
 
-
 // class _Regst extends StatelessWidget {
 //   final UserData userData;
 
@@ -18,12 +17,42 @@ import 'regristasi.dart';
 //   }
 // }
 
-class Regst extends StatelessWidget {
+void _showDatePickerBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext builder) {
+      return Container(
+        height: 300, // Sesuaikan dengan kebutuhan
+        child: Column(
+          children: [
+            Expanded(
+              child: CalendarDatePicker(
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                onDateChanged: (DateTime selectedDate) {
+                  // Lakukan sesuatu dengan tanggal yang dipilih
+                  print('Selected date: $selectedDate');
+                },
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
-    final UserData userData;
+class Regst extends StatelessWidget {
+  final UserData userData;
 
   Regst({required this.userData});
-
 
   @override
   Widget build(BuildContext context) {
@@ -61,15 +90,15 @@ class Regst extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
-        child: RegstForm(userData: userData,),
+        child: RegstForm(
+          userData: userData,
+        ),
       ),
     );
   }
 }
 
 class RegstForm extends StatefulWidget {
-
-
   final UserData userData;
 
   RegstForm({required this.userData});
@@ -79,8 +108,7 @@ class RegstForm extends StatefulWidget {
 }
 
 class _RegstFormState extends State<RegstForm> {
-
-      final UserData userData;
+  final UserData userData;
 
   _RegstFormState({required this.userData});
   final TextEditingController _EmailController = TextEditingController();
@@ -89,6 +117,7 @@ class _RegstFormState extends State<RegstForm> {
   final TextEditingController _no_hpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _birth = TextEditingController();
   final TextEditingController _no_ktpController = TextEditingController();
   bool _obscureText = true;
 
@@ -101,8 +130,7 @@ class _RegstFormState extends State<RegstForm> {
     String gender = _genderController.text;
     String address = _addressController.text;
     String no_ktp = _no_ktpController.text;
-    
-    
+
     // Konfigurasi objek Dio
     Dio dio = Dio();
 
@@ -118,7 +146,6 @@ class _RegstFormState extends State<RegstForm> {
           'password': userData.password,
           'alamat': address,
           'no_ktp': no_ktp,
-          
         },
       );
 
@@ -157,134 +184,145 @@ class _RegstFormState extends State<RegstForm> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-  children: [
-    SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(
-            bottom: 60.0), // Adjust bottom padding for watermark
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Hello! Welcome 👋',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Before seeing the notification you get, log in first',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 50),
-            TextFormField(
-              controller: _no_ktpController,
-              decoration: InputDecoration(
-                labelText: 'ID Card Number',
-                border: InputBorder.none,
-                filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(
-                    vertical: 1.0,
-                    horizontal: 15.0), // Atur padding horizontal untuk mengatur lebar
-              ),
-            ),
-            SizedBox(height: 10),
-            Column(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: 60.0), // Adjust bottom padding for watermark
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Text(
-                  'Gender',
+                  'Hello! Welcome 👋',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                RadioListTile<String>(
-                  title: const Text('Male'),
-                  value: 'pria',
-                  groupValue: _genderController.text,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _genderController.text = value!;
-                    });
-                  },
+                SizedBox(height: 20),
+                Text(
+                  'Before seeing the notification you get, log in first',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
-                RadioListTile<String>(
-                  title: const Text('Female'),
-                  value: 'wanita',
-                  groupValue: _genderController.text,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _genderController.text = value!;
-                    });
-                  },
+                SizedBox(height: 50),
+                TextFormField(
+                  controller: _no_ktpController,
+                  decoration: InputDecoration(
+                    labelText: 'NIK',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 1.0,
+                        horizontal:
+                            15.0), // Atur padding horizontal untuk mengatur lebar
+                  ),
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              controller: _addressController,
-              decoration: InputDecoration(
-                labelText: 'Address',
-                border: InputBorder.none,
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Welcomepage()),
-                  );
-                },
-                child: Text("Skip"),
-              ),
-            ),
-            SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              height: 45, // Tinggi button
-              child: ElevatedButton(
-                onPressed: _registerUser, // Panggil fungsi registrasi saat tombol ditekan
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xFF16A69A), // Background color
+                SizedBox(height: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Gender',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    RadioListTile<String>(
+                      title: const Text('Male'),
+                      value: 'pria',
+                      groupValue: _genderController.text,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _genderController.text = value!;
+                        });
+                      },
+                    ),
+                    RadioListTile<String>(
+                      title: const Text('Female'),
+                      value: 'wanita',
+                      groupValue: _genderController.text,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _genderController.text = value!;
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                child: Text(
-                  'Sign Up',
-                  style: TextStyle(color: Colors.white), // Text color
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Don't have an account yet?"),
+                SizedBox(height: 10),
                 TextButton(
                   onPressed: () {
-                    //   Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => Register()),
-                    // );
+                    _showDatePickerBottomSheet(context);
                   },
-                  child: Text('Login'),
+                  child: Container(
+                    width: double
+                        .infinity, // Mengatur lebar Container agar mengisi lebar penuh TextButton
+                    padding: EdgeInsets.all(16.0),
+                    
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.0),
+                      color: Colors.grey[200],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Date of Birth',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        Icon(Icons.calendar_today),
+                      ],
+                    ),
+                  ),
                 ),
+
+                SizedBox(height: 10),
+               TextFormField(
+                  controller: _addressController,
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 10.0,
+                        horizontal: 15.0), // Sesuaikan dengan kebutuhan
+                  ),
+                ),
+
+               
+               
+                SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 45, // Tinggi button
+                  child: ElevatedButton(
+                    onPressed:
+                        _registerUser, // Panggil fungsi registrasi saat tombol ditekan
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF16A69A), // Background color
+                    ),
+                    child: Text(
+                      'Sign Up',
+                      style: TextStyle(color: Colors.white), // Text color
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+               
               ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  ],
-);
-
+      ],
+    );
   }
 
   @override

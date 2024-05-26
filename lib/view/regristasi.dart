@@ -77,10 +77,9 @@ class _RegisterFormState extends State<RegisterForm> {
   late UserData userData;
 
   // Method to validate the form fields
-  bool _validateForm() {
+bool _validateForm() {
     if (NameController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
-        _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
       // Show a snackbar or toast to inform the user to fill all fields
       ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +88,27 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
       );
       return false;
+    } else if (_emailController.text.isEmpty ||
+        !_emailController.text.contains('@')) {
+      // Show a snackbar or toast to inform the user to enter a valid email
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter a valid email address.'),
+        ),
+      );
+      return false;
+    } else if (_passwordController.text.length < 8) {
+      // Show a snackbar or toast to inform the user about the minimum password length
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password must be at least 8 characters.'),
+        ),
+      );
+      return false;
     }
     return true;
   }
+
 
   Future<void> _registerUser() async {
     // Mengambil data dari controller
@@ -237,7 +254,8 @@ class _RegisterFormState extends State<RegisterForm> {
         SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
-                bottom: 60.0), // Adjust bottom padding for watermark
+              bottom: 60.0, // Adjust bottom padding for watermark
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -257,21 +275,41 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                 ),
                 SizedBox(height: 50),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller:
-                      _phoneNumberController, // Menggunakan controller _phoneNumberController
-                  decoration: InputDecoration(
-                    labelText: 'Phone number',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        '+62',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(
+                        width:
+                            8.0), // Memberikan sedikit ruang antara +62 dan TextFormField
+                    Expanded(
+                      child: TextFormField(
+                        controller: _phoneNumberController,
+                        decoration: InputDecoration(
+                          labelText: 'Phone number',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                        keyboardType: TextInputType.phone,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10),
                 TextFormField(
                   controller:
-                      NameController, // Menggunakan controller _phoneNumberController
+                      NameController, // Menggunakan controller NameController
                   decoration: InputDecoration(
                     labelText: 'Name',
                     border: InputBorder.none,
@@ -281,17 +319,22 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller:
-                      _emailController, // Menggunakan controller _emailController
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    errorText: !_emailController.text.contains('@gmail.com') &&
+                            _emailController.text.isNotEmpty
+                        ? 'Please enter a valid email address.'
+                        : null,
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
+
                 SizedBox(height: 10),
-                TextFormField(
+               TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -308,37 +351,49 @@ class _RegisterFormState extends State<RegisterForm> {
                         });
                       },
                     ),
+                    // Set errorText jika panjang kata sandi kurang dari 8 karakter
+                    errorText: _passwordController.text.isNotEmpty &&
+                            _passwordController.text.length < 8
+                        ? 'Password must be at least 8 characters.'
+                        : null,
                   ),
                   obscureText: _obscureText,
                 ),
+
                 SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   height: 45, // Tinggi button
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_validateForm()) {
-                        // Save user data
-                        userData = UserData(
-                          nama: NameController.text,
-                          email: _emailController.text,
-                          no_hp: _phoneNumberController.text,
-                          password: _passwordController.text,
-                        );
+                      onPressed: () {
+                        // Validasi formulir
+                        bool isValid = _validateForm();
 
-                        // Check if user already exists in the database
-                        _registerUser();
+                        // Perbarui tampilan pesan kesalahan pada TextField
+                        setState(() {});
 
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A), // Background color
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white), // Text color
-                    ),
-                  ),
+                        if (isValid) {
+                          // Simpan data pengguna
+                          userData = UserData(
+                            nama: NameController.text,
+                            email: _emailController.text,
+                            no_hp: _phoneNumberController.text,
+                            password: _passwordController.text,
+                          );
+
+                          // Periksa apakah pengguna sudah ada di database
+                          _registerUser();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF16A69A), // Warna latar belakang
+                      ),
+                      child: Text(
+                        'Next',
+                        style: TextStyle(color: Colors.white), // Warna teks
+                      ),
+                    )
+
                 ),
                 SizedBox(height: 10),
               ],
@@ -347,6 +402,7 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
       ],
     );
+
   }
 
   @override
