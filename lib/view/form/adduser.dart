@@ -68,6 +68,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _noKtpController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
   bool _obscureText = true;
   String? _gender;
 
@@ -77,18 +78,29 @@ class _RegistrationFormState extends State<RegistrationForm> {
     String password = _passwordController.text;
     String nama = _nameController.text;
     String no_hp = _phoneNumberController.text;
+    String gender = _genderController.text;
+    String address = _addressController.text;
+    String no_ktp = _noKtpController.text;
 
+    // Konfigurasi objek Dio
     Dio dio = Dio();
 
     try {
-      // Melakukan request ke endpoint registrasi
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_user');
+
+
       Response response = await dio.post(
-        'http://82.197.95.108:8003/user/registerlogin', // Ganti dengan URL endpoint registrasi yang sesuai
+        'http://82.197.95.108:8003/user/registeruser', // Ganti dengan URL endpoint registrasi yang sesuai
         data: {
+          'id_login': id,
           'email': email,
+          'gender': gender,
           'nama': nama,
           'no_hp': no_hp,
           'password': password,
+          'alamat': address,
+          'no_ktp': no_ktp,
         },
       );
 
@@ -96,18 +108,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
       print(response.data);
 
       // Jika registrasi berhasil, arahkan ke halaman Welcomepage
-      if (response.statusCode == 200) {
-
-        int id_exist = response.data['data']['id'];
-        SharedPreferences.setMockInitialValues({});
-        // Save user ID to SharedPreferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('id_exist', id_exist);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Profiles()),
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Profiles()),
+      );
     } catch (error) {
       // Menangani error jika terjadi
       print(error.toString());
@@ -248,9 +252,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   width: double.infinity,
                   height: 45,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // handle update action
-                    },
+                    onPressed: 
+                    _registerUser,
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF16A69A),
                     ),
