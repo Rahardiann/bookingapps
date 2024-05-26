@@ -6,7 +6,23 @@ import 'package:booking/view/login.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
 import 'package:booking/view/form/editprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+class User {
+  final int id;
+  final String nama;
+  final int noRekamMedis;
+
+  User({required this.id, required this.nama, required this.noRekamMedis});
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      nama: json['nama'],
+      noRekamMedis: json['no_rekam_medis'],
+    );
+  }
+}
 
 class Userprofile extends StatefulWidget {
   @override
@@ -14,16 +30,18 @@ class Userprofile extends StatefulWidget {
 }
 
 class _UserProfilesState extends State<Userprofile> {
-  final TextEditingController NameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
-  // late UserData userData;
+  bool isLoading = false;
+  List<User> user = [];
+  User? currentUser;
 
   // Method to validate the form fields
   bool _validateForm() {
-    if (NameController.text.isEmpty ||
+    if (_nameController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
@@ -37,7 +55,8 @@ class _UserProfilesState extends State<Userprofile> {
     }
     return true;
   }
-  int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
+
+  int _selectedIndex = 2; // Set index sesuai dengan "Profile"
 
   void _onItemTapped(int index) {
     setState(() {
@@ -65,60 +84,56 @@ class _UserProfilesState extends State<Userprofile> {
         break;
     }
   }
-  Future<void> _registerUser() async {
-    // Mengambil data dari controller
-    String email = _emailController.text;
-    String password = _passwordController.text;
-    String nama = NameController.text;
-    String no_hp = _phoneNumberController.text;
-    
 
-
-Dio dio = Dio();
+  Future<void> fetchUser() async {
+    setState(() {
+      isLoading = true;
+    });
 
     try {
-      // Melakukan request ke endpoint registrasi
-      Response response = await dio.post(
-        'http://82.197.95.108:8003/user/register', // Ganti dengan URL endpoint registrasi yang sesuai
-        data: {
-          'email': email,
-          'nama': nama,
-          'no_hp': no_hp,
-          'password': password,
-          
-        },
-      );
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('id_user');
+      if (id == null) {
+        print("User ID is null");
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+      String apiUrl = "http://82.197.95.108:8003/user/2/$id";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
 
-      // Menggunakan data response jika diperlukan
-      print(response.data);
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = response.data['data'];
+        List<User> fetchedUser =
+            responseData.map((json) => User.fromJson(json)).toList();
 
-      // Jika registrasi berhasil, arahkan ke halaman Welcomepage
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Profiles()),
-      );
-    } catch (error) {
-      // Menangani error jika terjadi
-      print(error.toString());
-      // Tampilkan pesan kesalahan kepada pengguna
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to register. Please try again.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+        setState(() {
+          user = fetchedUser;
+          if (user.isNotEmpty) {
+            currentUser = user.first; // Assume the first user is the current user
+          }
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching user: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching user: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUser();
   }
 
   @override
@@ -167,106 +182,105 @@ Dio dio = Dio();
           ],
         ),
       ),
-      body: ListView(
-        children: [
-          SizedBox(height: 20),
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFD7F0EE),
-              borderRadius:
-                  BorderRadius.circular(15), // Tambahkan border radius di sini
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 5.0,
-                      right: 8.0), // Margin di sebelah kiri ikon profil
-                  child: Icon(
-                    Icons.account_circle,
-                    color: Colors.grey,
-                    size: 50,
+                SizedBox(height: 20),
+                if (currentUser != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD7F0EE),
+                      borderRadius: BorderRadius.circular(15), // Tambahkan border radius di sini
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 5.0, right: 8.0), // Margin di sebelah kiri ikon profil
+                          child: Icon(
+                            Icons.account_circle,
+                            color: Colors.grey,
+                            size: 50,
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              currentUser!.nama, // Ganti dengan nama pengguna yang sesuai
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              'Medical record | ${currentUser!.noRekamMedis}', // Sub judul
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Budi', // Ganti dengan nama pengguna yang sesuai
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                for (var usr in user)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD7F0EE),
+                      borderRadius: BorderRadius.circular(15), // Tambahkan border radius di sini
                     ),
-                    Text(
-                      'Medical record | 001', // Sub judul
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                      ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 5.0, right: 8.0), // Margin di sebelah kiri ikon profil
+                          child: Icon(
+                            Icons.account_circle,
+                            color: Colors.grey,
+                            size: 50,
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "usr.nama", // Ganti dengan nama pengguna yang sesuai
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              'Medical record | 009', // Sub judul
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
               ],
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFD7F0EE),
-              borderRadius:
-                  BorderRadius.circular(15), // Tambahkan border radius di sini
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 5.0,
-                      right: 8.0), // Margin di sebelah kiri ikon profil
-                  child: Icon(
-                    Icons.account_circle,
-                    color: Colors.grey,
-                    size: 50,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'BOWO', // Ganti dengan nama pengguna yang sesuai
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'Medical record | 001', // Sub judul
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 20.0),
         child: FloatingActionButton.extended(
           onPressed: () {
-           Navigator.push(
+            Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      Adduser()), // Sesuaikan dengan route halaman Edit Profile
+                  builder: (context) => Adduser()), // Sesuaikan dengan route halaman Edit Profile
             );
           },
           label: Text(
@@ -279,6 +293,24 @@ Dio dio = Dio();
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Booking',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 }

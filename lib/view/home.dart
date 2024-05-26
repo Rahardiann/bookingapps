@@ -46,17 +46,17 @@ class Dentist {
 }
 
 class User {
-  final int id;
+  final int id_login;
   final String nama;
-  final int no_rekam_medis;
 
-  User({required this.id, required this.nama, required this.no_rekam_medis});
+
+  User({required this.id_login, required this.nama});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
+      id_login: json['id_login'],
       nama: json['nama'],
-      no_rekam_medis: json['no_rekam_medis'],
+      
     );
   }
 }
@@ -524,8 +524,6 @@ class _HomeState extends State<Home> {
   // Method untuk menampilkan bottom sheet
 
  void _showUserSelectionSheet(BuildContext context) {
-  int _enteredNumber = 0;
-
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -552,8 +550,7 @@ class _HomeState extends State<Home> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.arrow_back_ios,
-                              size: 20, color: Colors.black),
+                          Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
                           SizedBox(width: 5),
                           Text(
                             'Back',
@@ -569,92 +566,53 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: user.length,
-                itemBuilder: (BuildContext context, int index) {
-                  User currentUser = user[index];
-                  return ListTile(
-                    title: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 5.0, right: 20.0),
-                          child: Icon(
-                            Icons.account_circle,
-                            color: Colors.grey,
-                            size: 50,
+              Container(
+                height: 400, // Atur tinggi ListView sesuai kebutuhan
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: user.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    User currentUser = user[index];
+                    return ListTile(
+                      title: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                            child: Icon(
+                              Icons.account_circle,
+                              color: Colors.grey,
+                              size: 50,
+                            ),
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentUser.nama,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentUser.nama,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Medical record | ${currentUser.no_rekam_medis}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    onTap: () async {
-                      setState(() {
-                        _selectedUser = currentUser.nama;
-                      });
-                      Navigator.pop(context);
-                       await fetchRM(_selectedUser);
-                    },
-                  );
-                },
+                              
+                            ],
+                          ),
+                        ],
+                      ),
+                      onTap: () async {
+                        setState(() {
+                          _selectedUser = currentUser.nama;
+                        });
+                        Navigator.pop(context);
+                        await fetchRM(_selectedUser);
+                      },
+                    );
+                  },
+                ),
               ),
               SizedBox(height: 20), // Jarak antara ListTile dan TextField
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10.0, left: 10.0),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: 'No Rekam Medic',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            noRM = NoRM(no_rekam_medis: int.parse(value));
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedUser = _enteredNumber.toString();
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Add',
-                      style: TextStyle(
-                        color: Color(0xFFB6366D),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Tambahkan widget lain di sini jika diperlukan
               SizedBox(height: 80), // Jarak tambahan di bawah TextField
             ],
           ),

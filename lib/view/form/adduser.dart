@@ -1,5 +1,8 @@
+import 'package:booking/view/profile.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Adduser extends StatelessWidget {
   @override
@@ -67,6 +70,67 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _noKtpController = TextEditingController();
   bool _obscureText = true;
   String? _gender;
+
+  Future<void> _registerUser() async {
+    // Mengambil data dari controller
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String nama = _nameController.text;
+    String no_hp = _phoneNumberController.text;
+
+    Dio dio = Dio();
+
+    try {
+      // Melakukan request ke endpoint registrasi
+      Response response = await dio.post(
+        'http://82.197.95.108:8003/user/registerlogin', // Ganti dengan URL endpoint registrasi yang sesuai
+        data: {
+          'email': email,
+          'nama': nama,
+          'no_hp': no_hp,
+          'password': password,
+        },
+      );
+
+      // Menggunakan data response jika diperlukan
+      print(response.data);
+
+      // Jika registrasi berhasil, arahkan ke halaman Welcomepage
+      if (response.statusCode == 200) {
+
+        int id_exist = response.data['data']['id'];
+        SharedPreferences.setMockInitialValues({});
+        // Save user ID to SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('id_exist', id_exist);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Profiles()),
+        );
+      }
+    } catch (error) {
+      // Menangani error jika terjadi
+      print(error.toString());
+      // Tampilkan pesan kesalahan kepada pengguna
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to register. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
