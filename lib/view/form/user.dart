@@ -11,15 +11,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class User {
   final int id;
   final String nama;
-  final int noRekamMedis;
+  
 
-  User({required this.id, required this.nama, required this.noRekamMedis});
+  User({required this.id, required this.nama});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
       nama: json['nama'],
-      noRekamMedis: json['no_rekam_medis'],
+     
     );
   }
 }
@@ -184,94 +184,57 @@ class _UserProfilesState extends State<Userprofile> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView(
-              children: [
-                SizedBox(height: 20),
-                if (currentUser != null)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD7F0EE),
-                      borderRadius: BorderRadius.circular(15), // Tambahkan border radius di sini
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 5.0, right: 8.0), // Margin di sebelah kiri ikon profil
-                          child: Icon(
-                            Icons.account_circle,
-                            color: Colors.grey,
-                            size: 50,
+          : ListView.builder(
+              itemCount: user.length,
+              itemBuilder: (BuildContext context, int index) {
+                User currentUser = user[index];
+                return Column(
+                  children: [
+                    SizedBox(height: 5),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFD7F0EE),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.0, right: 8.0),
+                            child: Icon(
+                              Icons.account_circle,
+                              color: Colors.grey,
+                              size: 50,
+                            ),
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentUser!.nama, // Ganti dengan nama pengguna yang sesuai
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentUser.nama,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Medical record | ${currentUser!.noRekamMedis}', // Sub judul
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black87,
+                              Text(
+                                'Medical record | {currentUser.noRekamMedis}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                for (var usr in user)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD7F0EE),
-                      borderRadius: BorderRadius.circular(15), // Tambahkan border radius di sini
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 5.0, right: 8.0), // Margin di sebelah kiri ikon profil
-                          child: Icon(
-                            Icons.account_circle,
-                            color: Colors.grey,
-                            size: 50,
+                            ],
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "usr.nama", // Ganti dengan nama pengguna yang sesuai
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Text(
-                              'Medical record | 009', // Sub judul
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-              ],
+                  ],
+                );
+              },
             ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 20.0),
