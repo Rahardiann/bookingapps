@@ -7,6 +7,38 @@ import 'package:booking/widget/welcomepage.dart';
 import 'package:booking/view/form/addpassword.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+void _showDatePickerBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext builder) {
+      return Container(
+        height: 300, // Sesuaikan dengan kebutuhan
+        child: Column(
+          children: [
+            Expanded(
+              child: CalendarDatePicker(
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                onDateChanged: (DateTime selectedDate) {
+                  // Lakukan sesuatu dengan tanggal yang dipilih
+                  print('Selected date: $selectedDate');
+                },
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 class UserData {
   final String nama;
   final String email;
@@ -73,11 +105,14 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _no_ktpController = TextEditingController();
   bool _obscureText = true;
   late UserData userData;
 
   // Method to validate the form fields
-bool _validateForm() {
+  bool _validateForm() {
     if (NameController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
         _passwordController.text.isEmpty) {
@@ -109,7 +144,6 @@ bool _validateForm() {
     return true;
   }
 
-
   Future<void> _registerUser() async {
     // Mengambil data dari controller
     String email = _emailController.text;
@@ -136,16 +170,15 @@ bool _validateForm() {
 
       // Jika registrasi berhasil, arahkan ke halaman Welcomepage
       if (response.statusCode == 200) {
-
         int id_exist = response.data['data']['id'];
         SharedPreferences.setMockInitialValues({});
         // Save user ID to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt('id_exist', id_exist);
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Regst(userData: userData)),
-        );
+        context,
+        MaterialPageRoute(builder: (context) => Welcomepage()),
+      );
       }
     } catch (error) {
       // Menangani error jika terjadi
@@ -198,7 +231,6 @@ bool _validateForm() {
       },
     );
   }
-
 
   void _showBadRequestDialog() {
     showDialog(
@@ -332,9 +364,8 @@ bool _validateForm() {
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-
                 SizedBox(height: 10),
-               TextFormField(
+                TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -359,12 +390,57 @@ bool _validateForm() {
                   ),
                   obscureText: _obscureText,
                 ),
-
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _no_ktpController,
+                  decoration: InputDecoration(
+                    labelText: 'NIK',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 1.0,
+                        horizontal:
+                            15.0), // Atur padding horizontal untuk mengatur lebar
+                  ),
+                ),
+                SizedBox(height: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Gender',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    RadioListTile<String>(
+                      title: const Text('Male'),
+                      value: 'pria',
+                      groupValue: _genderController.text,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _genderController.text = value!;
+                        });
+                      },
+                    ),
+                    RadioListTile<String>(
+                      title: const Text('Female'),
+                      value: 'wanita',
+                      groupValue: _genderController.text,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _genderController.text = value!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
                 SizedBox(height: 10),
                 SizedBox(
-                  width: double.infinity,
-                  height: 45, // Tinggi button
-                  child: ElevatedButton(
+                    width: double.infinity,
+                    height: 45, // Tinggi button
+                    child: ElevatedButton(
                       onPressed: () {
                         // Validasi formulir
                         bool isValid = _validateForm();
@@ -392,9 +468,7 @@ bool _validateForm() {
                         'Next',
                         style: TextStyle(color: Colors.white), // Warna teks
                       ),
-                    )
-
-                ),
+                    )),
                 SizedBox(height: 10),
               ],
             ),
@@ -402,7 +476,6 @@ bool _validateForm() {
         ),
       ],
     );
-
   }
 
   @override
