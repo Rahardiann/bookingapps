@@ -131,13 +131,13 @@ class _BookingState extends State<Booking> {
           Map<String, dynamic> userData = response.data['data'][0];
           String usernameFromData =
               userData['nama']; // Mengambil nama dari respons
-          int rekamFromData =
-              userData['no_rekam_medis']; // Mengambil nama dari respons
+          // int rekamFromData =
+          //     userData['no_rekam_medis']; // Mengambil nama dari respons
 
           // Set username
           setState(() {
             _username = usernameFromData;
-            _rekam = rekamFromData;
+            // _rekam = rekamFromData;
           });
         } else {
           // Handle respons yang tidak sesuai dengan harapan
@@ -292,13 +292,13 @@ class _BookingState extends State<Booking> {
                           color: Colors.black,
                         ),
                       ),
-                      Text(
-                        'Medical record | ${_rekam}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
+                      // Text(
+                      //   'Medical record | {_rekam}',
+                      //   style: TextStyle(
+                      //     fontSize: 12,
+                      //     color: Colors.black87,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],
@@ -315,13 +315,13 @@ class _BookingState extends State<Booking> {
                         color: Colors.black,
                       ),
                     ),
-                    Text(
-                      'Code booking',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                    ),
+                    // Text(
+                    //   'Code booking',
+                    //   style: TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.black,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

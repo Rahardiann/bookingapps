@@ -69,13 +69,13 @@ int _rekam=0;
           Map<String, dynamic> userData = response.data['data'][0];
           String usernameFromData =
               userData['nama']; 
-               int rekamFromData =
-              userData['no_rekam_medis'];// Mengambil nama dari respons
+              //  int rekamFromData =
+              // userData['no_rekam_medis'];// Mengambil nama dari respons
 
           // Set username
           setState(() {
             _username = usernameFromData;
-            _rekam = rekamFromData;
+            // _rekam = rekamFromData;
           });
         } else {
           // Handle respons yang tidak sesuai dengan harapan
@@ -171,13 +171,13 @@ int _rekam=0;
                         color: Colors.black,
                       ),
                     ),
-                    Text(
-                      'Medical record | ${_rekam}', // Sub judul
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                      ),
-                    ),
+                    // Text(
+                    //   'Medical record | ${_rekam}', // Sub judul
+                    //   style: TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.black87,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],

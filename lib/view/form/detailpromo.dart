@@ -255,17 +255,17 @@ class _DetailpromoState extends State<Detailpromo> {
                           style: TextStyle(fontSize: 16, color: Colors.black54),
                         ),
                         SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Center(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Add your booking now action here
-                              },
-                              child: Text('Book Now'),
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        //   child: Center(
+                        //     child: ElevatedButton(
+                        //       onPressed: () {
+                        //         // Add your booking now action here
+                        //       },
+                        //       child: Text('Book Now'),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

@@ -44,12 +44,16 @@ class UserData {
   final String email;
   final String no_hp;
   final String password;
+  final String no_ktp;
+  final String gender;
 
   UserData(
       {required this.nama,
       required this.email,
       required this.no_hp,
-      required this.password});
+      required this.password,
+      required this.no_ktp,
+      required this.gender});
 }
 
 class Register extends StatelessWidget {
@@ -150,6 +154,10 @@ class _RegisterFormState extends State<RegisterForm> {
     String password = _passwordController.text;
     String nama = NameController.text;
     String no_hp = _phoneNumberController.text;
+    String no_ktp = _no_ktpController.text;
+    String gender = _genderController.text;
+
+
 
     Dio dio = Dio();
 
@@ -162,6 +170,8 @@ class _RegisterFormState extends State<RegisterForm> {
           'nama': nama,
           'no_hp': no_hp,
           'password': password,
+          'no_ktp' : no_ktp,
+          'gender' : gender
         },
       );
 
@@ -175,6 +185,7 @@ class _RegisterFormState extends State<RegisterForm> {
         // Save user ID to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt('id_exist', id_exist);
+        
         Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Welcomepage()),
@@ -276,7 +287,7 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   void initState() {
     super.initState();
-    userData = UserData(nama: '', email: '', no_hp: '', password: '');
+    userData = UserData(nama: '', email: '', no_hp: '', password: '', no_ktp: '', gender: '');
   }
 
   @override
@@ -455,6 +466,8 @@ class _RegisterFormState extends State<RegisterForm> {
                             email: _emailController.text,
                             no_hp: _phoneNumberController.text,
                             password: _passwordController.text,
+                            no_ktp: _no_ktpController.text,
+                            gender: _genderController.text,
                           );
 
                           // Periksa apakah pengguna sudah ada di database
@@ -484,6 +497,8 @@ class _RegisterFormState extends State<RegisterForm> {
     _emailController.dispose();
     _phoneNumberController.dispose();
     _passwordController.dispose();
+      NameController.dispose();
+    _genderController.dispose();
     super.dispose();
   }
 }

@@ -1007,33 +1007,43 @@ class _HomeState extends State<Home> {
       body: ListView(
         children: [
           Container(
-            padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.notifications_none_outlined,
-                        size: 30,
-                        color: Colors.black54,
-                      ),
-                      onPressed: () {
-                        // Navigasi ke NotificationScreen saat ikon notifikasi ditekan
-                        Navigator.pushNamed(context, '/notifikasi');
-                      },
-                    ),
-                    Icon(
-                      Icons.account_circle,
-                      size: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-              ],
+  padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
+  child: Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: Icon(
+              Icons.notifications_none_outlined,
+              size: 30,
+              color: Colors.black54,
             ),
+            onPressed: () {
+              // Navigasi ke NotificationScreen saat ikon notifikasi ditekan
+              Navigator.pushNamed(context, '/notifikasi');
+            },
           ),
+          IconButton(
+            icon: Icon(
+              Icons.account_circle,
+              size: 30,
+              color: Colors.black54,
+            ),
+            onPressed: () {
+              // Navigasi ke AccountScreen saat ikon akun ditekan
+             Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Profiles()),
+                        );
+            },
+          ),
+        ],
+      ),
+    ],
+  ),
+)
+,
           SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),

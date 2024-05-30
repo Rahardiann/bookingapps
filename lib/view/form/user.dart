@@ -220,13 +220,13 @@ class _UserProfilesState extends State<Userprofile> {
                                   color: Colors.black,
                                 ),
                               ),
-                              Text(
-                                'Medical record | {currentUser.noRekamMedis}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                              // Text(
+                              //   'Medical record | {currentUser.noRekamMedis}',
+                              //   style: TextStyle(
+                              //     fontSize: 12,
+                              //     color: Colors.black87,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],

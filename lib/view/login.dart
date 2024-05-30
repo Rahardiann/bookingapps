@@ -1,3 +1,4 @@
+import 'package:booking/view/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart'; // Import dio package
 import 'package:booking/view/home.dart';
@@ -16,7 +17,10 @@ class LoginPage extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+               Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
               },
               style: TextButton.styleFrom(
                 primary: Colors.black,
