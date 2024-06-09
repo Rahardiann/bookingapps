@@ -705,78 +705,92 @@ class _HomeState extends State<Home> {
   }
 
   void _showDatePickerSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Date',
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        height: 300,
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Date',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Menutup layar saat tombol ditekan
+                      Navigator.pop(context);
+
+                      // Menjadwalkan notifikasi untuk muncul setelah 10 detik dari sekarang
+                      DateTime scheduledTime =
+                          DateTime.now().add(Duration(seconds: 10));
+
+                      // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
+                      String formattedDate =
+                          scheduledTime.toIso8601String().substring(0, 10);
+
+                      debugPrint('Notification Scheduled for $formattedDate');
+
+                      _notificationRemindedr.scheduleNotification(
+                        title: 'Reminder',
+                        body:
+                            'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!',
+                        scheduledNotificationDateTime: scheduledTime,
+                      );
+                    },
+                    child: Text(
+                      'Done',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        color: Color(0xFFB6366D),
+                        fontSize: 16,
                       ),
                     ),
-                    TextButton(
-                   onPressed: () {
-                        // Menutup layar saat tombol ditekan
-                        Navigator.pop(context);
-
-                        // Menjadwalkan notifikasi untuk muncul setelah 5 detik dari sekarang
-                        DateTime scheduledTime =
-                            DateTime.now().add(Duration(seconds: 10));
-
-                        // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
-                        String formattedDate =
-                            scheduledTime.toIso8601String().substring(0, 10);
-
-                        debugPrint('Notification Scheduled for $formattedDate');
-
-                        _notificationRemindedr.scheduleNotification(
-                          title: 'Reminder',
-                          body:
-                              'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!', 
-                          scheduledNotificationDateTime: scheduledTime,
-                        );
-                      },
-
-                      child: Text(
-                        'Done',
-                        style: TextStyle(
-                          color: Color(0xFFB6366D),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: _selectedDate,
-                  onDateTimeChanged: (DateTime newDateTime) {
-                    // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
-                    setState(() {
-                      _selectedDate = newDateTime;
-                    });
-                  },
-                ),
-              ),
-            ],
+            ),
+           Expanded(
+            child: CalendarDatePicker(
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(), // Menggunakan DateTime.now() sebagai firstDate
+              lastDate: DateTime(DateTime.now().year + 10), // Menambahkan satu tahun ke tanggal saat ini sebagai lastDate
+              onDateChanged: (DateTime newDateTime) {
+                // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+                setState(() {
+                  _selectedDate = newDateTime;
+                });
+              },
+            ),
           ),
-        );
-      },
-    );
-  }
+
+            // Expanded(
+            //   child: CupertinoDatePicker(
+            //     mode: CupertinoDatePickerMode.date,
+            //     minimumDate: DateTime.now(), // Hanya tampilkan tanggal hari ini dan seterusnya
+            //     initialDateTime: _selectedDate,
+            //     onDateTimeChanged: (DateTime newDateTime) {
+            //       // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+            //       setState(() {
+            //         _selectedDate = newDateTime;
+            //       });
+            //     },
+            //   ),
+            // ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 
   void _handleTimeSelection(String selectedTime) {
     setState(() {

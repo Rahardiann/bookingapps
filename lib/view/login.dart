@@ -5,7 +5,6 @@ import 'package:booking/view/home.dart';
 import 'package:booking/view/regristasi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -17,10 +16,10 @@ class LoginPage extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
-               Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
               },
               style: TextButton.styleFrom(
                 primary: Colors.black,
@@ -60,46 +59,58 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
+  String? _emailError;
+  String? _passwordError;
 
   void _login() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
+    setState(() {
+      _emailError = _emailController.text.isEmpty || !_emailController.text.contains('@gmail.com')
+          ? 'Please enter a valid email address.'
+          : null;
+      _passwordError = _passwordController.text.isEmpty || _passwordController.text.length < 8
+          ? 'Password must be at least 8 characters.'
+          : null;
+    });
 
-    try {
-      // Send a POST request with Dio
-      Response response =
-          await Dio().post('http://82.197.95.108:8003/user/login', data: {
-        'email': email,
-        'password': password,
-      });
-      print(response.data['data']);
+    if (_emailError == null && _passwordError == null) {
+      String email = _emailController.text;
+      String password = _passwordController.text;
 
-      // Check if request is successful
-      if (response.statusCode == 200) {
-        // Get user ID from response
-        String email = response.data['data']['email'];
-        int id_user = response.data['data']['id'];
-        SharedPreferences.setMockInitialValues({});
-        // Save user ID to SharedPreferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('email', email);
-        await prefs.setInt('id_user', id_user);
+      try {
+        // Send a POST request with Dio
+        Response response =
+            await Dio().post('http://82.197.95.108:8003/user/login', data: {
+          'email': email,
+          'password': password,
+        });
+        print(response.data['data']);
 
-        // If successful, navigate to home page
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-        );
-      } else {
-        // Handle other status codes or errors
-        print('Login failed: ${response.statusCode}');
+        // Check if request is successful
+        if (response.statusCode == 200) {
+          // Get user ID from response
+          String email = response.data['data']['email'];
+          int id_user = response.data['data']['id'];
+          SharedPreferences.setMockInitialValues({});
+          // Save user ID to SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', email);
+          await prefs.setInt('id_user', id_user);
+
+          // If successful, navigate to home page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+          );
+        } else {
+          // Handle other status codes or errors
+          print('Login failed: ${response.statusCode}');
+        }
+      } catch (e) {
+        // Handle Dio errors
+        print('Error during login: $e');
       }
-    } catch (e) {
-      // Handle Dio errors
-      print('Error during login: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,14 +129,6 @@ class _LoginFormState extends State<LoginForm> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'Before seeing the notification you get, log in first',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
                 SizedBox(height: 50),
                 TextFormField(
                   controller: _emailController,
@@ -134,7 +137,9 @@ class _LoginFormState extends State<LoginForm> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    errorText: _emailError,
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
@@ -145,15 +150,15 @@ class _LoginFormState extends State<LoginForm> {
                     filled: true,
                     fillColor: Colors.grey[200],
                     suffixIcon: IconButton(
-                      icon: Icon(_obscureText
-                          ? Icons.visibility_off
-                          : Icons.visibility),
+                      icon: Icon(
+                          _obscureText ? Icons.visibility_off : Icons.visibility),
                       onPressed: () {
                         setState(() {
                           _obscureText = !_obscureText;
                         });
                       },
                     ),
+                    errorText: _passwordError,
                   ),
                   obscureText: _obscureText,
                 ),

@@ -90,50 +90,50 @@ class _DetailpromoState extends State<Detailpromo> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+     appBar: AppBar(
+  automaticallyImplyLeading: false,
+  title: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        style: TextButton.styleFrom(
+          primary: Colors.black, // Text color
+        ),
+        child: Row(
           children: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: TextButton.styleFrom(
-                primary: Colors.black, // Text color
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.arrow_back_ios, size: 20, color: Colors.black), // Icon color
-                  Text(
-                    'Back',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black, // Text color
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                ],
-              ),
-            ),
+            Icon(Icons.arrow_back_ios, size: 20, color: Colors.black), // Icon color
             Text(
-              'Promo',
+              'Back',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.black, // Text color
               ),
             ),
-            SizedBox(width: 5),
-            Icon(
-              Icons.account_circle,
-              size: 30,
-              color: Colors.black54,
-            ),
+            SizedBox(width: 20),
           ],
         ),
       ),
+      Expanded(
+        child: Center(
+          child: Text(
+            'Promo',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // Text color
+            ),
+          ),
+        ),
+      ),
+      SizedBox(width: 48), // Ensure space taken by removed icon for alignment
+    ],
+  ),
+),
+
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : promo.isEmpty
