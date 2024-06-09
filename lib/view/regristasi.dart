@@ -1,18 +1,15 @@
 import 'package:booking/view/form/addpassword.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:booking/view/regristasipage.dart';
-import 'package:booking/view/home.dart';
 import 'package:booking/widget/welcomepage.dart';
-import 'package:booking/view/form/addpassword.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void _showDatePickerBottomSheet(BuildContext context) {
+void _showDatePickerBottomSheet(BuildContext context, Function(DateTime) onDateSelected) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext builder) {
       return Container(
-        height: 300, // Sesuaikan dengan kebutuhan
+        height: 300,
         child: Column(
           children: [
             Expanded(
@@ -21,8 +18,8 @@ void _showDatePickerBottomSheet(BuildContext context) {
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
                 onDateChanged: (DateTime selectedDate) {
-                  // Lakukan sesuatu dengan tanggal yang dipilih
-                  print('Selected date: $selectedDate');
+                  // Call the onDateSelected function with the selected date
+                  onDateSelected(selectedDate);
                 },
               ),
             ),
@@ -46,14 +43,17 @@ class UserData {
   final String password;
   final String no_ktp;
   final String gender;
+  final String tanggal_lahir;
 
-  UserData(
-      {required this.nama,
-      required this.email,
-      required this.no_hp,
-      required this.password,
-      required this.no_ktp,
-      required this.gender});
+  UserData({
+    required this.nama,
+    required this.email,
+    required this.no_hp,
+    required this.password,
+    required this.no_ktp,
+    required this.gender,
+    required this.tanggal_lahir,
+  });
 }
 
 class Register extends StatelessWidget {
@@ -70,19 +70,18 @@ class Register extends StatelessWidget {
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(
-                primary: Colors.black, // Mengatur warna teks tombol
+                primary: Colors.black,
               ),
               child: Row(
                 children: [
-                  Icon(Icons.arrow_back_ios,
-                      size: 20, color: Colors.black), // Mengatur warna ikon
+                  Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
                   SizedBox(width: 5),
                   Text(
                     'Back',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black, // Mengatur warna teks
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -112,6 +111,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _no_ktpController = TextEditingController();
+  final TextEditingController _birthController = TextEditingController();
   bool _obscureText = true;
   late UserData userData;
 
@@ -120,7 +120,6 @@ class _RegisterFormState extends State<RegisterForm> {
     if (NameController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
         _passwordController.text.isEmpty) {
-      // Show a snackbar or toast to inform the user to fill all fields
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please fill in all fields.'),
@@ -129,7 +128,6 @@ class _RegisterFormState extends State<RegisterForm> {
       return false;
     } else if (_emailController.text.isEmpty ||
         !_emailController.text.contains('@')) {
-      // Show a snackbar or toast to inform the user to enter a valid email
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please enter a valid email address.'),
@@ -137,7 +135,6 @@ class _RegisterFormState extends State<RegisterForm> {
       );
       return false;
     } else if (_passwordController.text.length < 8) {
-      // Show a snackbar or toast to inform the user about the minimum password length
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Password must be at least 8 characters.'),
@@ -149,53 +146,46 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Future<void> _registerUser() async {
-    // Mengambil data dari controller
     String email = _emailController.text;
     String password = _passwordController.text;
     String nama = NameController.text;
     String no_hp = _phoneNumberController.text;
     String no_ktp = _no_ktpController.text;
     String gender = _genderController.text;
-
-
+    String tanggal_lahir = _birthController.text;
 
     Dio dio = Dio();
 
     try {
-      // Melakukan request ke endpoint registrasi
       Response response = await dio.post(
-        'http://82.197.95.108:8003/user/registerlogin', // Ganti dengan URL endpoint registrasi yang sesuai
+        'http://82.197.95.108:8003/user/registerlogin',
         data: {
           'email': email,
           'nama': nama,
           'no_hp': no_hp,
           'password': password,
-          'no_ktp' : no_ktp,
-          'gender' : gender
+          'no_ktp': no_ktp,
+          'gender': gender,
+          'tanggal_lahir': tanggal_lahir
         },
       );
 
-      // Menggunakan data response jika diperlukan
       print(response.data);
 
-      // Jika registrasi berhasil, arahkan ke halaman Welcomepage
       if (response.statusCode == 200) {
         int id_exist = response.data['data']['id'];
         SharedPreferences.setMockInitialValues({});
-        // Save user ID to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt('id_exist', id_exist);
-        
+
         Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Welcomepage()),
-      );
+          context,
+          MaterialPageRoute(builder: (context) => Welcomepage()),
+        );
       }
     } catch (error) {
-      // Menangani error jika terjadi
       if (error is DioError) {
         if (error.response?.statusCode == 400) {
-          // Status code 400 menunjukkan data sudah ada
           _showUserExistsDialog();
         } else {
           print(error.toString());
@@ -220,7 +210,6 @@ class _RegisterFormState extends State<RegisterForm> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Navigate to password creation screen with the email
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -287,7 +276,14 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   void initState() {
     super.initState();
-    userData = UserData(nama: '', email: '', no_hp: '', password: '', no_ktp: '', gender: '');
+    userData = UserData(
+        nama: '',
+        email: '',
+        no_hp: '',
+        password: '',
+        no_ktp: '',
+        gender: '',
+        tanggal_lahir: '');
   }
 
   @override
@@ -297,7 +293,7 @@ class _RegisterFormState extends State<RegisterForm> {
         SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
-              bottom: 60.0, // Adjust bottom padding for watermark
+              bottom: 60.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,9 +328,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         style: TextStyle(fontSize: 16.0),
                       ),
                     ),
-                    SizedBox(
-                        width:
-                            8.0), // Memberikan sedikit ruang antara +62 dan TextFormField
+                    SizedBox(width: 8.0),
                     Expanded(
                       child: TextFormField(
                         controller: _phoneNumberController,
@@ -351,8 +345,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller:
-                      NameController, // Menggunakan controller NameController
+                  controller: NameController,
                   decoration: InputDecoration(
                     labelText: 'Name',
                     border: InputBorder.none,
@@ -393,7 +386,6 @@ class _RegisterFormState extends State<RegisterForm> {
                         });
                       },
                     ),
-                    // Set errorText jika panjang kata sandi kurang dari 8 karakter
                     errorText: _passwordController.text.isNotEmpty &&
                             _passwordController.text.length < 8
                         ? 'Password must be at least 8 characters.'
@@ -410,9 +402,11 @@ class _RegisterFormState extends State<RegisterForm> {
                     filled: true,
                     fillColor: Colors.grey[200],
                     contentPadding: EdgeInsets.symmetric(
-                        vertical: 1.0,
-                        horizontal:
-                            15.0), // Atur padding horizontal untuk mengatur lebar
+                        vertical: 1.0, horizontal: 15.0),
+                    errorText: _no_ktpController.text.isNotEmpty &&
+                            _no_ktpController.text.length < 16
+                        ? 'NIK must be at least 16 characters.'
+                        : null,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -448,40 +442,60 @@ class _RegisterFormState extends State<RegisterForm> {
                   ],
                 ),
                 SizedBox(height: 10),
-                SizedBox(
-                    width: double.infinity,
-                    height: 45, // Tinggi button
-                    child: ElevatedButton(
+                TextFormField(
+                  controller: _birthController,
+                  decoration: InputDecoration(
+                    labelText: 'Date of Birth',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
                       onPressed: () {
-                        // Validasi formulir
-                        bool isValid = _validateForm();
-
-                        // Perbarui tampilan pesan kesalahan pada TextField
-                        setState(() {});
-
-                        if (isValid) {
-                          // Simpan data pengguna
-                          userData = UserData(
-                            nama: NameController.text,
-                            email: _emailController.text,
-                            no_hp: _phoneNumberController.text,
-                            password: _passwordController.text,
-                            no_ktp: _no_ktpController.text,
-                            gender: _genderController.text,
-                          );
-
-                          // Periksa apakah pengguna sudah ada di database
-                          _registerUser();
-                        }
+                        _showDatePickerBottomSheet(context, (selectedDate) {
+                          setState(() {
+                            _birthController.text = selectedDate.toString();
+                          });
+                          Navigator.pop(context);
+                        });
                       },
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0xFF16A69A), // Warna latar belakang
-                      ),
-                      child: Text(
-                        'Next',
-                        style: TextStyle(color: Colors.white), // Warna teks
-                      ),
-                    )),
+                    ),
+                  ),
+                  readOnly: true,
+                ),
+                SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      bool isValid = _validateForm();
+
+                      setState(() {});
+
+                      if (isValid) {
+                        userData = UserData(
+                          nama: NameController.text,
+                          email: _emailController.text,
+                          no_hp: _phoneNumberController.text,
+                          password: _passwordController.text,
+                          no_ktp: _no_ktpController.text,
+                          gender: _genderController.text,
+                          tanggal_lahir: _birthController.text,
+                        );
+
+                        _registerUser();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF16A69A),
+                    ),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 10),
               ],
             ),
@@ -497,8 +511,9 @@ class _RegisterFormState extends State<RegisterForm> {
     _emailController.dispose();
     _phoneNumberController.dispose();
     _passwordController.dispose();
-      NameController.dispose();
+    _no_ktpController.dispose();
     _genderController.dispose();
+    _birthController.dispose();
     super.dispose();
   }
 }
