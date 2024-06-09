@@ -3,7 +3,37 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+void _showDatePickerBottomSheet(BuildContext context, Function(DateTime) onDateSelected) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext builder) {
+      return Container(
+        height: 300,
+        child: Column(
+          children: [
+            Expanded(
+              child: CalendarDatePicker(
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                onDateChanged: (DateTime selectedDate) {
+                  // Call the onDateSelected function with the selected date
+                  onDateSelected(selectedDate);
+                },
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 class Adduser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -69,7 +99,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _noKtpController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _birth = TextEditingController();
   bool _obscureText = true;
+  bool _isValidForm = false;
   String? _gender;
 
   Future<void> _registerUser() async {
@@ -81,6 +113,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     String gender = _genderController.text;
     String address = _addressController.text;
     String no_ktp = _noKtpController.text;
+    String tanggal_lahir = _birth.text;
 
     // Konfigurasi objek Dio
     Dio dio = Dio();
@@ -101,6 +134,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
           'password': password,
           'alamat': address,
           'no_ktp': no_ktp,
+          'tanggal_lahir': tanggal_lahir,
         },
       );
 
@@ -149,33 +183,44 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 SizedBox(height: 10),
                 TextFormField(
                   controller: _emailController,
+                  onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
                     labelText: 'Email',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    errorText: !_emailController.text.contains('@gmail.com') &&
+                            _emailController.text.isNotEmpty
+                        ? 'Please enter a valid email address.'
+                        : null,
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
+                  onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscureText
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
+                    errorText: _passwordController.text.isNotEmpty &&
+                            _passwordController.text.length < 8
+                        ? 'Password must be at least 8 characters.'
+                        : null,
                   ),
                   obscureText: _obscureText,
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _rekamController,
-                  decoration: InputDecoration(
-                    labelText: 'No Rekam Medis',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
                 ),
                 SizedBox(height: 20),
                 TextFormField(
@@ -240,23 +285,51 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _noKtpController,
+                  onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
-                    labelText: 'No KTP',
+                    labelText: 'NIK',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 1.0, horizontal: 15.0),
+                    errorText: _noKtpController.text.isNotEmpty &&
+                            _noKtpController.text.length < 16
+                        ? 'NIK must be at least 16 characters.'
+                        : null,
                   ),
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _birth,
+                  decoration: InputDecoration(
+                    labelText: 'Date of Birth',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () {
+                        _showDatePickerBottomSheet(context, (selectedDate) {
+                          setState(() {
+                            _birth.text = selectedDate.toString();
+                          });
+                          Navigator.pop(context);
+                        });
+                      },
+                    ),
+                  ),
+                  readOnly: true,
                 ),
                 SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   height: 45,
-                  child: ElevatedButton(
-                    onPressed: 
-                    _registerUser,
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A),
-                    ),
+                   child: ElevatedButton(
+                  onPressed: _isValidForm ? _registerUser : null, // Tambahkan pengecekan _isValidForm
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFF16A69A),
+                  ),
                     child: Text(
                       'Add',
                       style: TextStyle(color: Colors.white),
@@ -271,6 +344,15 @@ class _RegistrationFormState extends State<RegistrationForm> {
       ],
     );
   }
+  void _validateForm() {
+  setState(() {
+    _isValidForm = _emailController.text.contains('@gmail.com') &&
+        _passwordController.text.isNotEmpty &&
+        _passwordController.text.length >= 8;
+        _noKtpController.text.length >= 16;
+    // Tambahkan validasi untuk TextFormField lainnya sesuai kebutuhan
+  });
+}
 
   @override
   void dispose() {

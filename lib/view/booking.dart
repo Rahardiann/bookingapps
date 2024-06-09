@@ -6,6 +6,8 @@ import 'package:booking/view/homepage.dart';
 import 'package:booking/beforelogin/profilenone.dart';
 import 'package:booking/view/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+
 
 class Booking extends StatefulWidget {
   final BookingData? bookingData; // Ubah menjadi nullable (opsional)
@@ -309,7 +311,7 @@ class _BookingState extends State<Booking> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '2 April, 9:45 AM',
+                     getCurrentDateTime(),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -327,6 +329,7 @@ class _BookingState extends State<Booking> {
               ),
             ],
           ),
+          
           SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -543,3 +546,9 @@ class _BookingState extends State<Booking> {
     );
   }
 }
+String getCurrentDateTime() {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('d MMMM, h:mm a').format(now);
+    return formattedDate;
+  }
+
