@@ -4,7 +4,37 @@ import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
+void _showDatePickerBottomSheet(BuildContext context, Function(DateTime) onDateSelected) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext builder) {
+      return Container(
+        height: 300,
+        child: Column(
+          children: [
+            Expanded(
+              child: CalendarDatePicker(
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                onDateChanged: (DateTime selectedDate) {
+                  // Call the onDateSelected function with the selected date
+                  onDateSelected(selectedDate);
+                },
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
 class VisitUser {
   final String nama;
@@ -15,10 +45,12 @@ class VisitUser {
   final String? gender;
   final String? alamat;
   final int? no_ktp;
+  final String tanggal_lahir;
 
   VisitUser({
     required this.nama,
     required this.email,
+    required this.tanggal_lahir,
     this.no_rekam_medis,
     this.no_hp,
     this.password,
@@ -37,6 +69,7 @@ class VisitUser {
       gender: json['gender'] ?? '',
       alamat: json['alamat'] ?? '',
       no_ktp: json['no_ktp'],
+      tanggal_lahir: json['tanggal_lahir'] ?? '',
     );
   }
 }
@@ -106,6 +139,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _noKtpController = TextEditingController();
+  final TextEditingController _birth = TextEditingController();
   bool _obscureText = true;
   String? _gender;
   VisitUser? _visitUser;
@@ -125,6 +159,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     String no_hp = _phoneNumberController.text;
     String gender = _gender ?? '';
     String alamat = _addressController.text;
+    String tanggal_lahir = _birth.text;
     int no_ktp = int.tryParse(_noKtpController.text) ?? 0;
 
     VisitUser _visitUser = VisitUser(
@@ -136,6 +171,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
       gender: gender,
       alamat: alamat,
       no_ktp: no_ktp,
+      tanggal_lahir: tanggal_lahir,
     );
 
     Dio dio = Dio();
@@ -154,6 +190,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
           'gender': _visitUser.gender,
           'alamat': _visitUser.alamat,
           'no_ktp': _visitUser.no_ktp,
+          'tanggal_lahir': _visitUser.tanggal_lahir,
         },
       );
 
@@ -221,6 +258,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         _phoneNumberController.text = _visitUser?.no_hp ?? '';
         _gender = _visitUser?.gender ?? '';
         _addressController.text = _visitUser?.alamat ?? '';
+        _birth.text = _visitUser?.tanggal_lahir ?? '';
        _noKtpController.text = (_visitUser?.no_ktp ?? 0).toString();
         isLoading = false;
       });
@@ -272,17 +310,17 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         ),
                         obscureText: _obscureText,
                       ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        controller: _rekamController,
-                        decoration: InputDecoration(
-                          labelText: 'No Rekam Medis',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                        ),
+                      // SizedBox(height: 20),
+                      // TextFormField(
+                      //   controller: _rekamController,
+                      //   decoration: InputDecoration(
+                      //     labelText: 'No Rekam Medis',
+                      //     border: InputBorder.none,
+                      //     filled: true,
+                      //     fillColor: Colors.grey[200],
+                      //   ),
                         
-                      ),
+                      // ),
                      
                       SizedBox(height: 20),
                       TextFormField(
@@ -354,6 +392,28 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           fillColor: Colors.grey[200],
                         ),
                       ),
+                       SizedBox(height: 20),
+                      TextFormField(
+                  controller: _birth,
+                  decoration: InputDecoration(
+                    labelText: 'Date of Birth',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () {
+                        _showDatePickerBottomSheet(context, (selectedDate) {
+                          setState(() {
+                            _birth.text = selectedDate.toString();
+                          });
+                          Navigator.pop(context);
+                        });
+                      },
+                    ),
+                  ),
+                  readOnly: true,
+                ),
                       SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
