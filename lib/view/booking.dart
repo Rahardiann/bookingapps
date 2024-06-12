@@ -21,7 +21,7 @@ class Booking extends StatefulWidget {
 class HistoryData {
   final String nama_user;
   final String nama_dokter;
-  final String jadwal;
+  final String tanggal_pemesanan;
   final String jam;
   final String promo;
 
@@ -29,7 +29,7 @@ class HistoryData {
       {
       required this.nama_user,
       required this.nama_dokter,
-      required this.jadwal,
+      required this.tanggal_pemesanan,
       required this.jam,
       required this.promo});
 
@@ -37,7 +37,7 @@ class HistoryData {
     return HistoryData(
       nama_user: json['nama_user'],
       nama_dokter: json['nama_dokter'],
-      jadwal: json['jadwal'],
+      tanggal_pemesanan: json['tanggal_pemesanan'],
       jam: json['jam'],
       promo: json['judul'],
     );
@@ -47,7 +47,7 @@ class HistoryData {
 class _BookingState extends State<Booking> {
   int _bottomNavCurrentIndex = 1;
   String nama_dokter = "";
-  DateTime jadwal = DateTime.now();
+  DateTime tanggal_pemesanan = DateTime.now();
   String jam = "";
   String promo = "";
   String _selectedItem = 'Budi';
@@ -420,7 +420,7 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        history.isNotEmpty ? history[0].jadwal.toString() : '',
+                        history.isNotEmpty ? history[0].tanggal_pemesanan.toString() : '',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

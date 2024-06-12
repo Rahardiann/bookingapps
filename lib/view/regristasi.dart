@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:booking/widget/welcomepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void _showDatePickerBottomSheet(BuildContext context, Function(DateTime) onDateSelected) {
+void _showDatePickerBottomSheet(
+    BuildContext context, Function(DateTime) onDateSelected) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext builder) {
@@ -146,6 +147,10 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Future<void> _registerUser() async {
+    // Hapus id_exist dari SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('id_exist');
+
     String email = _emailController.text;
     String password = _passwordController.text;
     String nama = NameController.text;
@@ -154,9 +159,9 @@ class _RegisterFormState extends State<RegisterForm> {
     String gender = _genderController.text;
     String tanggal_lahir = _birthController.text;
 
-    Dio dio = Dio();
-
     try {
+      Dio dio = Dio();
+      // Jalankan permintaan HTTP
       Response response = await dio.post(
         'http://82.197.95.108:8003/user/registerlogin',
         data: {
@@ -166,18 +171,17 @@ class _RegisterFormState extends State<RegisterForm> {
           'password': password,
           'no_ktp': no_ktp,
           'gender': gender,
-          'tanggal_lahir': tanggal_lahir
+          'tanggal_lahir': tanggal_lahir,
         },
       );
 
       print(response.data);
 
-      if (response.statusCode == 200) {
-        int id_exist = response.data['data']['id'];
-        SharedPreferences.setMockInitialValues({});
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('id_exist', id_exist);
+      // Simpan id_exist ke SharedPreferences
+      int id_exist = response.data['data']['id'];
+      await prefs.setInt('id_exist', id_exist);
 
+      if (response.statusCode == 200) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Welcomepage()),
@@ -401,8 +405,8 @@ class _RegisterFormState extends State<RegisterForm> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 1.0, horizontal: 15.0),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
                     errorText: _no_ktpController.text.isNotEmpty &&
                             _no_ktpController.text.length < 16
                         ? 'NIK must be at least 16 characters.'

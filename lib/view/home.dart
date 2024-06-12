@@ -12,7 +12,6 @@ import 'package:booking/view/notif/notif.dart';
 import 'package:booking/view/notif/notificationScreen.dart';
 import 'package:booking/view/notif/reminder.dart';
 
-
 class Post {
   final int id;
   final String title;
@@ -49,19 +48,17 @@ class User {
   final int id;
   final String nama;
 
-
   User({required this.id, required this.nama});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
       nama: json['nama'],
-      
     );
   }
 }
 
-class NoRM{
+class NoRM {
   final int no_rekam_medis;
 
   NoRM({required this.no_rekam_medis});
@@ -91,16 +88,14 @@ class Jam {
 
 class Jadwal {
   final int id;
-  // final DateTime jadwal;
-  final String jam;
+  final List<String> jam;
 
   Jadwal({required this.id, required this.jam});
 
   factory Jadwal.fromJson(Map<String, dynamic> json) {
     return Jadwal(
       id: json['id'],
-      // jadwal: DateTime.parse(json['jadwal']),
-      jam: json['jam'],
+      jam: List<String>.from(json['jam']),
     );
   }
 }
@@ -138,7 +133,7 @@ class BookingData {
   final int selectedUserId;
   final String selectedDentist;
   final DateTime selectedDate;
-  final String selectedTimeText;
+  final String selectedTime;
   final String selectedPromo;
   final int selectedPromoId;
   final int selectedJadwalId;
@@ -148,7 +143,7 @@ class BookingData {
     required this.selectedUserId,
     required this.selectedDentist,
     required this.selectedDate,
-    required this.selectedTimeText,
+    required this.selectedTime,
     required this.selectedPromo,
     required this.selectedPromoId,
     required this.selectedJadwalId,
@@ -161,7 +156,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-   final NotificationService _notificationService = NotificationService();
+  final NotificationService _notificationService = NotificationService();
   final NotificationRemindedr _notificationRemindedr = NotificationRemindedr();
 
   int _bottomNavCurrentIndex = 0;
@@ -169,7 +164,7 @@ class _HomeState extends State<Home> {
   String _selectedUser = "User";
   String _selectedDentist = "Choose a dentist";
   DateTime _selectedDate = DateTime.now();
-  String _selectedTimeText = 'Select Time';
+  // String _selectedTimeText = 'Select Time';
   String _selectedPromo = "Promo";
   String _username = "";
   List<Dentist> dentists = [];
@@ -181,7 +176,7 @@ class _HomeState extends State<Home> {
   bool isLoading = false;
   BookingData? bookingData;
   NoRM? noRM;
-
+  String? _selectedTime;
 
   int _selectedDentistId = 0;
   int _selectedUserId = 0;
@@ -197,7 +192,7 @@ class _HomeState extends State<Home> {
     _notificationService.initialize(context);
     _notificationRemindedr.initNotification();
     _bottomNavCurrentIndex = 0;
-    
+
     fetchData();
     fetchDentists();
     fetchUser();
@@ -226,13 +221,8 @@ class _HomeState extends State<Home> {
             'nama': _selectedDentist,
           },
           'jadwal': {
-            'id':
-                _selectedJadwalId, // Sesuaikan dengan id jadwal jika diperlukan
+            'jam': _selectedTime, 
             'jadwal': _selectedDate.toIso8601String()
-          },
-          'jam': {
-            'id': _selectedJadwalId, // Sesuaikan dengan id jam jika diperlukan
-            'jam': _selectedTimeText
           },
           'judul': {'id': _selectedPromoId, 'judul': _selectedPromo + "judul"},
         },
@@ -248,12 +238,12 @@ class _HomeState extends State<Home> {
           ),
           settings: RouteSettings(
             arguments: {
-              'selectedUserId' : _selectedUserId,
+              'selectedUserId': _selectedUserId,
               'selectedDentistId': _selectedDentistId,
               'selectedDentist': _selectedDentist,
               'selectJadwalId': _selectedJadwalId,
               'selectedDate': _selectedDate,
-              'selectedTimeText': _selectedTimeText,
+              'selectedTimeText': _selectedTime,
               'selectedPromo': _selectedPromo,
               'selectedPromoId': _selectedPromoId,
             },
@@ -285,7 +275,6 @@ class _HomeState extends State<Home> {
       );
     }
   }
-  
 
   Future<void> fetchPosts() async {
     setState(() {
@@ -454,8 +443,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  
-
   Future<void> fetchPromo() async {
     setState(() {
       isLoading = true;
@@ -528,109 +515,105 @@ class _HomeState extends State<Home> {
 
   // Method untuk menampilkan bottom sheet
 
- void _showUserSelectionSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (BuildContext context) {
-      return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: TextButton.styleFrom(
-                        primary: Colors.black,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
-                          SizedBox(width: 5),
-                          Text(
-                            'Back',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 400, // Atur tinggi ListView sesuai kebutuhan
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: user.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    User currentUser = user[index];
-                    return ListTile(
-                      title: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 5.0, right: 20.0),
-                            child: Icon(
-                              Icons.account_circle,
-                              color: Colors.grey,
-                              size: 50,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                currentUser.nama,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+  void _showUserSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_back_ios,
+                                size: 20, color: Colors.black),
+                            SizedBox(width: 5),
+                            Text(
+                              'Back',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
-                              
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
-                      onTap: () async {
-                        setState(() {
-                          _selectedUser = currentUser.nama;
-                          _selectedUserId = currentUser.id;
-                        });
-                        Navigator.pop(context);
-                        await fetchRM(_selectedUser);
-                      },
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 20), // Jarak antara ListTile dan TextField
-              // Tambahkan widget lain di sini jika diperlukan
-              SizedBox(height: 80), // Jarak tambahan di bawah TextField
-            ],
+                Container(
+                  height: 400, // Atur tinggi ListView sesuai kebutuhan
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: user.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      User currentUser = user[index];
+                      return ListTile(
+                        title: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 5.0, right: 20.0),
+                              child: Icon(
+                                Icons.account_circle,
+                                color: Colors.grey,
+                                size: 50,
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  currentUser.nama,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          setState(() {
+                            _selectedUser = currentUser.nama;
+                            _selectedUserId = currentUser.id;
+                          });
+                          Navigator.pop(context);
+                          await fetchRM(_selectedUser);
+                        },
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20), // Jarak antara ListTile dan TextField
+                // Tambahkan widget lain di sini jika diperlukan
+                SizedBox(height: 80), // Jarak tambahan di bawah TextField
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
-
-
-
-
+        );
+      },
+    );
+  }
 
   void _showDentistSelectionSheet(BuildContext context) {
     showModalBottomSheet(
@@ -705,96 +688,99 @@ class _HomeState extends State<Home> {
   }
 
   void _showDatePickerSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        height: 300,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Select Date',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Menutup layar saat tombol ditekan
-                      Navigator.pop(context);
-
-                      // Menjadwalkan notifikasi untuk muncul setelah 10 detik dari sekarang
-                      DateTime scheduledTime =
-                          DateTime.now().add(Duration(seconds: 10));
-
-                      // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
-                      String formattedDate =
-                          scheduledTime.toIso8601String().substring(0, 10);
-
-                      debugPrint('Notification Scheduled for $formattedDate');
-
-                      _notificationRemindedr.scheduleNotification(
-                        title: 'Reminder',
-                        body:
-                            'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!',
-                        scheduledNotificationDateTime: scheduledTime,
-                      );
-                    },
-                    child: Text(
-                      'Done',
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select Date',
                       style: TextStyle(
-                        color: Color(0xFFB6366D),
-                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
-                  ),
-                ],
+                    TextButton(
+                      onPressed: () {
+                        // Menutup layar saat tombol ditekan
+                        Navigator.pop(context);
+
+                        // Menjadwalkan notifikasi untuk muncul setelah 10 detik dari sekarang
+                        DateTime scheduledTime =
+                            DateTime.now().add(Duration(seconds: 10));
+
+                        // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
+                        String formattedDate =
+                            scheduledTime.toIso8601String().substring(0, 10);
+
+                        debugPrint('Notification Scheduled for $formattedDate');
+
+                        _notificationRemindedr.scheduleNotification(
+                          title: 'Reminder',
+                          body:
+                              'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!',
+                          scheduledNotificationDateTime: scheduledTime,
+                        );
+                      },
+                      child: Text(
+                        'Done',
+                        style: TextStyle(
+                          color: Color(0xFFB6366D),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-           Expanded(
-            child: CalendarDatePicker(
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(), // Menggunakan DateTime.now() sebagai firstDate
-              lastDate: DateTime(DateTime.now().year + 10), // Menambahkan satu tahun ke tanggal saat ini sebagai lastDate
-              onDateChanged: (DateTime newDateTime) {
-                // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
-                setState(() {
-                  _selectedDate = newDateTime;
-                });
-              },
-            ),
+              Expanded(
+                child: CalendarDatePicker(
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime
+                      .now(), // Menggunakan DateTime.now() sebagai firstDate
+                  lastDate: DateTime(DateTime.now().year +
+                      10), // Menambahkan satu tahun ke tanggal saat ini sebagai lastDate
+                  onDateChanged: (DateTime newDateTime) {
+                    // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+                    setState(() {
+                      _selectedDate = newDateTime;
+                    });
+                  },
+                ),
+              ),
+
+              // Expanded(
+              //   child: CupertinoDatePicker(
+              //     mode: CupertinoDatePickerMode.date,
+              //     minimumDate: DateTime.now(), // Hanya tampilkan tanggal hari ini dan seterusnya
+              //     initialDateTime: _selectedDate,
+              //     onDateTimeChanged: (DateTime newDateTime) {
+              //       // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+              //       setState(() {
+              //         _selectedDate = newDateTime;
+              //       });
+              //     },
+              //   ),
+              // ),
+            ],
           ),
-
-            // Expanded(
-            //   child: CupertinoDatePicker(
-            //     mode: CupertinoDatePickerMode.date,
-            //     minimumDate: DateTime.now(), // Hanya tampilkan tanggal hari ini dan seterusnya
-            //     initialDateTime: _selectedDate,
-            //     onDateTimeChanged: (DateTime newDateTime) {
-            //       // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
-            //       setState(() {
-            //         _selectedDate = newDateTime;
-            //       });
-            //     },
-            //   ),
-            // ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 
   void _handleTimeSelection(String selectedTime) {
+    // Lakukan sesuatu dengan waktu yang dipilih
+    print("Waktu yang dipilih: $selectedTime");
     setState(() {
-      _selectedTimeText = selectedTime; // Perbarui nilai waktu yang dipilih
+      _selectedTime = selectedTime;
     });
   }
 
@@ -843,34 +829,40 @@ class _HomeState extends State<Home> {
                 child: ListView.builder(
                   itemCount: jadwal.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(0xFFD7F0EE),
-                        ),
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          jadwal[index]
-                              .jam, // Menggunakan properti jam dari objek jadwal saat ini
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      onTap: () {
-                        var selectedTime = jadwal[index]
-                            .jam; // Menggunakan properti jam dari objek jadwal saat ini
-                        setState(() {
-                          _handleTimeSelection(selectedTime);
-                          _selectedJadwalId = jadwal[index].id;
-                        });
-                        Navigator.pop(context);
-                      },
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            height:
+                                8), // Menambahkan spasi antara ID dan daftar jam
+                        ...jadwal[index].jam.map((time) {
+                          return ListTile(
+                            title: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Color(0xFFD7F0EE),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                time, // Menggunakan setiap waktu dari daftar jam
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _handleTimeSelection(time);
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+                        }).toList(),
+                      ],
                     );
                   },
                 ),
@@ -903,7 +895,6 @@ class _HomeState extends State<Home> {
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      
                     },
                     style: TextButton.styleFrom(
                       primary: Colors.black,
@@ -928,90 +919,88 @@ class _HomeState extends State<Home> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: promos.length,
-                itemBuilder: (context, index) {
-                  Promo promo = promos[index];
-                  return TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedPromo = promo.judul;
-                        _selectedPromoId = promo.id;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFD7F0EE),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      promo.judul,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Detailpromo(),
-                                        ),
-                                      );
-                                        // Tambahkan logika untuk tindakan saat tombol ditekan
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                // Tambahkan jarak vertikal antara judul dan deskripsi
-                                Text(
-                                  promo
-                                      .subtitle, // Menggunakan properti subtitle dari objek Promo
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
+  child: ListView.builder(
+    itemCount: promos.length,
+    itemBuilder: (context, index) {
+      Promo promo = promos[index];
+      return TextButton(
+        onPressed: () {
+          setState(() {
+            _selectedPromo = promo.judul;
+            _selectedPromoId = promo.id;
+          });
+          Navigator.pop(context);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFD7F0EE),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          promo.judul,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
-                        ],
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 15,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _selectedPromoId = promo.id; // Save selected promo ID
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Detailpromo(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    // Add vertical space between title and description
+                    Text(
+                      promo.subtitle, // Using the subtitle property from the Promo object
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.black54,
                       ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
-            ),
+            ],
+          ),
+        ),
+      );
+    },
+  ),
+),
+
           ],
         );
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -1021,43 +1010,42 @@ class _HomeState extends State<Home> {
       body: ListView(
         children: [
           Container(
-  padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
-  child: Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: Icon(
-              Icons.notifications_none_outlined,
-              size: 30,
-              color: Colors.black54,
-            ),
-            onPressed: () {
-              // Navigasi ke NotificationScreen saat ikon notifikasi ditekan
-              Navigator.pushNamed(context, '/notifikasi');
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.account_circle,
-              size: 30,
-              color: Colors.black54,
-            ),
-            onPressed: () {
-              // Navigasi ke AccountScreen saat ikon akun ditekan
-             Navigator.push(
+            padding: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.notifications_none_outlined,
+                        size: 30,
+                        color: Colors.black54,
+                      ),
+                      onPressed: () {
+                        // Navigasi ke NotificationScreen saat ikon notifikasi ditekan
+                        Navigator.pushNamed(context, '/notifikasi');
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.account_circle,
+                        size: 30,
+                        color: Colors.black54,
+                      ),
+                      onPressed: () {
+                        // Navigasi ke AccountScreen saat ikon akun ditekan
+                        Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => Profiles()),
                         );
-            },
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-    ],
-  ),
-)
-,
           SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -1163,7 +1151,7 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedUser, 
+                        _selectedUser,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1181,7 +1169,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
                 TextButton.icon(
                   onPressed: () {
                     _showDentistSelectionSheet(
@@ -1213,7 +1200,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
                 TextButton.icon(
                   onPressed: () {
                     _showDatePickerSheet(context);
@@ -1247,7 +1233,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
                 TextButton.icon(
                   onPressed: () {
                     _showTimePickerSheet(context);
@@ -1260,7 +1245,8 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedTimeText, // Tampilkan waktu yang dipilih
+                        _selectedTime ??
+                            'Select time', // Tampilkan waktu yang dipilih jika tersedia, jika tidak, tampilkan "Select time"
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1279,7 +1265,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
                 TextButton.icon(
                   onPressed: () {
                     _showPromoSelectionSheet(context, promo);
@@ -1311,7 +1296,6 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-
                 Row(
                   children: [
                     Expanded(
@@ -1378,7 +1362,6 @@ class _HomeState extends State<Home> {
                               onPressed: () {
                                 int promoId =
                                     0; // ID promo yang dipilih, bisa diganti dengan yang lain
-                                
                               },
                             ),
                           ],
