@@ -147,7 +147,8 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Future<void> _registerUser() async {
-    // Hapus id_exist dari SharedPreferences
+    Dio dio = Dio();
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('id_exist');
 
@@ -160,7 +161,6 @@ class _RegisterFormState extends State<RegisterForm> {
     String tanggal_lahir = _birthController.text;
 
     try {
-      Dio dio = Dio();
       // Jalankan permintaan HTTP
       Response response = await dio.post(
         'http://82.197.95.108:8003/user/registerlogin',
@@ -175,30 +175,29 @@ class _RegisterFormState extends State<RegisterForm> {
         },
       );
 
-      print(response.data);
-
       // Simpan id_exist ke SharedPreferences
-      int id_exist = response.data['data']['id'];
+      int id_exist = response.data['data'];
       await prefs.setInt('id_exist', id_exist);
+      print(id_exist);
 
-      if (response.statusCode == 200) {
+      // Check jika respons sukses
+      if (response.statusCode == 201) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Welcomepage()),
         );
-      }
-    } catch (error) {
-      if (error is DioError) {
-        if (error.response?.statusCode == 400) {
+      } else {
+        // Tangani respons error
+        if (response.statusCode == 200) {
           _showUserExistsDialog();
         } else {
-          print(error.toString());
           _showErrorDialog();
         }
-      } else {
-        print(error.toString());
-        _showErrorDialog();
       }
+    } catch (error) {
+      // Tangani error lainnya
+      print(error.toString());
+      _showErrorDialog();
     }
   }
 
