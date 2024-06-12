@@ -44,7 +44,7 @@ class VisitUser {
   final String? password;
   final String? gender;
   final String? alamat;
-  final int? no_ktp;
+  final String? no_ktp;
   final String tanggal_lahir;
 
   VisitUser({
@@ -68,7 +68,7 @@ class VisitUser {
       password: json['password'] ?? '',
       gender: json['gender'] ?? '',
       alamat: json['alamat'] ?? '',
-      no_ktp: json['no_ktp'],
+      no_ktp: json['no_ktp']?? '',
       tanggal_lahir: json['tanggal_lahir'] ?? '',
     );
   }
@@ -160,7 +160,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     String gender = _gender ?? '';
     String alamat = _addressController.text;
     String tanggal_lahir = _birth.text;
-    int no_ktp = int.tryParse(_noKtpController.text) ?? 0;
+    String no_ktp = _noKtpController.text;
 
     VisitUser _visitUser = VisitUser(
       email: email,
