@@ -176,7 +176,7 @@ class _RegisterFormState extends State<RegisterForm> {
       );
 
       // Simpan id_exist ke SharedPreferences
-      int id_exist = response.data['data'];
+      int id_exist = response.data['data']['id'];
       await prefs.setInt('id_exist', id_exist);
       print(id_exist);
 
