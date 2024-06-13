@@ -14,32 +14,32 @@ class DetailHistory extends StatefulWidget {
 class VisitData {
   final String nama_dokter;
   final String nama_user;
-  final String jadwal;
+  final String tanggal_pemesanan;
   final String jam;
   final String promo;
 
   VisitData({
     required this.nama_dokter,
     required this.nama_user,
-    required this.jadwal,
+    required this.tanggal_pemesanan,
     required this.jam,
     required this.promo,
   });
 
   factory VisitData.fromJson(Map<String, dynamic> json) {
     return VisitData(
-      nama_dokter: json['dokter']['nama'],
-      nama_user: json['user']['nama'],
-      jadwal: json['jadwal']['jadwal'],
-      jam: json['jadwal']['jam'],
-      promo: json['promo']['judul'],
+      nama_dokter: json['dokter']['nama'] as String? ?? '',
+      nama_user: json['user']['nama'] as String? ?? '',
+      tanggal_pemesanan: json['tanggal_pemesanan'] as String? ?? '',
+      jam: json['jadwal']['jam'] as String? ?? '',
+      promo: json['promo']['judul'] as String? ?? '',
     );
   }
 }
 
 class _DetailHistoryState extends State<DetailHistory> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
-
+  DateTime tanggal_pemesanan = DateTime.now();
   List<VisitData> visit = [];
   bool isLoading = false;
 
@@ -61,7 +61,6 @@ class _DetailHistoryState extends State<DetailHistory> {
       String apiUrl = "http://82.197.95.108:8003/booking/$id";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
-      print(response.data['data']);
       if (response.statusCode == 200) {
         List<dynamic> responseData = response.data['data'];
         List<VisitData> fetchedVisit =
@@ -155,112 +154,112 @@ class _DetailHistoryState extends State<DetailHistory> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: visit.length,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFD7F0EE),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: visit.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFD7F0EE),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person, color: Color(0xFF16A69A)),
+                            SizedBox(width: 8),
+                            Text(
+                              ' ${visit[index].nama_user}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person, color: Color(0xFF16A69A)),
+                            SizedBox(width: 8),
+                            Text(
+                              ' ${visit[index].nama_dokter}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, color: Color(0xFF16A69A)),
+                            SizedBox(width: 8),
+                            Text(
+                              ' ${visit[index].tanggal_pemesanan}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time, color: Color(0xFF16A69A)),
+                            SizedBox(width: 8),
+                            Text(
+                              '${visit[index].jam}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.local_offer, color: Color(0xFF16A69A)),
+                            SizedBox(width: 8),
+                            Text(
+                              '${visit[index].promo}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                );
+              },
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.only(bottom: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.person, color: Color(0xFF16A69A)),
-                      SizedBox(width: 8),
-                      Text(
-                        ' ${visit[index].nama_user}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.person, color: Color(0xFF16A69A)),
-                      SizedBox(width: 8),
-                      Text(
-                        ' ${visit[index].nama_dokter}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_today, color: Color(0xFF16A69A)),
-                      SizedBox(width: 8),
-                      Text(
-                        ' ${visit[index].jadwal}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.access_time, color: Color(0xFF16A69A)),
-                      SizedBox(width: 8),
-                      Text(
-                        '${visit[index].jam}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.local_offer, color: Color(0xFF16A69A)),
-                      SizedBox(width: 8),
-                      Text(
-                        '${visit[index].promo}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10),
-              ],
-            ),
-          );
-        },
-      ),
-
-
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void _showDatePickerBottomSheet(
     BuildContext context, Function(DateTime) onDateSelected) {
+  DateTime? selectedDate;
+
   showModalBottomSheet(
     context: context,
     builder: (BuildContext builder) {
@@ -18,15 +20,17 @@ void _showDatePickerBottomSheet(
                 initialDate: DateTime.now(),
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
-                onDateChanged: (DateTime selectedDate) {
-                  // Call the onDateSelected function with the selected date
-                  onDateSelected(selectedDate);
+                onDateChanged: (DateTime date) {
+                  selectedDate = date;
                 },
               ),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                if (selectedDate != null) {
+                  onDateSelected(selectedDate!);
+                }
+                Navigator.pop(context);
               },
               child: Text('Close'),
             ),
@@ -116,7 +120,6 @@ class _RegisterFormState extends State<RegisterForm> {
   bool _obscureText = true;
   late UserData userData;
 
-  // Method to validate the form fields
   bool _validateForm() {
     if (NameController.text.isEmpty ||
         _phoneNumberController.text.isEmpty ||
@@ -161,7 +164,6 @@ class _RegisterFormState extends State<RegisterForm> {
     String tanggal_lahir = _birthController.text;
 
     try {
-      // Jalankan permintaan HTTP
       Response response = await dio.post(
         'http://82.197.95.108:8003/user/registerlogin',
         data: {
@@ -175,19 +177,16 @@ class _RegisterFormState extends State<RegisterForm> {
         },
       );
 
-      // Simpan id_exist ke SharedPreferences
       int id_exist = response.data['data']['id'];
       await prefs.setInt('id_exist', id_exist);
       print(id_exist);
 
-      // Check jika respons sukses
       if (response.statusCode == 201) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Welcomepage()),
         );
       } else {
-        // Tangani respons error
         if (response.statusCode == 200) {
           _showUserExistsDialog();
         } else {
@@ -195,7 +194,6 @@ class _RegisterFormState extends State<RegisterForm> {
         }
       }
     } catch (error) {
-      // Tangani error lainnya
       print(error.toString());
       _showErrorDialog();
     }
@@ -457,9 +455,9 @@ class _RegisterFormState extends State<RegisterForm> {
                       onPressed: () {
                         _showDatePickerBottomSheet(context, (selectedDate) {
                           setState(() {
-                            _birthController.text = selectedDate.toString();
+                            _birthController.text =
+                                selectedDate.toIso8601String().split('T')[0];
                           });
-                          Navigator.pop(context);
                         });
                       },
                     ),

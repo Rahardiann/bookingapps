@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void _showDatePickerBottomSheet(BuildContext context, Function(DateTime) onDateSelected) {
+void _showDatePickerBottomSheet(
+    BuildContext context, Function(DateTime) onDateSelected) {
+  DateTime? selectedDate;
+
   showModalBottomSheet(
     context: context,
     builder: (BuildContext builder) {
@@ -17,15 +20,17 @@ void _showDatePickerBottomSheet(BuildContext context, Function(DateTime) onDateS
                 initialDate: DateTime.now(),
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
-                onDateChanged: (DateTime selectedDate) {
-                  // Call the onDateSelected function with the selected date
-                  onDateSelected(selectedDate);
+                onDateChanged: (DateTime date) {
+                  selectedDate = date;
                 },
               ),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                if (selectedDate != null) {
+                  onDateSelected(selectedDate!);
+                }
+                Navigator.pop(context);
               },
               child: Text('Close'),
             ),
@@ -405,9 +410,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       onPressed: () {
                         _showDatePickerBottomSheet(context, (selectedDate) {
                           setState(() {
-                            _birth.text = selectedDate.toString();
+                            _birth.text =
+                                selectedDate.toIso8601String().split('T')[0];
                           });
-                          Navigator.pop(context);
                         });
                       },
                     ),
