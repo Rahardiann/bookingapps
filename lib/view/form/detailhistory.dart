@@ -27,15 +27,21 @@ class VisitData {
   });
 
   factory VisitData.fromJson(Map<String, dynamic> json) {
+    // Handle potential type mismatches
+    String getString(dynamic value) {
+      return value?.toString() ?? '';
+    }
+
     return VisitData(
-      nama_dokter: json['dokter']['nama'] as String? ?? '',
-      nama_user: json['user']['nama'] as String? ?? '',
-      tanggal_pemesanan: json['tanggal_pemesanan'] as String? ?? '',
-      jam: json['jadwal']['jam'] as String? ?? '',
-      promo: json['promo']['judul'] as String? ?? '',
+      nama_dokter: getString(json['dokter']?['nama']),
+      nama_user: getString(json['user']?['nama']),
+      tanggal_pemesanan: getString(json['tanggal_pemesanan']),
+      jam: getString(json['jadwal']),
+      promo: getString(json['promo']?['judul']),
     );
   }
 }
+
 
 class _DetailHistoryState extends State<DetailHistory> {
   int _selectedIndex = 2; // Set indeks sesuai dengan "Profile"
@@ -50,39 +56,53 @@ class _DetailHistoryState extends State<DetailHistory> {
   }
 
   Future<void> fetchVisit() async {
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int? id = prefs.getInt('id_user');
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id_user');
 
-      String apiUrl = "http://82.197.95.108:8003/booking/$id";
-      Dio dio = Dio();
-      Response response = await dio.get(apiUrl);
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = response.data['data'];
-        List<VisitData> fetchedVisit =
-            responseData.map((json) => VisitData.fromJson(json)).toList();
+    if (id == null) {
+      // Handle the case where the user ID is not available
+      print("User ID not found in SharedPreferences");
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
 
-        setState(() {
-          visit = fetchedVisit;
-          isLoading = false;
-        });
-      } else {
-        print("Error fetching data: ${response.statusCode}");
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print("Error: $e");
+    String apiUrl = "http://82.197.95.108:8003/booking/$id";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      // Log the response data
+      print("Response data: ${response.data}");
+
+      List<dynamic> responseData = response.data['data'];
+      List<VisitData> fetchedVisit =
+          responseData.map((json) => VisitData.fromJson(json)).toList();
+
+      setState(() {
+        visit = fetchedVisit;
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching data: ${response.statusCode}");
       setState(() {
         isLoading = false;
       });
     }
+  } catch (e) {
+    print("Error: $e");
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   void _onItemTapped(int index) {
     setState(() {
