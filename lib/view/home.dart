@@ -1443,8 +1443,8 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: ElevatedButton(
               onPressed: () {
-                // Action when button is pressed
-              },
+                    _showPromoSelectionSheet(context, promo);
+                  },
               style: ElevatedButton.styleFrom(
                 primary: Color.fromARGB(255, 237, 69, 142),
                 side: BorderSide(
