@@ -2,6 +2,7 @@ import 'package:booking/view/form/addpassword.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/widget/welcomepage.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void _showDatePickerBottomSheet(
@@ -109,6 +110,7 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController NameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -118,35 +120,13 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _no_ktpController = TextEditingController();
   final TextEditingController _birthController = TextEditingController();
   bool _obscureText = true;
+  bool _isFormValid = false;
   late UserData userData;
 
-  bool _validateForm() {
-    if (NameController.text.isEmpty ||
-        _phoneNumberController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please fill in all fields.'),
-        ),
-      );
-      return false;
-    } else if (_emailController.text.isEmpty ||
-        !_emailController.text.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a valid email address.'),
-        ),
-      );
-      return false;
-    } else if (_passwordController.text.length < 8) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Password must be at least 8 characters.'),
-        ),
-      );
-      return false;
-    }
-    return true;
+  void _validateForm() {
+    setState(() {
+      _isFormValid = _formKey.currentState?.validate() ?? false;
+    });
   }
 
   Future<void> _registerUser() async {
@@ -289,220 +269,261 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: 60.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Hello! Welcome 👋',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      onChanged: _validateForm,
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: 60.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Hello! Welcome 👋',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Please fill in the detailed information below',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
+                  SizedBox(height: 20),
+                  Text(
+                    'Please fill in the detailed information below',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-                SizedBox(height: 50),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 20.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(4.0),
+                  SizedBox(height: 50),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 20.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          '+62',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phoneNumberController,
+                          decoration: InputDecoration(
+                            labelText: 'Phone number',
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0, horizontal: 15.0),
+                          ),
+                         keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                          validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Phone Number';
+                      } else if (value.length > 13) {
+                        return 'NIK must be at least 13 characters';
+                      }
+                      return null;
+                    },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: NameController,
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your name';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      } else if (!value.contains('@')) {
+                        return 'Please enter a valid email address';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscureText
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: _obscureText,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      } else if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _no_ktpController,
+                    decoration: InputDecoration(
+                      labelText: 'NIK',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your NIK';
+                      } else if (value.length != 16) {
+                        return 'NIK must be exactly 16 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Gender',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                      RadioListTile<String>(
+                        title: const Text('Male'),
+                        value: 'pria',
+                        groupValue: _genderController.text,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _genderController.text = value!;
+                          });
+                        },
+                      ),
+                      RadioListTile<String>(
+                        title: const Text('Female'),
+                        value: 'wanita',
+                        groupValue: _genderController.text,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _genderController.text = value!;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _birthController,
+                    decoration: InputDecoration(
+                      labelText: 'Date of Birth',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () {
+                          _showDatePickerBottomSheet(context, (selectedDate) {
+                            setState(() {
+                              _birthController.text =
+                                  selectedDate.toIso8601String().split('T')[0];
+                            });
+                          });
+                        },
+                      ),
+                    ),
+                    readOnly: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select your date of birth';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 45,
+                    child: ElevatedButton(
+                      onPressed: _isFormValid
+                          ? () {
+                              userData = UserData(
+                                nama: NameController.text,
+                                email: _emailController.text,
+                                no_hp: _phoneNumberController.text,
+                                password: _passwordController.text,
+                                no_ktp: _no_ktpController.text,
+                                gender: _genderController.text,
+                                tanggal_lahir: _birthController.text,
+                              );
+
+                              _registerUser();
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF16A69A),
                       ),
                       child: Text(
-                        '+62',
-                        style: TextStyle(fontSize: 16.0),
+                        'Next',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    SizedBox(width: 8.0),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _phoneNumberController,
-                        decoration: InputDecoration(
-                          labelText: 'Phone number',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                        ),
-                        keyboardType: TextInputType.phone,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: NameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
                   ),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    errorText: !_emailController.text.contains('@gmail.com') &&
-                            _emailController.text.isNotEmpty
-                        ? 'Please enter a valid email address.'
-                        : null,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    suffixIcon: IconButton(
-                      icon: Icon(_obscureText
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
-                    errorText: _passwordController.text.isNotEmpty &&
-                            _passwordController.text.length < 8
-                        ? 'Password must be at least 8 characters.'
-                        : null,
-                  ),
-                  obscureText: _obscureText,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _no_ktpController,
-                  decoration: InputDecoration(
-                    labelText: 'NIK',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
-                    errorText: _no_ktpController.text.isNotEmpty &&
-                            _no_ktpController.text.length < 16
-                        ? 'NIK must be at least 16 characters.'
-                        : null,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Gender',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Male'),
-                      value: 'pria',
-                      groupValue: _genderController.text,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _genderController.text = value!;
-                        });
-                      },
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Female'),
-                      value: 'wanita',
-                      groupValue: _genderController.text,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _genderController.text = value!;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _birthController,
-                  decoration: InputDecoration(
-                    labelText: 'Date of Birth',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.calendar_today),
-                      onPressed: () {
-                        _showDatePickerBottomSheet(context, (selectedDate) {
-                          setState(() {
-                            _birthController.text =
-                                selectedDate.toIso8601String().split('T')[0];
-                          });
-                        });
-                      },
-                    ),
-                  ),
-                  readOnly: true,
-                ),
-                SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 45,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      bool isValid = _validateForm();
-
-                      setState(() {});
-
-                      if (isValid) {
-                        userData = UserData(
-                          nama: NameController.text,
-                          email: _emailController.text,
-                          no_hp: _phoneNumberController.text,
-                          password: _passwordController.text,
-                          no_ktp: _no_ktpController.text,
-                          gender: _genderController.text,
-                          tanggal_lahir: _birthController.text,
-                        );
-
-                        _registerUser();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF16A69A),
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-              ],
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:booking/view/profile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 void _showDatePickerBottomSheet(
     BuildContext context, Function(DateTime) onDateSelected) {
@@ -238,15 +239,48 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   ),
                 ),
                 SizedBox(height: 20),
-                TextFormField(
-                  controller: _phoneNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Nomor Hp',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
+                 Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 20.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          '+62',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phoneNumberController,
+                          decoration: InputDecoration(
+                            labelText: 'Phone number',
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0, horizontal: 15.0),
+                          ),
+                          keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                          validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Phone Number';
+                      } else if (value.length > 13) {
+                        return 'NIK must be at least 13 characters';
+                      }
+                      return null;
+                    },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
                 SizedBox(height: 20),
                 Text(
                   'Gender',
@@ -289,21 +323,28 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                  controller: _noKtpController,
-                  onChanged: (_) => _validateForm(),
-                  decoration: InputDecoration(
-                    labelText: 'NIK',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 1.0, horizontal: 15.0),
-                    errorText: _noKtpController.text.isNotEmpty &&
-                            _noKtpController.text.length < 16
-                        ? 'NIK must be at least 16 characters.'
-                        : null,
+                    controller: _noKtpController,
+                    decoration: InputDecoration(
+                      labelText: 'NIK',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your NIK';
+                      } else if (value.length != 16) {
+                        return 'NIK must be exactly 16 characters';
+                      }
+                      return null;
+                    },
                   ),
-                ),
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _birth,
