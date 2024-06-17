@@ -162,15 +162,15 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                   obscureText: _obscureText,
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      // Action when forgot password button is pressed
-                    },
-                    child: Text("Forgot Password?"),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: TextButton(
+                //     onPressed: () {
+                //       // Action when forgot password button is pressed
+                //     },
+                //     child: Text("Forgot Password?"),
+                //   ),
+                // ),
                 SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,

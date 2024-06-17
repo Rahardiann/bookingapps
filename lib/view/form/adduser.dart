@@ -99,7 +99,6 @@ class RegistrationForm extends StatefulWidget {
 class _RegistrationFormState extends State<RegistrationForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _rekamController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -110,8 +109,30 @@ class _RegistrationFormState extends State<RegistrationForm> {
   bool _isValidForm = false;
   String? _gender;
 
-  Future<void> _registerUser() async {
-    // Mengambil data dari controller
+  Future<void> _registerUser(BuildContext context) async {
+    // Validate all fields are filled
+    if (!_isValidForm) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Please fill in all fields.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // Get data from controllers
     String email = _emailController.text;
     String password = _passwordController.text;
     String nama = _nameController.text;
@@ -121,16 +142,15 @@ class _RegistrationFormState extends State<RegistrationForm> {
     String no_ktp = _noKtpController.text;
     String tanggal_lahir = _birth.text;
 
-    // Konfigurasi objek Dio
+    // Configuration for Dio
     Dio dio = Dio();
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int? id = prefs.getInt('id_user');
 
-
       Response response = await dio.post(
-        'http://82.197.95.108:8003/user/registeruser', // Ganti dengan URL endpoint registrasi yang sesuai
+        'http://82.197.95.108:8003/user/registeruser', // Replace with your registration endpoint URL
         data: {
           'id_login': id,
           'email': email,
@@ -144,18 +164,16 @@ class _RegistrationFormState extends State<RegistrationForm> {
         },
       );
 
-      // Menggunakan data response jika diperlukan
-      print(response.data);
+      print(response.data); // Use response data if needed
 
-      // Jika registrasi berhasil, arahkan ke halaman Welcomepage
+      // Navigate to profile page if registration successful
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Profiles()),
       );
     } catch (error) {
-      // Menangani error jika terjadi
+      // Handle errors
       print(error.toString());
-      // Tampilkan pesan kesalahan kepada pengguna
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -231,56 +249,63 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _nameController,
+                  onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
-                    labelText: 'Nama',
+                    labelText: 'Name',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    errorText: _nameController.text.isEmpty
+                        ? 'Please enter your name.'
+                        : null,
                   ),
                 ),
                 SizedBox(height: 20),
-                 Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 20.0),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        child: Text(
-                          '+62',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4.0),
                       ),
-                      SizedBox(width: 8.0),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _phoneNumberController,
-                          decoration: InputDecoration(
-                            labelText: 'Phone number',
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 1.0, horizontal: 15.0),
-                          ),
-                          keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                          validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Phone Number';
-                      } else if (value.length > 13) {
-                        return 'NIK must be at least 13 characters';
-                      }
-                      return null;
-                    },
-                        ),
+                      child: Text(
+                        '+62',
+                        style: TextStyle(fontSize: 16.0),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: 8.0),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _phoneNumberController,
+                        onChanged: (_) => _validateForm(),
+                        decoration: InputDecoration(
+                          labelText: 'Phone Number',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
+                          errorText: _phoneNumberController.text.isEmpty
+                              ? 'Please enter your Phone Number.'
+                              : (_phoneNumberController.text.length < 9 ||
+                                      _phoneNumberController.text.length > 13)
+                                  ? 'Phone Number must be between 9 and 13 characters.'
+                                  : null,
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(13), // Limit input to 13 characters
+                        ],
+                        maxLength: 13, // Set maximum length of input
+                        minLength: 9, // Set minimum length of input
+                      ),
+
+                    ),
+
+                  ],
+                ),
                 SizedBox(height: 20),
                 Text(
                   'Gender',
@@ -290,21 +315,23 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Radio(
-                      value: 'pria',
+                      value: 'Male',
                       groupValue: _gender,
                       onChanged: (value) {
                         setState(() {
                           _gender = value.toString();
+                          _validateForm();
                         });
                       },
                     ),
                     Text('Male'),
                     Radio(
-                      value: 'wanita',
+                      value: 'Female',
                       groupValue: _gender,
                       onChanged: (value) {
                         setState(() {
                           _gender = value.toString();
+                          _validateForm();
                         });
                       },
                     ),
@@ -314,40 +341,44 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _addressController,
+                  onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
-                    labelText: 'Alamat',
+                    labelText: 'Address',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
+                    errorText: _addressController.text.isEmpty
+                        ? 'Please enter your address.'
+                        : null,
                   ),
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                    controller: _noKtpController,
-                    decoration: InputDecoration(
-                      labelText: 'NIK',
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your NIK';
-                      } else if (value.length != 16) {
-                        return 'NIK must be exactly 16 characters';
-                      }
-                      return null;
-                    },
+                  controller: _noKtpController,
+                  onChanged: (_) => _validateForm(),
+                  decoration: InputDecoration(
+                    labelText: 'NIK',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
+                    errorText: _noKtpController.text.isEmpty
+                        ? 'Please enter your NIK.'
+                        : _noKtpController.text.length != 16
+                            ? 'NIK must be exactly 16 characters.'
+                            : null,
                   ),
+                 keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(16), // Limit input to 13 characters
+                        ],
+                ),
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _birth,
+                  onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
                     labelText: 'Date of Birth',
                     border: InputBorder.none,
@@ -360,10 +391,14 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           setState(() {
                             _birth.text =
                                 selectedDate.toIso8601String().split('T')[0];
+                            _validateForm();
                           });
                         });
                       },
                     ),
+                    errorText: _birth.text.isEmpty
+                        ? 'Please select your date of birth.'
+                        : null,
                   ),
                   readOnly: true,
                 ),
@@ -371,11 +406,11 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 SizedBox(
                   width: double.infinity,
                   height: 45,
-                   child: ElevatedButton(
-                  onPressed: _isValidForm ? _registerUser : null, // Tambahkan pengecekan _isValidForm
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFF16A69A),
-                  ),
+                  child: ElevatedButton(
+                    onPressed: _isValidForm ? () => _registerUser(context) : null,
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF16A69A),
+                    ),
                     child: Text(
                       'Add',
                       style: TextStyle(color: Colors.white),
@@ -390,15 +425,24 @@ class _RegistrationFormState extends State<RegistrationForm> {
       ],
     );
   }
+
   void _validateForm() {
-  setState(() {
-    _isValidForm = _emailController.text.contains('@gmail.com') &&
-        _passwordController.text.isNotEmpty &&
-        _passwordController.text.length >= 8;
-        _noKtpController.text.length >= 16;
-    // Tambahkan validasi untuk TextFormField lainnya sesuai kebutuhan
-  });
-}
+    setState(() {
+      _isValidForm = _emailController.text.contains('@gmail.com') &&
+    _emailController.text.isNotEmpty &&
+    _passwordController.text.isNotEmpty &&
+    _passwordController.text.length >= 8 &&
+    _nameController.text.isNotEmpty &&
+    _phoneNumberController.text.isNotEmpty &&
+    _phoneNumberController.text.length <=13 && // Ensure exactly 13 characters
+    _phoneNumberController.text.length >=9 && // Ensure exactly 13 characters
+    _addressController.text.isNotEmpty &&
+    _noKtpController.text.isNotEmpty &&
+    _noKtpController.text.length == 16 &&
+    _birth.text.isNotEmpty;
+
+    });
+  }
 
   @override
   void dispose() {
@@ -411,3 +455,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     super.dispose();
   }
 }
+
+
+
+

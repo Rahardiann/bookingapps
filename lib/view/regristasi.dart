@@ -332,7 +332,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your Phone Number';
                       } else if (value.length > 13) {
-                        return 'NIK must be at least 13 characters';
+                        return 'Phone Number must be at least 13 characters';
                       }
                       return null;
                     },
