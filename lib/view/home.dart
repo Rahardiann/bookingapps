@@ -221,7 +221,7 @@ class _HomeState extends State<Home> {
             'nama': _selectedDentist,
           },
           'jadwal': {
-            'jam': _selectedTime, 
+            'jam': _selectedTime,
             'jadwal': _selectedDate.toIso8601String()
           },
           'judul': {'id': _selectedPromoId, 'judul': _selectedPromo + "judul"},
@@ -409,7 +409,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> fetchJadwal(int dentistID) async {
+  Future<void> fetchJadwal(int dentistID, String selectedDate) async {
     setState(() {
       isLoading = true;
     });
@@ -417,7 +417,12 @@ class _HomeState extends State<Home> {
     try {
       String apiUrl = "http://82.197.95.108:8003/jadwal/$dentistID";
       Dio dio = Dio();
-      Response response = await dio.get(apiUrl);
+      Response response = await dio.get(
+        apiUrl,
+        data: {
+          "tanggal_pemesanan": selectedDate,
+        },
+      );
 
       if (response.statusCode == 200) {
         print(response.data['data']);
@@ -436,7 +441,7 @@ class _HomeState extends State<Home> {
         });
       }
     } catch (e) {
-      print("Error fetching dentists: $e");
+      print("Error fetching jadwal: $e");
       setState(() {
         isLoading = false;
       });
@@ -676,7 +681,6 @@ class _HomeState extends State<Home> {
                       _selectedDentistId = dentist.id;
                     });
                     Navigator.pop(context);
-                    await fetchJadwal(_selectedDentistId);
                   },
                 );
               },
@@ -708,26 +712,14 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
-                        // Menutup layar saat tombol ditekan
+                      onPressed: () async {
                         Navigator.pop(context);
-
-                        // Menjadwalkan notifikasi untuk muncul setelah 10 detik dari sekarang
-                        DateTime scheduledTime =
-                            DateTime.now().add(Duration(seconds: 10));
-
-                        // Mengambil tanggal dari DateTime dan mengonversinya menjadi string dengan format 'YYYY-MM-DD'
-                        String formattedDate =
-                            scheduledTime.toIso8601String().substring(0, 10);
-
-                        debugPrint('Notification Scheduled for $formattedDate');
-
-                        _notificationRemindedr.scheduleNotification(
-                          title: 'Reminder',
-                          body:
-                              'Good morning, appointment with the dentist on $formattedDate. Dont miss your appointment. See you!',
-                          scheduledNotificationDateTime: scheduledTime,
-                        );
+                        if (_selectedDentistId != null) {
+                          await fetchJadwal(
+                            _selectedDentistId,
+                            _selectedDate.toIso8601String().substring(0, 10),
+                          );
+                        }
                       },
                       child: Text(
                         'Done',
@@ -743,38 +735,34 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: CalendarDatePicker(
                   initialDate: DateTime.now(),
-                  firstDate: DateTime
-                      .now(), // Menggunakan DateTime.now() sebagai firstDate
-                  lastDate: DateTime(DateTime.now().year +
-                      10), // Menambahkan satu tahun ke tanggal saat ini sebagai lastDate
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(DateTime.now().year + 10),
                   onDateChanged: (DateTime newDateTime) {
-                    // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
                     setState(() {
                       _selectedDate = newDateTime;
                     });
                   },
                 ),
               ),
-
-              // Expanded(
-              //   child: CupertinoDatePicker(
-              //     mode: CupertinoDatePickerMode.date,
-              //     minimumDate: DateTime.now(), // Hanya tampilkan tanggal hari ini dan seterusnya
-              //     initialDateTime: _selectedDate,
-              //     onDateTimeChanged: (DateTime newDateTime) {
-              //       // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
-              //       setState(() {
-              //         _selectedDate = newDateTime;
-              //       });
-              //     },
-              //   ),
-              // ),
             ],
           ),
         );
       },
     );
   }
+  // Expanded(
+  //   child: CupertinoDatePicker(
+  //     mode: CupertinoDatePickerMode.date,
+  //     minimumDate: DateTime.now(), // Hanya tampilkan tanggal hari ini dan seterusnya
+  //     initialDateTime: _selectedDate,
+  //     onDateTimeChanged: (DateTime newDateTime) {
+  //       // Tambahkan logika di sini untuk menyimpan tanggal yang dipilih
+  //       setState(() {
+  //         _selectedDate = newDateTime;
+  //       });
+  //     },
+  //   ),
+  // ),
 
   void _handleTimeSelection(String selectedTime) {
     // Lakukan sesuatu dengan waktu yang dipilih
@@ -854,7 +842,7 @@ class _HomeState extends State<Home> {
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                            onTap: () {
+                            onTap: () async {
                               setState(() {
                                 _handleTimeSelection(time);
                               });
@@ -919,83 +907,86 @@ class _HomeState extends State<Home> {
               ),
             ),
             Expanded(
-  child: ListView.builder(
-    itemCount: promos.length,
-    itemBuilder: (context, index) {
-      Promo promo = promos[index];
-      return TextButton(
-        onPressed: () {
-          setState(() {
-            _selectedPromo = promo.judul;
-            _selectedPromoId = promo.id;
-          });
-          Navigator.pop(context);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFFD7F0EE),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          margin: EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          promo.judul,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+              child: ListView.builder(
+                itemCount: promos.length,
+                itemBuilder: (context, index) {
+                  Promo promo = promos[index];
+                  return TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedPromo = promo.judul;
+                        _selectedPromoId = promo.id;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFD7F0EE),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      promo.judul,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 15,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedPromoId = promo
+                                              .id; // Save selected promo ID
+                                        });
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => Detailpromo(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                // Add vertical space between title and description
+                                Text(
+                                  promo
+                                      .subtitle, // Using the subtitle property from the Promo object
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 15,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _selectedPromoId = promo.id; // Save selected promo ID
-                            });
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Detailpromo(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    // Add vertical space between title and description
-                    Text(
-                      promo.subtitle, // Using the subtitle property from the Promo object
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.black54,
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            ],
-          ),
-        ),
-      );
-    },
-  ),
-),
-
+            ),
           ],
         );
       },
@@ -1353,17 +1344,6 @@ class _HomeState extends State<Home> {
                                 color: Color(0xFFB6366D),
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 15,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {
-                                int promoId =
-                                    0; // ID promo yang dipilih, bisa diganti dengan yang lain
-                              },
-                            ),
                           ],
                         ),
                         // Tambahkan jarak vertikal antara judul dan deskripsi
@@ -1418,14 +1398,14 @@ class _HomeState extends State<Home> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
                         child: Image.asset(
-                          'assets/slide3.jpeg',
+                          'assets/slide2.jpeg',
                           width: screenWidth * 0.4,
                           fit: BoxFit.cover,
                         ),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Routine check-up discounts',
+                        'New patient discount',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -1443,8 +1423,8 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: ElevatedButton(
               onPressed: () {
-                    _showPromoSelectionSheet(context, promo);
-                  },
+                _showPromoSelectionSheet(context, promo);
+              },
               style: ElevatedButton.styleFrom(
                 primary: Color.fromARGB(255, 237, 69, 142),
                 side: BorderSide(

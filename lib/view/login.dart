@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
 
   void _login() async {
     setState(() {
-      _emailError = _emailController.text.isEmpty || !_emailController.text.contains('@gmail.com')
+      _emailError = _emailController.text.isEmpty || !_emailController.text.contains('@')
           ? 'Please enter a valid email address.'
           : null;
       _passwordError = _passwordController.text.isEmpty || _passwordController.text.length < 8

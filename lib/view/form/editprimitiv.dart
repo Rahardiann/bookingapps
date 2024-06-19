@@ -81,7 +81,8 @@ class VisitUser {
 }
 
 
-class EditProfile extends StatelessWidget {
+class EditPrimitiv extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

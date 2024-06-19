@@ -324,18 +324,18 @@ class _RegisterFormState extends State<RegisterForm> {
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 1.0, horizontal: 15.0),
                           ),
-                         keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                           validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Phone Number';
-                      } else if (value.length > 13) {
-                        return 'Phone Number must be at least 13 characters';
-                      }
-                      return null;
-                    },
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Phone Number';
+                            } else if (value.length < 9 || value.length > 13) {
+                              return 'Phone Number must be between 9 and 13 characters';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ],

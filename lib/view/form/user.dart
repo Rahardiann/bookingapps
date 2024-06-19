@@ -1,17 +1,16 @@
 import 'package:booking/view/form/adduser.dart';
+import 'package:booking/view/form/editprimitiv.dart';
 import 'package:booking/view/profile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:booking/view/login.dart';
 import 'package:booking/view/booking.dart';
 import 'package:booking/view/home.dart';
-import 'package:booking/view/form/editprofile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class User {
   final int id;
   final String nama;
-  
 
   User({required this.id, required this.nama});
 
@@ -19,7 +18,6 @@ class User {
     return User(
       id: json['id'],
       nama: json['nama'],
-     
     );
   }
 }
@@ -188,51 +186,62 @@ class _UserProfilesState extends State<Userprofile> {
               itemCount: user.length,
               itemBuilder: (BuildContext context, int index) {
                 User currentUser = user[index];
-                return Column(
-                  children: [
-                    SizedBox(height: 5),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFD7F0EE),
-                        borderRadius: BorderRadius.circular(15),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditPrimitiv(),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 5.0, right: 8.0),
-                            child: Icon(
-                              Icons.account_circle,
-                              color: Colors.grey,
-                              size: 50,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                currentUser.nama,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      SizedBox(height: 5),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFD7F0EE),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 5.0, right: 8.0),
+                              child: Icon(
+                                Icons.account_circle,
+                                color: Colors.grey,
+                                size: 50,
                               ),
-                              // Text(
-                              //   'Medical record | {currentUser.noRekamMedis}',
-                              //   style: TextStyle(
-                              //     fontSize: 12,
-                              //     color: Colors.black87,
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  currentUser.nama,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                // Text(
+                                //   'Medical record | {currentUser.noRekamMedis}',
+                                //   style: TextStyle(
+                                //     fontSize: 12,
+                                //     color: Colors.black87,
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),
@@ -243,7 +252,8 @@ class _UserProfilesState extends State<Userprofile> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Adduser()), // Sesuaikan dengan route halaman Edit Profile
+                  builder: (context) =>
+                      Adduser()), // Sesuaikan dengan route halaman Edit Profile
             );
           },
           label: Text(
@@ -252,11 +262,11 @@ class _UserProfilesState extends State<Userprofile> {
                 color: Colors.white), // Mengatur warna teks menjadi putih
           ),
           extendedPadding: EdgeInsets.symmetric(horizontal: 80),
-          backgroundColor: Color(0xFF16A69A), // Warna latar belakang tombol
+          backgroundColor:
+              Color(0xFF16A69A), // Warna latar belakang tombol
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-     
     );
   }
 }
