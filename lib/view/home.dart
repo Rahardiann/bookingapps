@@ -251,29 +251,60 @@ class _HomeState extends State<Home> {
         ),
       );
 
-      // Jika booking berhasil, lakukan tindakan selanjutnya
+      } on DioError catch (dioError) {
+      if (dioError.response?.statusCode == 500) {
+        // Show an error notification for 400 status code
+        await (
+          title: 'Booking Failed',
+          body: 'You have already booked an appointment.',
+        );
+
+        _showAlert(
+          title: 'Booking Failed',
+          content: 'You have already booked an appointment.',
+        );
+      } else if (dioError.response?.statusCode == 200) {
+        // Show an error alert for 500 status code
+        _showAlert(
+          title: 'Book success',
+          content: 'your booking accept by admin.',
+        );
+      } else {
+        // Handle other Dio errors
+        _showAlert(
+          title: 'Book success',
+          content: 'your booking accept by admin',
+        );
+        print(dioError.toString());
+      }
     } catch (error) {
-      // Menangani error jika terjadi
-      print(error.toString());
-      // Tampilkan pesan kesalahan kepada pengguna
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to book. Please try again.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
+      // Handle non-Dio errors
+      _showAlert(
+        title: 'Error',
+        content: 'An unexpected error occurred. Please try again.',
       );
+      print(error.toString());
     }
+  }
+
+  void _showAlert({required String title, required String content}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> fetchPosts() async {
@@ -1295,7 +1326,7 @@ class _HomeState extends State<Home> {
                         child: ElevatedButton(
                           onPressed: () {
                             _bookingUser();
-                            _notificationService.showNotification();
+                         
                             // Navigator.pushReplacement(
                             //   context,
                             //   MaterialPageRoute(
