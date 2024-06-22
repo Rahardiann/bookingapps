@@ -161,8 +161,8 @@ class _HomeState extends State<Home> {
 
   int _bottomNavCurrentIndex = 0;
   int _enteredNumber = 0;
-  String _selectedUser = "User";
-  String _selectedDentist = "Choose a dentist";
+  String _selectedUser = "Pilih user";
+  String _selectedDentist = "Pilih dokter gigi";
   DateTime _selectedDate = DateTime.now();
   // String _selectedTimeText = 'Select Time';
   String _selectedPromo = "Promo";
@@ -1270,7 +1270,7 @@ class _HomeState extends State<Home> {
                     children: [
                       Text(
                         _selectedTime ??
-                            'Select time', // Tampilkan waktu yang dipilih jika tersedia, jika tidak, tampilkan "Select time"
+                            'Pilih jadwal', // Tampilkan waktu yang dipilih jika tersedia, jika tidak, tampilkan "Select time"
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1381,7 +1381,7 @@ class _HomeState extends State<Home> {
                         ),
                         // Tambahkan jarak vertikal antara judul dan deskripsi
                         Text(
-                          'Get high quality dental filling treatment at special prices.',
+                          'Temukan penawaran menarik dipromo kami.',
                           style: TextStyle(
                             fontSize: 11,
                             color: Colors.black54,
@@ -1466,7 +1466,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               child: Text(
-                'Show more promo',
+                'Tampilkan promo',
                 style: TextStyle(color: Colors.white),
               ),
             ),

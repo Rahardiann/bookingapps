@@ -62,7 +62,7 @@ class _WelcomepageState extends State<Welcomepage> {
             Positioned(
               bottom: 16, // Adjust the distance from the bottom as desired
               child: Text(
-                "powered by Sujiwo tejo",
+                "Andes Studio",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black.withOpacity(0.8),

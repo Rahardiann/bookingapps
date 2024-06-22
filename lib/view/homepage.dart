@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: EdgeInsets.only(left: 3, bottom: 15),
                   child: Text(
-                    "Join and enjoy the benefits of being our member",
+                    "Bergabunglah dan nikmati keuntungan menjadi anggota kami",
                     style: TextStyle(fontSize: 11),
                   ),
                 ),
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                       primary: Colors.white,
                     ),
                     child: Text(
-                      'Login or Regrister',
+                      'Masuk atau Daftar',
                       style: TextStyle(color: Color(0xFF037F74)),
                     ),
                   ),
@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                         height: 5), // Tambahkan spasi antara judul dan subjudul
                     Text(
-                      "Find attractive offers in our promotions",
+                      "Temukan penawaran menarik dipromosi kami",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -153,12 +153,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {
-                    // Aksi ketika tombol panah diklik
-                  },
-                ),
+                
               ],
             ),
           ),
@@ -232,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                     color: Color.fromARGB(255, 237, 69, 142), width: 2),
               ),
               child: Text(
-                'Show More Promo',
+                'Tampilkan promo lainnya',
                 style: TextStyle(color: Colors.white),
               ),
             ),

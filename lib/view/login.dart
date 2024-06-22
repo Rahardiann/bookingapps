@@ -62,6 +62,26 @@ class _LoginFormState extends State<LoginForm> {
   String? _emailError;
   String? _passwordError;
 
+  void _showAlertDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _login() async {
     setState(() {
       _emailError = _emailController.text.isEmpty || !_emailController.text.contains('@')
@@ -103,10 +123,12 @@ class _LoginFormState extends State<LoginForm> {
           );
         } else {
           // Handle other status codes or errors
+          _showAlertDialog(context, 'Login Failed', 'Invalid email or password. Please try again.');
           print('Login failed: ${response.statusCode}');
         }
       } catch (e) {
         // Handle Dio errors
+        _showAlertDialog(context, 'Error', 'An error occurred during login. Please try again later.');
         print('Error during login: $e');
       }
     }
@@ -123,7 +145,7 @@ class _LoginFormState extends State<LoginForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Hello! Welcome 👋',
+                  'Hello! Selamat datang 👋',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -181,7 +203,7 @@ class _LoginFormState extends State<LoginForm> {
                       primary: Color(0xFF16A69A),
                     ),
                     child: Text(
-                      'Login',
+                      'Masuk',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -190,7 +212,7 @@ class _LoginFormState extends State<LoginForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account yet? "),
+                    Text("Belum punya akun ?"),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -198,7 +220,7 @@ class _LoginFormState extends State<LoginForm> {
                           MaterialPageRoute(builder: (context) => Register()),
                         );
                       },
-                      child: Text('Register'),
+                      child: Text('Daftar'),
                     ),
                   ],
                 ),

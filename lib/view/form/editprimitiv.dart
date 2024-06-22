@@ -280,7 +280,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
     }
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return isLoading
         ? Center(child: CircularProgressIndicator())
@@ -294,44 +294,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     children: <Widget>[
                       SizedBox(height: 10),
                       TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                       
-
-                        ),
-                        obscureText: _obscureText,
-                      ),
-                      // SizedBox(height: 20),
-                      // TextFormField(
-                      //   controller: _rekamController,
-                      //   decoration: InputDecoration(
-                      //     labelText: 'No Rekam Medis',
-                      //     border: InputBorder.none,
-                      //     filled: true,
-                      //     fillColor: Colors.grey[200],
-                      //   ),
-                        
-                      // ),
-                     
-                      SizedBox(height: 20),
-                      TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: 'Nama',
+                          labelText: 'Nama lengkap',
                           border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.grey[200],
@@ -357,7 +322,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         child: TextFormField(
                           controller: _phoneNumberController,
                           decoration: InputDecoration(
-                            labelText: 'Phone number',
+                            labelText: 'Nomor telepon',
                             border: InputBorder.none,
                             filled: true,
                             fillColor: Colors.grey[200],
@@ -370,9 +335,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     ],
                           validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your Phone Number';
+                        return 'Silahkan masukkan Nomor telepon';
                       } else if (value.length > 13) {
-                        return 'NIK must be at least 13 characters';
+                        return 'Nomor telepon harus maksimal 13 karakter';
                       }
                       return null;
                     },
@@ -380,9 +345,44 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 20),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                        ),
+                        obscureText: _obscureText,
+                      ),
+                      // SizedBox(height: 20),
+                      // TextFormField(
+                      //   controller: _rekamController,
+                      //   decoration: InputDecoration(
+                      //     labelText: 'No Rekam Medis',
+                      //     border: InputBorder.none,
+                      //     filled: true,
+                      //     fillColor: Colors.grey[200],
+                      //   ),
+                        
+                      // ),
+                     
+                      
+                      
                       SizedBox(height: 20),
                       Text(
-                        'Gender',
+                        'Jenis kelamin',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Row(
@@ -397,7 +397,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                               });
                             },
                           ),
-                          Text('Male'),
+                          Text('Pria'),
                           Radio(
                             value: 'wanita',
                             groupValue: _gender,
@@ -407,7 +407,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                               });
                             },
                           ),
-                          Text('Female'),
+                          Text('Wanita'),
                         ],
                       ),
                       SizedBox(height: 20),
@@ -437,9 +437,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your NIK';
+                        return 'Silahkan masukkan NIK';
                       } else if (value.length != 16) {
-                        return 'NIK must be exactly 16 characters';
+                        return 'NIK harus 16 karakter';
                       }
                       return null;
                     },
@@ -448,7 +448,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       TextFormField(
                   controller: _birth,
                   decoration: InputDecoration(
-                    labelText: 'Date of Birth',
+                    labelText: 'Tanggal lahir',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
@@ -476,7 +476,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                             primary: Color(0xFF16A69A),
                           ),
                           child: Text(
-                            'Update',
+                            'Edit',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),

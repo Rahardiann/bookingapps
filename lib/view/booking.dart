@@ -246,7 +246,7 @@ class _BookingState extends State<Booking> {
                 Padding(
                   padding: EdgeInsets.only(left: 2, top: 30),
                   child: Text(
-                    'Congratulations',
+                    'Yeay, selamat!',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -257,7 +257,7 @@ class _BookingState extends State<Booking> {
                 Padding(
                   padding: EdgeInsets.only(left: 2, top: 4, bottom: 8),
                   child: Text(
-                    'Your scheduling data is confirmed',
+                    'Data booking anda terkonfirmasi oleh admin kami',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black87,

@@ -72,7 +72,7 @@ class Adduser extends StatelessWidget {
               ),
             ),
             Text(
-              'Add user',
+              'Tambah user',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -206,6 +206,66 @@ class _RegistrationFormState extends State<RegistrationForm> {
               children: <Widget>[
                 SizedBox(height: 10),
                 TextFormField(
+                  controller: _nameController,
+                  onChanged: (_) => _validateForm(),
+                  decoration: InputDecoration(
+                    labelText: 'Nama lengkap',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    errorText: _nameController.text.isEmpty
+                        ? 'Silahkan masukkan nama lengkap.'
+                        : null,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        '+62',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(width: 8.0),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _phoneNumberController,
+                        onChanged: (_) => _validateForm(),
+                        decoration: InputDecoration(
+                          labelText: 'Nomor telepon',
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
+                          errorText: _phoneNumberController.text.isEmpty
+                              ? 'Silahkan masukkan nomor telepon.'
+                              : (_phoneNumberController.text.length < 9 ||
+                                      _phoneNumberController.text.length > 13)
+                                  ? 'Nomor telepon harus minimal 9 dan 13 karakter.'
+                                  : null,
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(13), // Limit input to 13 characters
+                        ],
+                        maxLength: 13, // Set maximum length of input
+                        minLength: 9, // Set minimum length of input
+                      ),
+
+                    ),
+
+                  ],
+                ),
+                SizedBox(height: 20),
+                TextFormField(
                   controller: _emailController,
                   onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
@@ -213,9 +273,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
-                    errorText: !_emailController.text.contains('@gmail.com') &&
+                    errorText: !_emailController.text.contains('@') &&
                             _emailController.text.isNotEmpty
-                        ? 'Please enter a valid email address.'
+                        ? 'Silahkan masukkan email dengan benar.'
                         : null,
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -241,81 +301,22 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     ),
                     errorText: _passwordController.text.isNotEmpty &&
                             _passwordController.text.length < 8
-                        ? 'Password must be at least 8 characters.'
+                        ? 'Password harus minimal 8 karakter.'
                         : null,
                   ),
                   obscureText: _obscureText,
                 ),
                 SizedBox(height: 20),
-                TextFormField(
-                  controller: _nameController,
-                  onChanged: (_) => _validateForm(),
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    errorText: _nameController.text.isEmpty
-                        ? 'Please enter your name.'
-                        : null,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 20.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Text(
-                        '+62',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
-                    SizedBox(width: 8.0),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _phoneNumberController,
-                        onChanged: (_) => _validateForm(),
-                        decoration: InputDecoration(
-                          labelText: 'Phone Number',
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
-                          errorText: _phoneNumberController.text.isEmpty
-                              ? 'Please enter your Phone Number.'
-                              : (_phoneNumberController.text.length < 9 ||
-                                      _phoneNumberController.text.length > 13)
-                                  ? 'Phone Number must be between 9 and 13 characters.'
-                                  : null,
-                        ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(13), // Limit input to 13 characters
-                        ],
-                        maxLength: 13, // Set maximum length of input
-                        minLength: 9, // Set minimum length of input
-                      ),
-
-                    ),
-
-                  ],
-                ),
-                SizedBox(height: 20),
+                
                 Text(
-                  'Gender',
+                  'Jenis kelamin',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Radio(
-                      value: 'Male',
+                      value: 'pria',
                       groupValue: _gender,
                       onChanged: (value) {
                         setState(() {
@@ -324,9 +325,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         });
                       },
                     ),
-                    Text('Male'),
+                    Text('Pria'),
                     Radio(
-                      value: 'Female',
+                      value: 'wanita',
                       groupValue: _gender,
                       onChanged: (value) {
                         setState(() {
@@ -335,7 +336,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         });
                       },
                     ),
-                    Text('Female'),
+                    Text('Wanita'),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -343,12 +344,12 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   controller: _addressController,
                   onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
-                    labelText: 'Address',
+                    labelText: 'Alamat',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
                     errorText: _addressController.text.isEmpty
-                        ? 'Please enter your address.'
+                        ? 'Silahkan masukkan alamat.'
                         : null,
                   ),
                 ),
@@ -364,9 +365,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
                     errorText: _noKtpController.text.isEmpty
-                        ? 'Please enter your NIK.'
+                        ? 'Silahkan masukkan NIK.'
                         : _noKtpController.text.length != 16
-                            ? 'NIK must be exactly 16 characters.'
+                            ? 'NIK harus 16 karakter.'
                             : null,
                   ),
                  keyboardType: TextInputType.number,
@@ -380,7 +381,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   controller: _birth,
                   onChanged: (_) => _validateForm(),
                   decoration: InputDecoration(
-                    labelText: 'Date of Birth',
+                    labelText: 'Tanggal lahir',
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
@@ -397,7 +398,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       },
                     ),
                     errorText: _birth.text.isEmpty
-                        ? 'Please select your date of birth.'
+                        ? 'Silahkan pilih tanggal lahir.'
                         : null,
                   ),
                   readOnly: true,
@@ -412,7 +413,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       primary: Color(0xFF16A69A),
                     ),
                     child: Text(
-                      'Add',
+                      'Tambah',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -428,7 +429,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
   void _validateForm() {
     setState(() {
-      _isValidForm = _emailController.text.contains('@gmail.com') &&
+      _isValidForm = _emailController.text.contains('@') &&
     _emailController.text.isNotEmpty &&
     _passwordController.text.isNotEmpty &&
     _passwordController.text.length >= 8 &&

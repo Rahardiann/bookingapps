@@ -283,7 +283,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Hello! Welcome 👋',
+                    'Hello! Selamat datang 👋',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -291,13 +291,30 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'Please fill in the detailed information below',
+                    'Silahkan lengkapi data dibawah ini',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
                     ),
                   ),
                   SizedBox(height: 50),
+                  TextFormField(
+                    controller: NameController,
+                    decoration: InputDecoration(
+                      labelText: 'Nama lengkap',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Silahkan masukkan nama lengkap';
+                      }
+                      return null;
+                    },
+                  ),
+                  
+                  SizedBox(height: 10),
                   Row(
                     children: [
                       Container(
@@ -317,7 +334,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         child: TextFormField(
                           controller: _phoneNumberController,
                           decoration: InputDecoration(
-                            labelText: 'Phone number',
+                            labelText: 'Nomor telepon',
                             border: InputBorder.none,
                             filled: true,
                             fillColor: Colors.grey[200],
@@ -330,31 +347,15 @@ class _RegisterFormState extends State<RegisterForm> {
                           ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your Phone Number';
+                              return 'Silahkan masukkan Nomor telepon';
                             } else if (value.length < 9 || value.length > 13) {
-                              return 'Phone Number must be between 9 and 13 characters';
+                              return 'Nomor Telepon harus minimal 9 dan 13 karakter';
                             }
                             return null;
                           },
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    controller: NameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
                   ),
                   SizedBox(height: 10),
                   TextFormField(
@@ -368,9 +369,9 @@ class _RegisterFormState extends State<RegisterForm> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return 'Silahkan masukkan email';
                       } else if (!value.contains('@')) {
-                        return 'Please enter a valid email address';
+                        return 'Silahkan masukkan email dengan benar';
                       }
                       return null;
                     },
@@ -397,9 +398,9 @@ class _RegisterFormState extends State<RegisterForm> {
                     obscureText: _obscureText,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
+                        return 'Silahkan masukkan password';
                       } else if (value.length < 8) {
-                        return 'Password must be at least 8 characters';
+                        return 'Password harus minimal 8 characters';
                       }
                       return null;
                     },
@@ -421,9 +422,9 @@ class _RegisterFormState extends State<RegisterForm> {
                     ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your NIK';
+                        return 'Silahkan masukkan NIK';
                       } else if (value.length != 16) {
-                        return 'NIK must be exactly 16 characters';
+                        return 'NIK harus 16 karakter';
                       }
                       return null;
                     },
@@ -433,13 +434,13 @@ class _RegisterFormState extends State<RegisterForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Gender',
+                        'Jenis kelamin',
                         style: TextStyle(
                           fontSize: 16,
                         ),
                       ),
                       RadioListTile<String>(
-                        title: const Text('Male'),
+                        title: const Text('Pria'),
                         value: 'pria',
                         groupValue: _genderController.text,
                         onChanged: (String? value) {
@@ -449,7 +450,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         },
                       ),
                       RadioListTile<String>(
-                        title: const Text('Female'),
+                        title: const Text('Wanita'),
                         value: 'wanita',
                         groupValue: _genderController.text,
                         onChanged: (String? value) {
@@ -464,7 +465,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFormField(
                     controller: _birthController,
                     decoration: InputDecoration(
-                      labelText: 'Date of Birth',
+                      labelText: 'Tanggal lahir',
                       border: InputBorder.none,
                       filled: true,
                       fillColor: Colors.grey[200],
@@ -483,7 +484,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     readOnly: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please select your date of birth';
+                        return 'Silahkan pilih tanggal lahirh';
                       }
                       return null;
                     },
@@ -512,7 +513,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         primary: Color(0xFF16A69A),
                       ),
                       child: Text(
-                        'Next',
+                        'Lanjut',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

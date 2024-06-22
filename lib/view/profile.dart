@@ -528,7 +528,7 @@ int _rekam=0;
                 // Border berwarna biru
               ),
               child: Text(
-                'logout',
+                'Keluar',
                 style: TextStyle(color: Colors.white),
               ),
             ),
