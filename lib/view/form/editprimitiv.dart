@@ -74,15 +74,13 @@ class VisitUser {
       password: json['password'] ?? '',
       gender: json['gender'] ?? '',
       alamat: json['alamat'] ?? '',
-      no_ktp: json['no_ktp']?? '',
+      no_ktp: json['no_ktp'] ?? '',
       tanggal_lahir: json['tanggal_lahir'] ?? '',
     );
   }
 }
 
-
 class EditPrimitiv extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,7 +132,6 @@ class EditPrimitiv extends StatelessWidget {
 }
 
 class RegistrationForm extends StatefulWidget {
-  
   @override
   _RegistrationFormState createState() => _RegistrationFormState();
 }
@@ -186,9 +183,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int? id = prefs.getInt('id_user');
+      int? userId = prefs.getInt('selected_user_id');
       Response response = await dio.put(
-        'http://82.197.95.108:8003/user/$id',
+        'http://82.197.95.108:8003/user/$userId',
         data: {
           'email': _visitUser.email,
           'nama': _visitUser.nama,
@@ -202,7 +199,6 @@ class _RegistrationFormState extends State<RegistrationForm> {
         },
       );
 
-      
       print(response.data);
 
       Navigator.push(
@@ -232,60 +228,59 @@ class _RegistrationFormState extends State<RegistrationForm> {
   }
 
   Future<void> fetchVisit() async {
-  setState(() {
-    isLoading = true;
-  });
+    setState(() {
+      isLoading = true;
+    });
 
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? id = prefs.getInt('id_user');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? userId = prefs.getInt('selected_user_id');
 
-    String apiUrl = "http://82.197.95.108:8003/user/2/$id";
-    Dio dio = Dio();
-    Response response = await dio.get(apiUrl);
-    print(response.data['data']);
+      String apiUrl = "http://82.197.95.108:8003/user/3/$userId";
+      Dio dio = Dio();
+      Response response = await dio.get(apiUrl);
+      print(response.data['data']);
 
-    if (response.statusCode == 200) {
-      var responseData = response.data['data'];
-      if (responseData is List) {
-        if (responseData.isNotEmpty) {
-          responseData = responseData.first;
-        } else {
-          throw Exception("User data list is empty");
+      if (response.statusCode == 200) {
+        var responseData = response.data['data'];
+        if (responseData is List) {
+          if (responseData.isNotEmpty) {
+            responseData = responseData.first;
+          } else {
+            throw Exception("User data list is empty");
+          }
         }
+
+        _visitUser = VisitUser.fromJson(responseData);
+
+        setState(() {
+          String password = '';
+          _emailController.text = _visitUser?.email ?? '';
+          _passwordController.text = password;
+          _rekamController.text = (_visitUser?.no_rekam_medis ?? 0).toString();
+          _nameController.text = _visitUser?.nama ?? '';
+          _phoneNumberController.text = _visitUser?.no_hp ?? '';
+          _gender = _visitUser?.gender ?? '';
+          _addressController.text = _visitUser?.alamat ?? '';
+          _birth.text = _visitUser?.tanggal_lahir ?? '';
+          _noKtpController.text = (_visitUser?.no_ktp ?? 0).toString();
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching user data: ${response.statusCode}");
+        setState(() {
+          isLoading = false;
+        });
       }
-
-      _visitUser = VisitUser.fromJson(responseData);
-
-      setState(() {
-        String password = '';
-        _emailController.text = _visitUser?.email ?? '';
-        _passwordController.text = password ;
-        _rekamController.text = (_visitUser?.no_rekam_medis ?? 0).toString();
-        _nameController.text = _visitUser?.nama ?? '';
-        _phoneNumberController.text = _visitUser?.no_hp ?? '';
-        _gender = _visitUser?.gender ?? '';
-        _addressController.text = _visitUser?.alamat ?? '';
-        _birth.text = _visitUser?.tanggal_lahir ?? '';
-       _noKtpController.text = (_visitUser?.no_ktp ?? 0).toString();
-        isLoading = false;
-      });
-    } else {
-      print("Error fetching user data: ${response.statusCode}");
+    } catch (e) {
+      print("Error: $e");
       setState(() {
         isLoading = false;
       });
     }
-  } catch (e) {
-    print("Error: $e");
-    setState(() {
-      isLoading = false;
-    });
   }
-}
 
-
-  @override 
+  @override
   Widget build(BuildContext context) {
     return isLoading
         ? Center(child: CircularProgressIndicator())
@@ -315,6 +310,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.grey[200],
+                       
+
                         ),
                         obscureText: _obscureText,
                       ),

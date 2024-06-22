@@ -128,6 +128,17 @@ class _UserProfilesState extends State<Userprofile> {
     }
   }
 
+  Future<void> _saveUserIdToSharedPreferences(int userId) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Menghapus nilai SharedPreferences sebelumnya
+  await prefs.remove('selected_user_id');
+
+  // Menyimpan nilai userId yang baru
+  await prefs.setInt('selected_user_id', userId);
+}
+
+
   @override
   void initState() {
     super.initState();
@@ -187,7 +198,8 @@ class _UserProfilesState extends State<Userprofile> {
               itemBuilder: (BuildContext context, int index) {
                 User currentUser = user[index];
                 return GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await _saveUserIdToSharedPreferences(currentUser.id);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
