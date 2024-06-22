@@ -213,18 +213,17 @@ class _HomeState extends State<Home> {
           'user': {
             'id': _selectedUserId,
           },
-          // 'no_rm': {
-          //   'no_rekam_medis': noRM?.no_rekam_medis,
-          // },
           'dentist': {
             'id': _selectedDentistId,
             'nama': _selectedDentist,
           },
           'jadwal': {
             'jam': _selectedTime,
-            'jadwal': _selectedDate.toIso8601String()
+            'jadwal': _selectedDate.toIso8601String(),
           },
-          'judul': {'id': _selectedPromoId, 'judul': _selectedPromo + "judul"},
+          'judul': _selectedPromo != null && _selectedPromoId != null
+              ? {'id': _selectedPromoId, 'judul': _selectedPromo + "judul"}
+              : null, 
         },
       );
 
@@ -234,7 +233,8 @@ class _HomeState extends State<Home> {
         context,
         MaterialPageRoute(
           builder: (context) => Booking(
-            bookingData: bookingData,
+            bookingData:
+                response.data, // Make sure to pass the correct booking data
           ),
           settings: RouteSettings(
             arguments: {
@@ -250,10 +250,9 @@ class _HomeState extends State<Home> {
           ),
         ),
       );
-
-      } on DioError catch (dioError) {
+    } on DioError catch (dioError) {
       if (dioError.response?.statusCode == 500) {
-        // Show an error notification for 400 status code
+        // Show an error notification for 500 status code
         await (
           title: 'Booking Failed',
           body: 'You have already booked an appointment.',
@@ -264,16 +263,16 @@ class _HomeState extends State<Home> {
           content: 'You have already booked an appointment.',
         );
       } else if (dioError.response?.statusCode == 200) {
-        // Show an error alert for 500 status code
+        // Show a success alert for 200 status code
         _showAlert(
-          title: 'Book success',
-          content: 'your booking accept by admin.',
+          title: 'Book Success',
+          content: 'Your booking was accepted by admin.',
         );
       } else {
         // Handle other Dio errors
         _showAlert(
-          title: 'Book success',
-          content: 'your booking accept by admin',
+          title: 'Booking Error',
+          content: 'An unexpected error occurred. Please try again.',
         );
         print(dioError.toString());
       }
@@ -286,6 +285,7 @@ class _HomeState extends State<Home> {
       print(error.toString());
     }
   }
+
 
   void _showAlert({required String title, required String content}) {
     showDialog(
