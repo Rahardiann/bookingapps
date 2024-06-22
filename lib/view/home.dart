@@ -893,6 +893,11 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<void> _saveUserIdToSharedPreferences(int promoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('selected_promo_id', promoId);
+  }
+
   void _showPromoSelectionSheet(BuildContext context, List<Promo> promos) {
     showModalBottomSheet(
       context: context,
@@ -984,18 +989,15 @@ class _HomeState extends State<Home> {
                                         size: 15,
                                         color: Colors.black,
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _selectedPromoId = promo
-                                              .id; // Save selected promo ID
-                                        });
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => Detailpromo(),
-                                          ),
-                                        );
-                                      },
+                                      onPressed: () async{
+                                      await _saveUserIdToSharedPreferences(promo.id);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Detailpromo(),
+                                        ),
+                                      );
+                                    },
                                     ),
                                   ],
                                 ),

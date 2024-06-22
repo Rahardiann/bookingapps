@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:booking/view/home.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,15 +33,13 @@ class Promo {
 }
 
 class Detailpromo extends StatefulWidget {
-
   @override
   _DetailpromoState createState() => _DetailpromoState();
-  
 }
 
 class _DetailpromoState extends State<Detailpromo> {
   int _bottomNavCurrentIndex = 1;
-  List<Promo> promo = [];
+  Promo? promo;
   bool isLoading = false;
 
   @override
@@ -53,91 +50,103 @@ class _DetailpromoState extends State<Detailpromo> {
   }
 
   Future<void> fetchPromo() async {
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    try {
-      String apiUrl = "http://82.197.95.108:8003/promo";
-      Dio dio = Dio();
-      Response response = await dio.get(apiUrl);
-      print(response.data['data']);
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? promoId = prefs.getInt('selected_promo_id');
+    
+    if (promoId == null) {
+      throw Exception('No promo ID found in shared preferences');
+    }
 
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = response.data['data'];
-        List<Promo> fetchedPromo = responseData.map((json) => Promo.fromJson(json)).toList();
+    String apiUrl = "http://82.197.95.108:8003/promo/$promoId";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
 
+    if (response.statusCode == 200) {
+      var responseData = response.data['data'];
+      
+      if (responseData is List && responseData.isNotEmpty) {
         setState(() {
-          promo = fetchedPromo;
+          promo = Promo.fromJson(responseData[0]); // Assuming you want the first promo in the list
           isLoading = false;
         });
       } else {
-        print("Error fetching promo: ${response.statusCode}");
         setState(() {
           isLoading = false;
         });
+        print("Error fetching promo: response data is not a list or is empty");
       }
-    } catch (e) {
-      print("Error: $e");
+    } else {
+      print("Error fetching promo: ${response.statusCode}");
       setState(() {
         isLoading = false;
       });
     }
+  } catch (e) {
+    print("Error fetching promo: $e");
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-     appBar: AppBar(
-  automaticallyImplyLeading: false,
-  title: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        style: TextButton.styleFrom(
-          primary: Colors.black, // Text color
-        ),
-        child: Row(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.arrow_back_ios, size: 20, color: Colors.black), // Icon color
-            Text(
-              'Back',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black, // Text color
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.black,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.arrow_back_ios, size: 20, color: Colors.black),
+                  Text(
+                    'Back',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                ],
               ),
             ),
-            SizedBox(width: 20),
+            Expanded(
+              child: Center(
+                child: Text(
+                  'Promo',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 48),
           ],
         ),
       ),
-      Expanded(
-        child: Center(
-          child: Text(
-            'Promo',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black, // Text color
-            ),
-          ),
-        ),
-      ),
-      SizedBox(width: 48), // Ensure space taken by removed icon for alignment
-    ],
-  ),
-),
-
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : promo.isEmpty
-              ? Center(child: Text('No promo available'))
+          : promo == null
+              ? Center(child: Text("No promo data available"))
               : SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -147,25 +156,24 @@ class _DetailpromoState extends State<Detailpromo> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
                           child: AspectRatio(
-                            aspectRatio: 16 / 9, // Adjust the aspect ratio as needed
+                            aspectRatio: 16 / 9,
                             child: Image.asset(
-                            'assets/slide3.jpeg'
-                           ,
-                          width: screenWidth * 0.4,
-                          fit: BoxFit.cover,
-                        ),
+                              'assets/slide3.jpeg',
+                              width: screenWidth * 0.4,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         SizedBox(height: 20),
                         Text(
-                          promo[0].judul, // Title from the promo data
+                          promo!.judul,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          promo[0].subtitle, // Subtitle from the promo data
+                          promo!.subtitle,
                           style: TextStyle(fontSize: 16, color: Colors.black38),
                         ),
                         SizedBox(height: 30),
@@ -191,7 +199,7 @@ class _DetailpromoState extends State<Detailpromo> {
                             ),
                             Expanded(
                               child: Text(
-                                promo[0].deskripsi_1, // Description from the promo data
+                                promo!.deskripsi_1,
                                 style: TextStyle(fontSize: 16, color: Colors.black54),
                               ),
                             ),
@@ -251,21 +259,10 @@ class _DetailpromoState extends State<Detailpromo> {
                           ),
                         ),
                         Text(
-                          promo[0].deskripsi_2, // Additional description from the promo data
+                          promo!.deskripsi_2,
                           style: TextStyle(fontSize: 16, color: Colors.black54),
                         ),
                         SizedBox(height: 20),
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        //   child: Center(
-                        //     child: ElevatedButton(
-                        //       onPressed: () {
-                        //         // Add your booking now action here
-                        //       },
-                        //       child: Text('Book Now'),
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
