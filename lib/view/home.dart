@@ -58,14 +58,14 @@ class User {
   }
 }
 
-class NoRM {
-  final int no_rekam_medis;
+class Gallery {
+  final int gambar;
 
-  NoRM({required this.no_rekam_medis});
+  Gallery({required this.gambar});
 
-  factory NoRM.fromJson(Map<String, dynamic> json) {
-    return NoRM(
-      no_rekam_medis: json['no_rekam_medis'],
+  factory Gallery.fromJson(Map<String, dynamic> json) {
+    return Gallery(
+      gambar: json['gambar'],
     );
   }
 }
@@ -173,9 +173,9 @@ class _HomeState extends State<Home> {
   List<Jam> jam = [];
   List<Promo> promo = [];
   List<Post> posts = [];
+  List<Gallery> gallery = [];
   bool isLoading = false;
   BookingData? bookingData;
-  NoRM? noRM;
   String? _selectedTime;
 
   int _selectedDentistId = 0;
@@ -196,7 +196,7 @@ class _HomeState extends State<Home> {
     fetchData();
     fetchDentists();
     fetchUser();
-    // fetchJadwal();
+    fetchGallery();
     fetchPromo();
   }
 
@@ -233,8 +233,7 @@ class _HomeState extends State<Home> {
         context,
         MaterialPageRoute(
           builder: (context) => Booking(
-            bookingData:
-                response.data, // Make sure to pass the correct booking data
+            bookingData: bookingData,// Make sure to pass the correct booking data
           ),
           settings: RouteSettings(
             arguments: {
@@ -253,20 +252,20 @@ class _HomeState extends State<Home> {
     } on DioError catch (dioError) {
       if (dioError.response?.statusCode == 500) {
         // Show an error notification for 500 status code
-        await (
-          title: 'Booking Failed',
-          body: 'You have already booked an appointment.',
+       await (
+          title: 'Booking Gagal',
+          body: 'Sudah ada jadwal booking lainnya.',
         );
 
         _showAlert(
-          title: 'Booking Failed',
-          content: 'You have already booked an appointment.',
+          title: 'Booking Gagal',
+          content: 'Sudah ada jadwal booking lainnya.',
         );
       } else if (dioError.response?.statusCode == 200) {
         // Show a success alert for 200 status code
         _showAlert(
-          title: 'Book Success',
-          content: 'Your booking was accepted by admin.',
+          title: 'Booking Sukses',
+          content: 'Booking anda diterima oleh admin.',
         );
       } else {
         // Handle other Dio errors
@@ -374,24 +373,28 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> fetchRM(String namaUser) async {
+  Future<void> fetchGallery() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      String apiUrl = "http://82.197.95.108:8003/user/$namaUser";
+      String apiUrl = "http://82.197.95.108:8003/gallery/";
       Dio dio = Dio();
       Response response = await dio.get(apiUrl);
 
       if (response.statusCode == 200) {
         print(response.data['data']);
+        List<dynamic> responseData = response.data['data'];
+        List<Gallery> fetchedGallery =
+            responseData.map((json) => Gallery.fromJson(json)).toList();
+
         setState(() {
-          noRM = NoRM.fromJson(response.data['data']);
+          gallery = fetchedGallery;
           isLoading = false;
         });
       } else {
-        print("Error fetching RM: ${response.statusCode}");
+        print("Error fetching Gallery: ${response.statusCode}");
         setState(() {
           isLoading = false;
         });
@@ -634,7 +637,7 @@ class _HomeState extends State<Home> {
                             _selectedUserId = currentUser.id;
                           });
                           Navigator.pop(context);
-                          await fetchRM(_selectedUser);
+                          // await fetchRM(_selectedUser);
                         },
                       );
                     },
@@ -1133,7 +1136,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ],
-          ),
+          ), 
           SizedBox(height: 40),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),

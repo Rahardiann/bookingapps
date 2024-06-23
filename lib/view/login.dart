@@ -128,7 +128,7 @@ class _LoginFormState extends State<LoginForm> {
         }
       } catch (e) {
         // Handle Dio errors
-        _showAlertDialog(context, 'Error', 'An error occurred during login. Please try again later.');
+        _showAlertDialog(context, 'Error', 'Password atau email sepertinya salah, silahkan masuk lagi dengan benar.');
         print('Error during login: $e');
       }
     }

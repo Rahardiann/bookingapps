@@ -53,7 +53,7 @@ class _SplashscreenState extends State<Splashscreen> {
               bottom: 16, // Sesuaikan dengan jarak dari bawah yang diinginkan
               child: Center(
                 child: Text(
-                  "powered by Sujiwo tejo",
+                  "Andes Studio",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.black.withOpacity(0.8),

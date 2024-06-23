@@ -35,11 +35,11 @@ class HistoryData {
 
   factory HistoryData.fromJson(Map<String, dynamic> json) {
     return HistoryData(
-      nama_user: json['nama_user'],
+      nama_user: json['nama_user'] ,
       nama_dokter: json['nama_dokter'],
       tanggal_pemesanan: json['tanggal_pemesanan'],
       jam: json['jam'],
-      promo: json['judul'],
+      promo: json['judul'] ?? '',
     );
   }
 }
@@ -78,43 +78,45 @@ class _BookingState extends State<Booking> {
   }
 
   Future<void> fetchBooking() async {
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int? id = prefs.getInt('id_user');
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('id_user');
 
-      String apiUrl = "http://82.197.95.108:8003/booking/last/$id";
-      Dio dio = Dio();
-      Response response = await dio.get(apiUrl);
-      print(response.data['data']);
+    String apiUrl = "http://82.197.95.108:8003/booking/last/$id";
+    Dio dio = Dio();
+    Response response = await dio.get(apiUrl);
+    print(response.data['data']);
 
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = response.data['data'];
+
+    if (response.statusCode == 200) {
+      // Assuming response.data is a single object
+     List<dynamic> responseData = response.data['data'];
         // print(responseData);
         List<HistoryData> fetchedBooking =
             responseData.map((json) => HistoryData.fromJson(json)).toList();
 
-        setState(() {
-          history = fetchedBooking;
-          isLoading = false;
-        });
-        // print("OK");
-      } else {
-        print("Error fetching dentists: ${response.statusCode}");
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print("Error bawah: $e");
+      setState(() {
+        history = fetchedBooking; // Storing in a list for consistency
+        isLoading = false;
+      });
+    } else {
+      print("Error fetching dentists: ${response.statusCode}");
       setState(() {
         isLoading = false;
       });
     }
+  } catch (e) {
+    print("Error bawah: $e");
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   void fetchData() async {
     try {
