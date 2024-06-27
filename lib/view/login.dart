@@ -239,3 +239,10 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 }
+bool validateEmail(String email) {
+  // Regular expression for validating an email
+  String pattern =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  RegExp regex = RegExp(pattern);
+  return regex.hasMatch(email);
+}

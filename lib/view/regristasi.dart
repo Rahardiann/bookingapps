@@ -370,7 +370,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Silahkan masukkan email';
-                      } else if (!value.contains('@')) {
+                      } else if (!validateEmail(value)) {
                         return 'Silahkan masukkan email dengan benar';
                       }
                       return null;
@@ -539,4 +539,12 @@ class _RegisterFormState extends State<RegisterForm> {
     _birthController.dispose();
     super.dispose();
   }
+}
+
+bool validateEmail(String email) {
+  // Regular expression for validating an email
+  String pattern =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  RegExp regex = RegExp(pattern);
+  return regex.hasMatch(email);
 }
