@@ -223,7 +223,7 @@ class _HomeState extends State<Home> {
           },
           'judul': _selectedPromo != null && _selectedPromoId != null
               ? {'id': _selectedPromoId, 'judul': _selectedPromo + "judul"}
-              : null, 
+              : null,
         },
       );
 
@@ -233,7 +233,8 @@ class _HomeState extends State<Home> {
         context,
         MaterialPageRoute(
           builder: (context) => Booking(
-            bookingData: bookingData,// Make sure to pass the correct booking data
+            bookingData:
+                bookingData, // Make sure to pass the correct booking data
           ),
           settings: RouteSettings(
             arguments: {
@@ -252,7 +253,7 @@ class _HomeState extends State<Home> {
     } on DioError catch (dioError) {
       if (dioError.response?.statusCode == 500) {
         // Show an error notification for 500 status code
-       await (
+        await (
           title: 'Booking Gagal',
           body: 'Sudah ada jadwal booking lainnya.',
         );
@@ -284,7 +285,6 @@ class _HomeState extends State<Home> {
       print(error.toString());
     }
   }
-
 
   void _showAlert({required String title, required String content}) {
     showDialog(
@@ -992,15 +992,16 @@ class _HomeState extends State<Home> {
                                         size: 15,
                                         color: Colors.black,
                                       ),
-                                      onPressed: () async{
-                                      await _saveUserIdToSharedPreferences(promo.id);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Detailpromo(),
-                                        ),
-                                      );
-                                    },
+                                      onPressed: () async {
+                                        await _saveUserIdToSharedPreferences(
+                                            promo.id);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => Detailpromo(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
@@ -1099,44 +1100,32 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          CarouselSlider(
-            options: CarouselOptions(
-              height: 200.0,
-              enlargeCenterPage: true,
-              autoPlay: true,
-              aspectRatio: 16 / 9,
-              autoPlayCurve: Curves.fastOutSlowIn,
-              enableInfiniteScroll: true,
-              autoPlayAnimationDuration: Duration(milliseconds: 800),
-              viewportFraction: 0.8,
-            ),
-            items: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.asset(
-                  'assets/slide2.jpeg',
-                  fit: BoxFit.cover,
-                  width: screenWidth,
-                ),
-              ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.asset(
-                  'assets/slide2.jpeg',
-                  fit: BoxFit.cover,
-                  width: screenWidth,
-                ),
-              ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Image.asset(
-                  'assets/slide3.jpeg',
-                  fit: BoxFit.cover,
-                  width: screenWidth,
-                ),
-              ),
-            ],
-          ), 
+          Container(
+            height: 200.0,
+            child: dentists.isNotEmpty
+                ? ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: dentists.length,
+                    itemBuilder: (context, index) {
+                      final dentist = dentists[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Image.network(
+                            "http://82.197.95.108:8003/dokter/gambar/${dentist.gambar}",
+                            fit: BoxFit.cover,
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(child: Text('Error loading image'));
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : Center(child: Text('No images available')),
+          ),
           SizedBox(height: 40),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -1273,7 +1262,7 @@ class _HomeState extends State<Home> {
                     children: [
                       Text(
                         _selectedTime ??
-                            'Pilih jadwal', // Tampilkan waktu yang dipilih jika tersedia, jika tidak, tampilkan "Select time"
+                            'Select time', // Tampilkan waktu yang dipilih jika tersedia, jika tidak, tampilkan "Select time"
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1331,13 +1320,6 @@ class _HomeState extends State<Home> {
                         child: ElevatedButton(
                           onPressed: () {
                             _bookingUser();
-                         
-                            // Navigator.pushReplacement(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => Booking(),
-                            //   ),
-                            // );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFFE65895),
@@ -1384,7 +1366,7 @@ class _HomeState extends State<Home> {
                         ),
                         // Tambahkan jarak vertikal antara judul dan deskripsi
                         Text(
-                          'Temukan penawaran menarik dipromo kami.',
+                          'Get high quality dental filling treatment at special prices.',
                           style: TextStyle(
                             fontSize: 11,
                             color: Colors.black54,
@@ -1398,62 +1380,57 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(height: 40),
+         
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Image.asset(
-                          'assets/slide2.jpeg',
-                          width: screenWidth * 0.4,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'New patient discount',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Image.asset(
-                          'assets/slide2.jpeg',
-                          width: screenWidth * 0.4,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'New patient discount',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              Container(
+                height: 200.0,
+                width: MediaQuery.of(context).size.width,
+                child: dentists.isNotEmpty
+                    ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: dentists.length,
+                        itemBuilder: (context, index) {
+                          final dentist = dentists[index];
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Column(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  child: Image.network(
+                                    "http://82.197.95.108:8003/dokter/gambar/${dentist.gambar}",
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    height: 100, // Set height to 50 pixels
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Text('Error loading image'),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  dentist.nama,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+                    : Center(child: Text('No discounts available')),
               ),
             ],
           ),
-          SizedBox(height: 20),
+     
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -1469,7 +1446,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               child: Text(
-                'Tampilkan promo',
+                'Show more promo',
                 style: TextStyle(color: Colors.white),
               ),
             ),
