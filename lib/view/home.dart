@@ -1384,54 +1384,64 @@ class _HomeState extends State<Home> {
           SizedBox(height: 40),
          
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                height: 200.0,
-                width: MediaQuery.of(context).size.width,
-                child: dentists.isNotEmpty
-                    ? ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dentists.length,
-                        itemBuilder: (context, index) {
-                          final dentist = dentists[index];
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  child: Image.network(
-                                    "http://82.197.95.108:8003/dokter/gambar/${dentist.gambar}",
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.4,
-                                    height: 100, // Set height to 50 pixels
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
-                                        child: Text('Error loading image'),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  dentist.nama,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Container(
+  height: 200.0,
+  width: MediaQuery.of(context).size.width,
+  child: dentists.isNotEmpty
+      ? ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: promo.length > 2 ? 2 : promo.length,
+          itemBuilder: (context, index) {
+            Promo promos = promo[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: GestureDetector(
+                onTap: () async {
+                  await _saveUserIdToSharedPreferences(promos.id);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Detailpromo(),
+                    ),
+                  );
+                },
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.asset(
+                        'assets/slide3.jpeg',
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 100, // Set height to 100 pixels
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Text('Error loading image'),
                           );
                         },
-                      )
-                    : Center(child: Text('No discounts available')),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      promos.judul,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            );
+          },
+        )
+      : Center(child: Text('No discounts available')),
+),
+
+  ],
+),
      
           Container(
             width: double.infinity,
