@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:booking/view/home.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 void _showDatePickerBottomSheet(
     BuildContext context, Function(DateTime) onDateSelected) {
   DateTime? selectedDate;
@@ -40,6 +41,7 @@ void _showDatePickerBottomSheet(
     },
   );
 }
+
 class Adduser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -248,7 +250,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                               ? 'Silahkan masukkan nomor telepon.'
                               : (_phoneNumberController.text.length < 9 ||
                                       _phoneNumberController.text.length > 13)
-                                  ? 'Nomor telepon harus minimal 9 dan 13 karakter.'
+                                  ? 'Nomor telepon harus minimal 9 dan maksimal 13 karakter.'
                                   : null,
                         ),
                         keyboardType: TextInputType.number,
@@ -257,11 +259,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           LengthLimitingTextInputFormatter(13), // Limit input to 13 characters
                         ],
                         maxLength: 13, // Set maximum length of input
-                        minLength: 9, // Set minimum length of input
                       ),
-
                     ),
-
                   ],
                 ),
                 SizedBox(height: 20),
@@ -273,7 +272,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[200],
-                    errorText: !_emailController.text.contains('@') &&
+                    errorText: !validateEmail(_emailController.text) &&
                             _emailController.text.isNotEmpty
                         ? 'Silahkan masukkan email dengan benar.'
                         : null,
@@ -307,7 +306,6 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   obscureText: _obscureText,
                 ),
                 SizedBox(height: 20),
-                
                 Text(
                   'Jenis kelamin',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -370,11 +368,11 @@ class _RegistrationFormState extends State<RegistrationForm> {
                             ? 'NIK harus 16 karakter.'
                             : null,
                   ),
-                 keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(16), // Limit input to 13 characters
-                        ],
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(16), // Limit input to 16 characters
+                  ],
                 ),
                 SizedBox(height: 20),
                 TextFormField(
@@ -429,19 +427,18 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
   void _validateForm() {
     setState(() {
-      _isValidForm = _emailController.text.contains('@') &&
-    _emailController.text.isNotEmpty &&
-    _passwordController.text.isNotEmpty &&
-    _passwordController.text.length >= 8 &&
-    _nameController.text.isNotEmpty &&
-    _phoneNumberController.text.isNotEmpty &&
-    _phoneNumberController.text.length <=13 && // Ensure exactly 13 characters
-    _phoneNumberController.text.length >=9 && // Ensure exactly 13 characters
-    _addressController.text.isNotEmpty &&
-    _noKtpController.text.isNotEmpty &&
-    _noKtpController.text.length == 16 &&
-    _birth.text.isNotEmpty;
-
+      _isValidForm = validateEmail(_emailController.text) &&
+          _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty &&
+          _passwordController.text.length >= 8 &&
+          _nameController.text.isNotEmpty &&
+          _phoneNumberController.text.isNotEmpty &&
+          _phoneNumberController.text.length <= 13 &&
+          _phoneNumberController.text.length >= 9 &&
+          _addressController.text.isNotEmpty &&
+          _noKtpController.text.isNotEmpty &&
+          _noKtpController.text.length == 16 &&
+          _birth.text.isNotEmpty;
     });
   }
 
@@ -457,6 +454,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
   }
 }
 
-
-
-
+bool validateEmail(String email) {
+  // Regular expression for validating an email
+  String pattern =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  RegExp regex = RegExp(pattern);
+  return regex.hasMatch(email);
+}
