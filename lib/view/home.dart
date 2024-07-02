@@ -449,9 +449,11 @@ class _HomeState extends State<Home> {
     });
 
     try {
-      String apiUrl = "http://82.197.95.108:8003/jadwal/$dentistID";
+      String apiUrl =
+          "http://82.197.95.108:8003/jadwal/$dentistID/$selectedDate";
       Dio dio = Dio();
-      Response response = await dio.get(
+      Response response = await dio.get(apiUrl);
+      (
         apiUrl,
         data: {
           "tanggal_pemesanan": selectedDate,
