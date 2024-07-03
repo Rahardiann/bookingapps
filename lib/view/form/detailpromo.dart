@@ -157,8 +157,8 @@ class _DetailpromoState extends State<Detailpromo> {
                           borderRadius: BorderRadius.circular(20.0),
                           child: AspectRatio(
                             aspectRatio: 16 / 9,
-                            child: Image.asset(
-                              'assets/slide3.jpeg',
+                             child: Image.network(
+                            "http://82.197.95.108:8003/dokter/gambar/${promo!.gambar}",
                               width: screenWidth * 0.4,
                               fit: BoxFit.cover,
                             ),

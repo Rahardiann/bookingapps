@@ -1104,18 +1104,18 @@ class _HomeState extends State<Home> {
           ),
           Container(
             height: 200.0,
-            child: dentists.isNotEmpty
+            child: promo.isNotEmpty
                 ? ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: dentists.length,
+                    itemCount: promo.length,
                     itemBuilder: (context, index) {
-                      final dentist = dentists[index];
+                      Promo promos = promo[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
                           child: Image.network(
-                            "http://82.197.95.108:8003/dokter/gambar/${dentist.gambar}",
+                            "http://82.197.95.108:8003/dokter/gambar/${promos.gambar}",
                             fit: BoxFit.cover,
                             width: MediaQuery.of(context).size.width * 0.8,
                             errorBuilder: (context, error, stackTrace) {
@@ -1411,10 +1411,10 @@ class _HomeState extends State<Home> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
-                      child: Image.asset(
-                        'assets/slide3.jpeg',
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: 100, // Set height to 100 pixels
+                       child: Image.network(
+                            "http://82.197.95.108:8003/dokter/gambar/${promos.gambar}",
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        height: 125, // Set height to 100 pixels
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Center(
